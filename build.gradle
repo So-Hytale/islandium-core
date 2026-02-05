@@ -6,9 +6,6 @@ plugins {
 archivesBaseName = 'islandium-core'
 
 dependencies {
-    // Islandium API
-    implementation project(':islandium-api')
-
     // Hytale Server API (compile-only car fourni par le serveur)
     compileOnly files('../libs/HytaleServer.jar')
 
