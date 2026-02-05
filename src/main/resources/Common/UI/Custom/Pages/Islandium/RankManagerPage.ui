@@ -1,0 +1,401 @@
+$C = "../../Common.ui";
+$Nav = "Nav/Islandium_TopNavigationBar.ui";
+
+$C.@PageOverlay {
+    $Nav.@IslandiumTopNavigationBar #IslandiumTopNavigationBar {}
+    $C.@Container {
+        Anchor: (Width: 1100, Height: 680);
+
+        #Title {
+            Group {
+                TextButton #BackButton {
+                    Anchor: (Left: 12, Top: 4, Width: 64, Height: 24);
+                    Padding: (Left: 8, Top: 2);
+                    Text: "< Retour";
+                    Style: TextButtonStyle(
+                        Default: (LabelStyle: (FontSize: 14, TextColor: #93844c, RenderBold: true)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                    Background: #000000(0.13);
+                }
+                $C.@Title {
+                    @Text = "Gestion des Ranks";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Left;
+
+            // Colonne 1 - Liste des Ranks
+            Group #LeftPanel {
+                Anchor: (Width: 180);
+                LayoutMode: Top;
+                Padding: (Right: 5);
+
+                Label {
+                    Text: "Ranks";
+                    Anchor: (Height: 30);
+                    Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #RankList {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 5);
+                }
+
+                $C.@TextButton #CreateRankButton {
+                    Anchor: (Height: 40, Top: 10);
+                    Text: "+ Nouveau";
+                }
+            }
+
+            Group {
+                Anchor: (Width: 2);
+                Background: (Color: #4a4a6a);
+            }
+
+            // Colonne 2 - Permissions
+            Group #MiddlePanel {
+                Anchor: (Width: 260);
+                LayoutMode: Top;
+                Padding: (Horizontal: 8);
+
+                Label #PermissionsTitle {
+                    Text: "Permissions";
+                    Anchor: (Height: 30);
+                    Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #PermissionsSection {
+                    FlexWeight: 1;
+                    LayoutMode: Top;
+                    Visible: false;
+
+                    Group #PermissionsList {
+                        FlexWeight: 1;
+                        LayoutMode: TopScrolling;
+                        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                        Background: (Color: #0a0f17);
+                        Padding: (Full: 5);
+                    }
+
+                    Group #AddPermRow {
+                        Anchor: (Height: 40, Top: 8);
+                        LayoutMode: Left;
+
+                        $C.@TextField #NewPermField {
+                            Anchor: (Width: 195, Height: 36);
+                            PlaceholderText: "essentials.perm";
+                        }
+
+                        TextButton #AddPermButton {
+                            Anchor: (Width: 40, Left: 5, Height: 36);
+                            Text: "+";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #2d5a2d,
+                                    LabelStyle: (FontSize: 20, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #3d7a3d,
+                                    LabelStyle: (FontSize: 20, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #1d4a1d,
+                                    LabelStyle: (FontSize: 20, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+                    }
+                }
+
+                Group #NoRankSelectedPerm {
+                    FlexWeight: 1;
+                    Label {
+                        Anchor: (Height: 40);
+                        Text: "Selectionnez un rank";
+                        Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+            }
+
+            Group {
+                Anchor: (Width: 2);
+                Background: (Color: #4a4a6a);
+            }
+
+            // Colonne 3 - Membres
+            Group #MembersPanel {
+                Anchor: (Width: 260);
+                LayoutMode: Top;
+                Padding: (Horizontal: 8);
+
+                Label {
+                    Text: "Membres";
+                    Anchor: (Height: 30);
+                    Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #MembersSection {
+                    FlexWeight: 1;
+                    LayoutMode: Top;
+                    Visible: false;
+
+                    Group #MembersList {
+                        FlexWeight: 1;
+                        LayoutMode: TopScrolling;
+                        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                        Background: (Color: #0a0f17);
+                        Padding: (Full: 5);
+                    }
+
+                    Group #AddMemberRow {
+                        Anchor: (Height: 40, Top: 8);
+                        LayoutMode: Left;
+
+                        $C.@TextField #MemberSearchField {
+                            Anchor: (Width: 195, Height: 36);
+                            PlaceholderText: "Pseudo joueur...";
+                        }
+
+                        TextButton #AddMemberButton {
+                            Anchor: (Width: 40, Left: 5, Height: 36);
+                            Text: "+";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #2d5a2d,
+                                    LabelStyle: (FontSize: 20, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #3d7a3d,
+                                    LabelStyle: (FontSize: 20, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #1d4a1d,
+                                    LabelStyle: (FontSize: 20, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+                    }
+                }
+
+                Group #NoRankSelectedMember {
+                    FlexWeight: 1;
+                    Label {
+                        Anchor: (Height: 40);
+                        Text: "Selectionnez un rank";
+                        Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+            }
+
+            Group {
+                Anchor: (Width: 2);
+                Background: (Color: #4a4a6a);
+            }
+
+            // Colonne 4 - Edition du Rank
+            Group #RightPanel {
+                FlexWeight: 1;
+                LayoutMode: Top;
+                Padding: (Left: 10);
+
+                Label #EditorTitle {
+                    Text: "Selectionnez un rank";
+                    Anchor: (Height: 35);
+                    Style: (FontSize: 18, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #EditorContent {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Visible: false;
+
+                    Label {
+                        Text: "Nom d'affichage:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #DisplayNameField {
+                        Anchor: (Height: 32);
+                    }
+
+                    Label {
+                        Text: "Prefix (chat):";
+                        Anchor: (Height: 22, Top: 8);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #PrefixField {
+                        Anchor: (Height: 32);
+                    }
+
+                    Label {
+                        Text: "Couleur:";
+                        Anchor: (Height: 22, Top: 8);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+
+                    ColorPicker #ColorPicker {
+                        Anchor: (Height: 180, Top: 4);
+                        DisplayTextField: true;
+                        Style: $C.@DefaultColorPickerStyle;
+                    }
+
+                    Label {
+                        Text: "Priorite:";
+                        Anchor: (Height: 22, Top: 8);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #PriorityField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "0";
+                    }
+
+                    // Boutons d'action
+                    Group {
+                        Anchor: (Height: 50, Top: 20);
+                        LayoutMode: Left;
+
+                        TextButton #SaveButton {
+                            Anchor: (Width: 100, Height: 44);
+                            Text: "Sauver";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #2d5a2d,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #3d7a3d,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #1d4a1d,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+
+                        TextButton #DeleteButton {
+                            Anchor: (Width: 100, Left: 8, Height: 44);
+                            Text: "Supprimer";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #8b2020,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #ab3030,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #6b1010,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+
+                        TextButton #SetDefaultButton {
+                            Anchor: (Width: 100, Left: 8, Height: 44);
+                            Text: "Defaut";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #2d4a8b,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #3d5a9b,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #1d3a7b,
+                                    LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+                    }
+                }
+
+                Group #CreateContent {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Visible: false;
+
+                    Label {
+                        Text: "Identifiant unique:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewRankIdField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "mon_rank";
+                    }
+
+                    Label {
+                        Text: "Nom d'affichage:";
+                        Anchor: (Height: 22, Top: 10);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewRankNameField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "Mon Rank";
+                    }
+
+                    Label {
+                        Text: "Couleur (hex):";
+                        Anchor: (Height: 22, Top: 10);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewRankColorField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "#ffffff";
+                    }
+
+                    Label {
+                        Text: "Priorite:";
+                        Anchor: (Height: 22, Top: 10);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewRankPriorityField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "0";
+                    }
+
+                    Group {
+                        Anchor: (Height: 50, Top: 20);
+                        LayoutMode: Left;
+
+                        $C.@TextButton #ConfirmCreateButton {
+                            Anchor: (Width: 120, Height: 44);
+                            Text: "Creer";
+                        }
+
+                        $C.@SecondaryTextButton #CancelCreateButton {
+                            Anchor: (Width: 120, Left: 15, Height: 44);
+                            Text: "Annuler";
+                        }
+                    }
+                }
+
+                Group #NoRankSelected {
+                    FlexWeight: 1;
+                    Label {
+                        Anchor: (Height: 40);
+                        Text: "Selectionnez un rank pour l'editer";
+                        Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+            }
+        }
+    }
+}

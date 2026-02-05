@@ -1,0 +1,84 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '8.3.5'
+}
+
+archivesBaseName = 'islandium-core'
+
+dependencies {
+    // Islandium API
+    implementation project(':islandium-api')
+
+    // Hytale Server API (compile-only car fourni par le serveur)
+    compileOnly files('../libs/HytaleServer.jar')
+
+    // Database - HikariCP + MySQL
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    implementation 'com.mysql:mysql-connector-j:8.2.0'
+
+    // Redis - Lettuce (async/reactive)
+    implementation 'io.lettuce:lettuce-core:6.3.0.RELEASE'
+
+    // JSON
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Annotations
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+}
+
+shadowJar {
+    archiveBaseName.set('islandium-core')
+    archiveClassifier.set('')
+    archiveVersion.set(version)
+
+    // Relocaliser les dépendances pour éviter les conflits
+    relocate 'com.zaxxer.hikari', 'com.islandium.libs.hikari'
+    relocate 'io.lettuce', 'com.islandium.libs.lettuce'
+    relocate 'com.google.gson', 'com.islandium.libs.gson'
+    relocate 'com.mysql', 'com.islandium.libs.mysql'
+
+    manifest {
+        attributes(
+            'Main-Class': 'com.islandium.core.IslandiumPlugin',
+            'Implementation-Title': 'Islandium Core',
+            'Implementation-Version': version,
+            'Implementation-Vendor-Id': 'com.islandium',
+            'Java-Version': '21'
+        )
+    }
+}
+
+jar {
+    archiveBaseName.set('islandium-core')
+    archiveClassifier.set('slim')
+    archiveVersion.set(version)
+
+    manifest {
+        attributes(
+            'Main-Class': 'com.islandium.core.IslandiumPlugin',
+            'Implementation-Title': 'Islandium Core',
+            'Implementation-Version': version,
+            'Implementation-Vendor-Id': 'com.islandium',
+            'Java-Version': '21'
+        )
+    }
+}
+
+// Build shadow jar by default
+build.dependsOn shadowJar
+
+// Exposer les classes pour les autres projets qui dépendent de core
+configurations {
+    apiElements {
+        outgoing {
+            artifacts.clear()
+            artifact(jar)
+        }
+    }
+    runtimeElements {
+        outgoing {
+            artifacts.clear()
+            artifact(shadowJar)
+        }
+    }
+}

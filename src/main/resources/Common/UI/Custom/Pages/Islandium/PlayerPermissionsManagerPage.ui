@@ -1,0 +1,207 @@
+$C = "../../Common.ui";
+$Nav = "Nav/Islandium_TopNavigationBar.ui";
+
+$C.@PageOverlay {
+    $Nav.@IslandiumTopNavigationBar #IslandiumTopNavigationBar {}
+    $C.@Container {
+        Anchor: (Width: 700, Height: 600);
+
+        #Title {
+            Group {
+                TextButton #BackButton {
+                    Anchor: (Left: 12, Top: 4, Width: 64, Height: 24);
+                    Padding: (Left: 8, Top: 2);
+                    Text: "< Retour";
+                    Style: TextButtonStyle(
+                        Default: (LabelStyle: (FontSize: 14, TextColor: #93844c, RenderBold: true)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                    Background: #000000(0.13);
+                }
+                $C.@Title {
+                    @Text = "Gestion des Permissions Joueur";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+
+            // Barre de recherche joueur (visible au debut)
+            Group #PlayerSearchPanel {
+                Anchor: (Height: 100);
+                LayoutMode: Top;
+                Padding: (Horizontal: 20, Vertical: 10);
+                Background: (Color: #0d1520);
+
+                Label {
+                    Text: "Rechercher un joueur";
+                    Anchor: (Height: 24);
+                    Style: (FontSize: 14, TextColor: #ffd700, RenderBold: true, HorizontalAlignment: Center);
+                }
+
+                Group {
+                    Anchor: (Height: 45, Top: 8);
+                    LayoutMode: Left;
+
+                    Group {
+                        FlexWeight: 1;
+                    }
+
+                    $C.@TextField #PlayerSearchField {
+                        Anchor: (Width: 280, Height: 38);
+                        PlaceholderText: "Pseudo du joueur...";
+                    }
+
+                    TextButton #SearchButton {
+                        Anchor: (Width: 90, Left: 8, Height: 38);
+                        Text: "Rechercher";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #2d5a2d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Hovered: (
+                                Background: #3d7a3d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Pressed: (
+                                Background: #1d4a1d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+
+                    Group {
+                        FlexWeight: 1;
+                    }
+                }
+
+                Label #SearchStatus {
+                    Text: "";
+                    Anchor: (Height: 18);
+                    Style: (FontSize: 11, TextColor: #ff6b6b, HorizontalAlignment: Center);
+                }
+            }
+
+            $C.@ContentSeparator {
+                Anchor: (Top: 3, Bottom: 3);
+            }
+
+            // Panel principal (cache jusqu'a selection d'un joueur)
+            Group #MainPanel {
+                FlexWeight: 1;
+                LayoutMode: Top;
+                Visible: false;
+                Padding: (Horizontal: 15);
+
+                // Infos joueur
+                Group #PlayerInfoBox {
+                    Anchor: (Height: 70);
+                    LayoutMode: Top;
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 10);
+
+                    Label #PlayerNameLabel {
+                        Text: "Joueur";
+                        Anchor: (Height: 26);
+                        Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center);
+                    }
+
+                    Label #PlayerUuidLabel {
+                        Text: "UUID";
+                        Anchor: (Height: 18);
+                        Style: (FontSize: 9, TextColor: #808080, HorizontalAlignment: Center);
+                    }
+
+                    Label #PlayerStatusLabel {
+                        Text: "Statut";
+                        Anchor: (Height: 18);
+                        Style: (FontSize: 10, TextColor: #4ade80, HorizontalAlignment: Center);
+                    }
+                }
+
+                Label {
+                    Text: "Permissions Personnelles";
+                    Anchor: (Height: 28, Top: 12);
+                    Style: (FontSize: 15, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #PersonalPermsList {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 8);
+                }
+
+                // Ajouter une permission
+                Group #AddPermRow {
+                    Anchor: (Height: 45, Top: 10);
+                    LayoutMode: Left;
+
+                    $C.@TextField #AddPermField {
+                        FlexWeight: 1;
+                        Anchor: (Height: 38);
+                        PlaceholderText: "essentials.exemple.permission";
+                    }
+
+                    TextButton #AddPermButton {
+                        Anchor: (Width: 80, Left: 8, Height: 38);
+                        Text: "Ajouter";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #2d5a2d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Hovered: (
+                                Background: #3d7a3d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Pressed: (
+                                Background: #1d4a1d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+                }
+            }
+
+            // Panel des joueurs connectes (visible quand aucun joueur selectionne)
+            Group #OnlinePlayersPanel {
+                FlexWeight: 1;
+                Visible: true;
+                LayoutMode: Top;
+                Padding: (Horizontal: 15, Top: 8);
+
+                Label {
+                    Text: "Joueurs Connectes";
+                    Anchor: (Height: 28);
+                    Style: (FontSize: 15, TextColor: #ffd700, RenderBold: true, HorizontalAlignment: Center);
+                }
+
+                Label #OnlinePlayersCount {
+                    Text: "0 joueurs en ligne";
+                    Anchor: (Height: 18);
+                    Style: (FontSize: 11, TextColor: #808080, HorizontalAlignment: Center);
+                }
+
+                Group #OnlinePlayersList {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 8);
+                }
+
+                Label {
+                    Text: "Cliquez sur un joueur ou recherchez un joueur hors-ligne";
+                    Anchor: (Height: 25, Top: 8);
+                    Style: (FontSize: 10, TextColor: #606060, HorizontalAlignment: Center);
+                }
+            }
+        }
+    }
+}

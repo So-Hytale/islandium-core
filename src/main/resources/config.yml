@@ -1,0 +1,38 @@
+{
+  "serverName": "server-1",
+
+  "database": {
+    "host": "172.252.236.20",
+    "port": 3306,
+    "database": "essentials",
+    "username": "hytale",
+    "password": "4{4hr4>yB5Qo",
+    "poolSize": 10
+  },
+
+  "redis": {
+    "host": "51.178.64.90",
+    "port": 25570,
+    "password": "qQc@:puU3qu33@1",
+    "database": 4
+  },
+  "homes": {
+    "maxHomes": {
+      "default": 3,
+      "vip": 5,
+      "premium": 10
+    }
+  },
+
+  "economy": {
+    "startingBalance": 100.0,
+    "currencySymbol": "$",
+    "currencyName": "coins"
+  },
+
+  "teleport": {
+    "warmupSeconds": 3,
+    "cooldownSeconds": 5,
+    "tpaExpireSeconds": 60
+  }
+}

@@ -1,0 +1,136 @@
+$C = "../../../Common.ui";
+$Nav = "../Nav/Islandium_TopNavigationBar.ui";
+
+$C.@PageOverlay {
+    $Nav.@IslandiumTopNavigationBar #IslandiumTopNavigationBar {}
+    $C.@Container {
+        Anchor: (Width: 900, Height: 600);
+
+        #Title {
+            Group {
+                TextButton #BackButton {
+                    Anchor: (Left: 12, Top: 4, Width: 80, Height: 28);
+                    Padding: (Left: 8, Top: 2);
+                    Text: "< Retour";
+                    Style: TextButtonStyle(
+                        Default: (LabelStyle: (FontSize: 14, TextColor: #93844c, RenderBold: true)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                    Background: #000000(0.13);
+                }
+                $C.@Title {
+                    @Text = "Details de l'Entite";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+            Padding: (Full: 15);
+
+            // Entity header section
+            Group #EntityHeader {
+                Anchor: (Height: 100);
+                Background: (Color: #151d28);
+                LayoutMode: Left;
+                Padding: (Full: 15);
+
+                // Entity info
+                Group #EntityInfo {
+                    FlexWeight: 1;
+                    LayoutMode: Top;
+
+                    Label #EntityName {
+                        Anchor: (Height: 36);
+                        Text: "Nom de l'entite";
+                        Style: (FontSize: 24, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                    }
+
+                    Group #EntityMeta {
+                        Anchor: (Height: 24);
+                        LayoutMode: Left;
+
+                        Label #EntityCategory {
+                            Anchor: (Width: 120);
+                            Text: "Categorie";
+                            Style: (FontSize: 12, TextColor: #4488ff, VerticalAlignment: Center);
+                        }
+
+                        Label {
+                            Anchor: (Width: 10);
+                            Text: "|";
+                            Style: (FontSize: 12, TextColor: #808080, VerticalAlignment: Center);
+                        }
+
+                        Label #EntityHealth {
+                            Anchor: (Width: 80);
+                            Text: "HP: 20";
+                            Style: (FontSize: 12, TextColor: #ff6666, VerticalAlignment: Center);
+                        }
+
+                        Label {
+                            Anchor: (Width: 10);
+                            Text: "|";
+                            Style: (FontSize: 12, TextColor: #808080, VerticalAlignment: Center);
+                        }
+
+                        Label #EntityAttack {
+                            Anchor: (Width: 100);
+                            Text: "Attaque: 0";
+                            Style: (FontSize: 12, TextColor: #ffaa00, VerticalAlignment: Center);
+                        }
+                    }
+
+                    Label #EntityDescription {
+                        FlexWeight: 1;
+                        Text: "Description de l'entite";
+                        Style: (FontSize: 13, TextColor: #aaaaaa, Wrap: true);
+                    }
+                }
+            }
+
+            Group { Anchor: (Height: 10); }
+
+            // Drops section header
+            Group #DropsHeader {
+                Anchor: (Height: 35);
+                Background: (Color: #1a2332);
+                LayoutMode: Left;
+                Padding: (Horizontal: 15);
+
+                Label {
+                    FlexWeight: 1;
+                    Text: "DROPS";
+                    Style: (FontSize: 14, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                }
+
+                Label #DropCount {
+                    Anchor: (Width: 80);
+                    Text: "0 items";
+                    Style: (FontSize: 12, TextColor: #808080, VerticalAlignment: Center, HorizontalAlignment: End);
+                }
+            }
+
+            // Drops list
+            Group #DropsList {
+                FlexWeight: 1;
+                LayoutMode: TopScrolling;
+                ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                Background: (Color: #0a0f17);
+                Padding: (Full: 10);
+            }
+
+            // No drops message
+            Group #NoDropsMessage {
+                FlexWeight: 1;
+                Visible: false;
+                Background: (Color: #0a0f17);
+
+                Label {
+                    Text: "Cette entite n'a pas de drops";
+                    Style: (FontSize: 14, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                }
+            }
+        }
+    }
+}

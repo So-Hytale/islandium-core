@@ -1,0 +1,963 @@
+$C = "../../Common.ui";
+$Nav = "Nav/Islandium_TopNavigationBar.ui";
+
+$C.@PageOverlay {
+    $Nav.@IslandiumTopNavigationBar #IslandiumTopNavigationBar {}
+    $C.@Container {
+        Anchor: (Width: 1000, Height: 720);
+
+        #Title {
+            Group {
+                TextButton #BackButton {
+                    Anchor: (Left: 12, Top: 4, Width: 64, Height: 24);
+                    Padding: (Left: 8, Top: 2);
+                    Text: "< Retour";
+                    Style: TextButtonStyle(
+                        Default: (LabelStyle: (FontSize: 14, TextColor: #93844c, RenderBold: true)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                    Background: #000000(0.13);
+                }
+                $C.@Title {
+                    @Text = "Gestion des Mondes";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Left;
+
+            // Colonne 1 - Liste des Mondes
+            Group #LeftPanel {
+                Anchor: (Width: 220);
+                LayoutMode: Top;
+                Padding: (Right: 5);
+
+                Label {
+                    Text: "Mondes";
+                    Anchor: (Height: 30);
+                    Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #WorldList {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 5);
+                }
+
+                $C.@TextButton #CreateWorldButton {
+                    Anchor: (Height: 40, Top: 10);
+                    Text: "+ Nouveau Monde";
+                }
+            }
+
+            Group {
+                Anchor: (Width: 2);
+                Background: (Color: #4a4a6a);
+            }
+
+            // Colonne 2 - Parametres du Monde
+            Group #SettingsPanel {
+                Anchor: (Width: 300);
+                LayoutMode: Top;
+                Padding: (Horizontal: 10);
+
+                Label {
+                    Text: "Parametres";
+                    Anchor: (Height: 30);
+                    Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true);
+                }
+
+                Group #SettingsSection {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Visible: false;
+                    Padding: (Right: 5);
+
+                    // Toggles
+                    Group #TogglesList {
+                        LayoutMode: Top;
+                        Anchor: (Bottom: 10);
+
+                        // PvP
+                        Group #PvpToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #PvpCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #PvpCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "PvP Active";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+
+                        // Fall Damage
+                        Group #FallDamageToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #FallDamageCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #FallDamageCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "Degats de chute";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+
+                        // NPC Spawning
+                        Group #NpcSpawnToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #NpcSpawnCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #NpcSpawnCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "Spawn des NPC";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+
+                        // Game Time Paused (temps fixe)
+                        Group #TimePausedToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #TimePausedCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #TimePausedCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "Temps fixe (ne varie pas)";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+
+                        // Weather Locked (meteo fixe)
+                        Group #WeatherLockedToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #WeatherLockedCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #WeatherLockedCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "Meteo fixe (ne varie pas)";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+
+                        // Block Ticking
+                        Group #BlockTickToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #BlockTickCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #BlockTickCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "Tick des blocs";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+
+                        // Save Chunks
+                        Group #SaveChunksToggle {
+                            Anchor: (Height: 28);
+                            LayoutMode: Left;
+                            Button #SaveChunksCheckBox {
+                                Anchor: (Width: 22, Height: 22);
+                                Background: (Color: #1a2332);
+                                Label #SaveChunksCheck { Text: ""; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                            Label {
+                                Anchor: (Left: 8);
+                                Text: "Sauvegarder chunks";
+                                Style: (FontSize: 12, TextColor: #bfcdd5, VerticalAlignment: Center);
+                            }
+                        }
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Bottom: 10);
+                        Background: (Color: #4a4a6a);
+                    }
+
+                    // Temps du monde (ticks)
+                    Label {
+                        Text: "Temps (ticks 0-24000):";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    Group {
+                        Anchor: (Height: 36, Bottom: 8);
+                        LayoutMode: Left;
+
+                        $C.@TextField #TimeField {
+                            Anchor: (Width: 80, Height: 32);
+                            PlaceholderText: "6000";
+                        }
+
+                        Label {
+                            Anchor: (Left: 8, Width: 180);
+                            Text: "0=6h, 6000=12h, 18000=0h";
+                            Style: (FontSize: 10, TextColor: #6e7da1, VerticalAlignment: Center);
+                        }
+                    }
+
+                    // Jour actuel
+                    Label {
+                        Text: "Jour actuel:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    Group {
+                        Anchor: (Height: 36, Bottom: 8);
+                        LayoutMode: Left;
+
+                        $C.@TextField #DayCountField {
+                            Anchor: (Width: 60, Height: 32);
+                            PlaceholderText: "1";
+                        }
+
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "jour";
+                            Style: (FontSize: 11, TextColor: #6e7da1, VerticalAlignment: Center);
+                        }
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Bottom: 8);
+                        Background: (Color: #3a3a5a);
+                    }
+
+                    // Duree jour/nuit
+                    Label {
+                        Text: "Duree du cycle:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    Group {
+                        Anchor: (Height: 36, Bottom: 4);
+                        LayoutMode: Left;
+
+                        Label {
+                            Anchor: (Width: 35);
+                            Text: "Jour:";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+
+                        $C.@TextField #DayDurationField {
+                            Anchor: (Width: 60, Height: 32);
+                            PlaceholderText: "1728";
+                        }
+
+                        Label {
+                            Anchor: (Left: 4, Width: 20);
+                            Text: "s";
+                            Style: (FontSize: 10, TextColor: #6e7da1, VerticalAlignment: Center);
+                        }
+
+                        Label {
+                            Anchor: (Left: 10, Width: 35);
+                            Text: "Nuit:";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+
+                        $C.@TextField #NightDurationField {
+                            Anchor: (Width: 60, Height: 32);
+                            PlaceholderText: "1152";
+                        }
+
+                        Label {
+                            Anchor: (Left: 4);
+                            Text: "s";
+                            Style: (FontSize: 10, TextColor: #6e7da1, VerticalAlignment: Center);
+                        }
+                    }
+
+                    // Vitesse du temps
+                    Label {
+                        Text: "Vitesse du temps:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    Group {
+                        Anchor: (Height: 36, Bottom: 8);
+                        LayoutMode: Left;
+
+                        $C.@TextField #TimeDilationField {
+                            Anchor: (Width: 60, Height: 32);
+                            PlaceholderText: "1.0";
+                        }
+
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "x (0.01 - 4.0)";
+                            Style: (FontSize: 10, TextColor: #6e7da1, VerticalAlignment: Center);
+                        }
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Bottom: 8);
+                        Background: (Color: #3a3a5a);
+                    }
+
+                    // Meteo du monde
+                    Label {
+                        Text: "Meteo:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    Group {
+                        Anchor: (Height: 36, Bottom: 4);
+                        LayoutMode: Left;
+
+                        Button #WeatherClear {
+                            Anchor: (Width: 52, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WeatherClearLbl { Text: "Clair"; Style: (FontSize: 9, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WeatherCloudy {
+                            Anchor: (Width: 52, Left: 3, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WeatherCloudyLbl { Text: "Nuage"; Style: (FontSize: 9, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WeatherRainLight {
+                            Anchor: (Width: 52, Left: 3, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WeatherRainLightLbl { Text: "Bruine"; Style: (FontSize: 9, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                    }
+                    Group {
+                        Anchor: (Height: 36, Bottom: 8);
+                        LayoutMode: Left;
+
+                        Button #WeatherRain {
+                            Anchor: (Width: 52, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WeatherRainLbl { Text: "Pluie"; Style: (FontSize: 9, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WeatherStorm {
+                            Anchor: (Width: 52, Left: 3, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WeatherStormLbl { Text: "Orage"; Style: (FontSize: 9, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WeatherSnow {
+                            Anchor: (Width: 52, Left: 3, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WeatherSnowLbl { Text: "Neige"; Style: (FontSize: 9, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Bottom: 8);
+                        Background: (Color: #3a3a5a);
+                    }
+
+                    // GameMode
+                    Label {
+                        Text: "Mode de jeu:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #GameModeField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "Adventure, Creative...";
+                    }
+                }
+
+                Group #NoWorldSelectedSettings {
+                    FlexWeight: 1;
+                    Label {
+                        Anchor: (Height: 40);
+                        Text: "Selectionnez un monde";
+                        Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+            }
+
+            Group {
+                Anchor: (Width: 2);
+                Background: (Color: #4a4a6a);
+            }
+
+            // Colonne 3 - Informations et Actions
+            Group #RightPanel {
+                FlexWeight: 1;
+                LayoutMode: Top;
+                Padding: (Left: 10);
+
+                Label #EditorTitle {
+                    Text: "Selectionnez un monde";
+                    Anchor: (Height: 35);
+                    Style: (FontSize: 18, TextColor: #ffd700, RenderBold: true);
+                }
+
+                // Tabs pour basculer entre Info et Joueurs
+                Group #TabsBar {
+                    Anchor: (Height: 36, Bottom: 8);
+                    LayoutMode: Left;
+                    Visible: false;
+
+                    Button #TabInfo {
+                        Anchor: (Width: 120, Height: 32);
+                        Background: (Color: #2d5a2d);
+                        Label #TabInfoLbl { Text: "Infos & Actions"; Style: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true); }
+                    }
+
+                    Button #TabPlayers {
+                        Anchor: (Width: 120, Left: 4, Height: 32);
+                        Background: (Color: #1a2332);
+                        Label #TabPlayersLbl { Text: "Joueurs (0)"; Style: (FontSize: 11, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                    }
+                }
+
+                Group #InfoContent {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Visible: false;
+
+                    // Informations du monde
+                    Label {
+                        Text: "Informations:";
+                        Anchor: (Height: 25);
+                        Style: (FontSize: 14, TextColor: #96a9be, RenderBold: true);
+                    }
+
+                    Label #UuidLabel {
+                        Anchor: (Height: 20);
+                        Style: (FontSize: 11, TextColor: #6e7da1);
+                    }
+
+                    Label #SeedLabel {
+                        Anchor: (Height: 20);
+                        Style: (FontSize: 11, TextColor: #6e7da1);
+                    }
+
+                    Label #GameTimeLabel {
+                        Anchor: (Height: 20);
+                        Style: (FontSize: 11, TextColor: #6e7da1);
+                    }
+
+                    Label #PlayerCountInfoLabel {
+                        Anchor: (Height: 20);
+                        Style: (FontSize: 11, TextColor: #6e7da1);
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Top: 15, Bottom: 15);
+                        Background: (Color: #4a4a6a);
+                    }
+
+                    // Bouton Appliquer les parametres (principal)
+                    TextButton #ApplySettingsButton {
+                        Anchor: (Height: 44, Top: 5);
+                        Text: "APPLIQUER LES PARAMETRES";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #2d7a2d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Hovered: (
+                                Background: #3d9a3d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Pressed: (
+                                Background: #1d5a1d,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Top: 10, Bottom: 10);
+                        Background: (Color: #4a4a6a);
+                    }
+
+                    // Actions rapides
+                    Label {
+                        Text: "Actions:";
+                        Anchor: (Height: 25);
+                        Style: (FontSize: 14, TextColor: #96a9be, RenderBold: true);
+                    }
+
+                    Group {
+                        Anchor: (Height: 44, Top: 8);
+                        LayoutMode: Left;
+
+                        TextButton #TeleportButton {
+                            Anchor: (Width: 105, Height: 40);
+                            Text: "Teleporter";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #2d4a8b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #3d5a9b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #1d3a7b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+
+                        TextButton #SaveWorldButton {
+                            Anchor: (Width: 105, Left: 6, Height: 40);
+                            Text: "Sauvegarder";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #4a6a4a,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #5a8a5a,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #3a5a3a,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+
+                        TextButton #RefreshButton {
+                            Anchor: (Width: 105, Left: 6, Height: 40);
+                            Text: "Actualiser";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #4a4a5a,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #5a5a6a,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #3a3a4a,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+                    }
+
+                    Group {
+                        Anchor: (Height: 44, Top: 8);
+                        LayoutMode: Left;
+
+                        TextButton #SetSpawnButton {
+                            Anchor: (Width: 105, Height: 40);
+                            Text: "Def. Spawn";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #5a5a2d,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #7a7a3d,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #4a4a1d,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+
+                        TextButton #TpAllHereButton {
+                            Anchor: (Width: 105, Left: 6, Height: 40);
+                            Text: "TP Tous Ici";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #6b4a8b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #8b5aab,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #5b3a7b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Top: 20, Bottom: 15);
+                        Background: (Color: #4a4a6a);
+                    }
+
+                    // Actions dangereuses
+                    Label {
+                        Text: "Zone dangereuse:";
+                        Anchor: (Height: 25);
+                        Style: (FontSize: 14, TextColor: #ff6b6b, RenderBold: true);
+                    }
+
+                    TextButton #DeleteWorldButton {
+                        Anchor: (Width: 180, Height: 40, Top: 8);
+                        Text: "Supprimer le monde";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #8b2020,
+                                LabelStyle: (FontSize: 12, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Hovered: (
+                                Background: #ab3030,
+                                LabelStyle: (FontSize: 12, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Pressed: (
+                                Background: #6b1010,
+                                LabelStyle: (FontSize: 12, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+                }
+
+                // Contenu liste des joueurs
+                Group #PlayersContent {
+                    FlexWeight: 1;
+                    LayoutMode: Top;
+                    Visible: false;
+
+                    // En-tete avec actions groupees
+                    Group {
+                        Anchor: (Height: 36, Bottom: 8);
+                        LayoutMode: Left;
+
+                        TextButton #KickAllButton {
+                            Anchor: (Width: 100, Height: 32);
+                            Text: "Kick Tous";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #8b4020,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #ab5030,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #6b3010,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+
+                        TextButton #TpAllToMeButton {
+                            Anchor: (Width: 100, Left: 6, Height: 32);
+                            Text: "TP Tous a Moi";
+                            Style: TextButtonStyle(
+                                Default: (
+                                    Background: #4a6a8b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Hovered: (
+                                    Background: #5a7a9b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Pressed: (
+                                    Background: #3a5a7b,
+                                    LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                                ),
+                                Sounds: $C.@ButtonSounds,
+                            );
+                        }
+                    }
+
+                    // Liste des joueurs
+                    Group #PlayersList {
+                        FlexWeight: 1;
+                        LayoutMode: TopScrolling;
+                        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                        Background: (Color: #0a0f17);
+                        Padding: (Full: 5);
+
+                        Label #NoPlayersLabel {
+                            Text: "Aucun joueur dans ce monde";
+                            Anchor: (Height: 30);
+                            Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center);
+                        }
+                    }
+                }
+
+                // Contenu de creation
+                Group #CreateContent {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Visible: false;
+
+                    Label {
+                        Text: "Nom du monde:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewWorldNameField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "MonNouveauMonde";
+                    }
+
+                    Label {
+                        Text: "Seed (optionnel):";
+                        Anchor: (Height: 22, Top: 10);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewWorldSeedField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "Laisser vide pour aleatoire";
+                    }
+
+                    Label {
+                        Text: "Generateur de monde:";
+                        Anchor: (Height: 22, Top: 10);
+                        Style: (FontSize: 12, TextColor: #96a9be);
+                    }
+                    $C.@TextField #NewWorldGenField {
+                        Anchor: (Height: 32);
+                        PlaceholderText: "Default";
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Top: 15, Bottom: 10);
+                        Background: (Color: #4a4a6a);
+                    }
+
+                    // Type de monde
+                    Label {
+                        Text: "Type de monde:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be, RenderBold: true);
+                    }
+
+                    Group {
+                        Anchor: (Height: 36, Top: 5);
+                        LayoutMode: Left;
+
+                        Button #WorldTypeNormal {
+                            Anchor: (Width: 75, Height: 32);
+                            Background: (Color: #2d5a2d);
+                            Label #WorldTypeNormalLbl { Text: "Normal"; Style: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WorldTypeVoid {
+                            Anchor: (Width: 75, Left: 6, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WorldTypeVoidLbl { Text: "Vide"; Style: (FontSize: 10, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WorldTypeIsland {
+                            Anchor: (Width: 75, Left: 6, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WorldTypeIslandLbl { Text: "Ile"; Style: (FontSize: 10, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+
+                        Button #WorldTypeFlat {
+                            Anchor: (Width: 75, Left: 6, Height: 32);
+                            Background: (Color: #1a2332);
+                            Label #WorldTypeFlatLbl { Text: "Plat"; Style: (FontSize: 10, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                    }
+
+                    // Section presets flat (visible uniquement si type = flat)
+                    Group #FlatPresetsSection {
+                        Anchor: (Top: 8);
+                        LayoutMode: Top;
+                        Visible: false;
+
+                        Label {
+                            Text: "Preset du monde plat:";
+                            Anchor: (Height: 22);
+                            Style: (FontSize: 11, TextColor: #96a9be);
+                        }
+
+                        Group {
+                            Anchor: (Height: 36, Top: 5);
+                            LayoutMode: Left;
+
+                            Button #FlatPresetGrass {
+                                Anchor: (Width: 70, Height: 32);
+                                Background: (Color: #4a7a2d);
+                                Label #FlatPresetGrassLbl { Text: "Herbe"; Style: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+
+                            Button #FlatPresetStone {
+                                Anchor: (Width: 70, Left: 6, Height: 32);
+                                Background: (Color: #1a2332);
+                                Label #FlatPresetStoneLbl { Text: "Pierre"; Style: (FontSize: 10, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+
+                            Button #FlatPresetSand {
+                                Anchor: (Width: 70, Left: 6, Height: 32);
+                                Background: (Color: #1a2332);
+                                Label #FlatPresetSandLbl { Text: "Sable"; Style: (FontSize: 10, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+
+                            Button #FlatPresetSnow {
+                                Anchor: (Width: 70, Left: 6, Height: 32);
+                                Background: (Color: #1a2332);
+                                Label #FlatPresetSnowLbl { Text: "Neige"; Style: (FontSize: 10, TextColor: #bfcdd5, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                            }
+                        }
+                    }
+
+                    // Separateur
+                    Group {
+                        Anchor: (Height: 1, Top: 10, Bottom: 10);
+                        Background: (Color: #4a4a6a);
+                    }
+
+                    // Pre-parametres
+                    Label {
+                        Text: "Pre-parametres:";
+                        Anchor: (Height: 22);
+                        Style: (FontSize: 12, TextColor: #96a9be, RenderBold: true);
+                    }
+
+                    Group {
+                        Anchor: (Height: 28, Top: 5);
+                        LayoutMode: Left;
+                        Button #NewPvpCheckBox {
+                            Anchor: (Width: 22, Height: 22);
+                            Background: (Color: #1a2332);
+                            Label #NewPvpCheck { Text: "X"; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "PvP Active";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+                    }
+
+                    Group {
+                        Anchor: (Height: 28);
+                        LayoutMode: Left;
+                        Button #NewFallDamageCheckBox {
+                            Anchor: (Width: 22, Height: 22);
+                            Background: (Color: #1a2332);
+                            Label #NewFallDamageCheck { Text: "X"; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "Degats de chute";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+                    }
+
+                    Group {
+                        Anchor: (Height: 28);
+                        LayoutMode: Left;
+                        Button #NewNpcSpawnCheckBox {
+                            Anchor: (Width: 22, Height: 22);
+                            Background: (Color: #1a2332);
+                            Label #NewNpcSpawnCheck { Text: "X"; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "Spawn des NPC";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+                    }
+
+                    Group {
+                        Anchor: (Height: 28);
+                        LayoutMode: Left;
+                        Button #NewBlockTickCheckBox {
+                            Anchor: (Width: 22, Height: 22);
+                            Background: (Color: #1a2332);
+                            Label #NewBlockTickCheck { Text: "X"; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "Tick des blocs";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+                    }
+
+                    Group {
+                        Anchor: (Height: 28);
+                        LayoutMode: Left;
+                        Button #NewSaveChunksCheckBox {
+                            Anchor: (Width: 22, Height: 22);
+                            Background: (Color: #1a2332);
+                            Label #NewSaveChunksCheck { Text: "X"; Style: (FontSize: 14, TextColor: #4a9f4a, HorizontalAlignment: Center, VerticalAlignment: Center); }
+                        }
+                        Label {
+                            Anchor: (Left: 8);
+                            Text: "Sauvegarder chunks";
+                            Style: (FontSize: 11, TextColor: #bfcdd5, VerticalAlignment: Center);
+                        }
+                    }
+
+                    Group {
+                        Anchor: (Height: 50, Top: 20);
+                        LayoutMode: Left;
+
+                        $C.@TextButton #ConfirmCreateButton {
+                            Anchor: (Width: 120, Height: 44);
+                            Text: "Creer";
+                        }
+
+                        $C.@SecondaryTextButton #CancelCreateButton {
+                            Anchor: (Width: 120, Left: 15, Height: 44);
+                            Text: "Annuler";
+                        }
+                    }
+                }
+
+                Group #NoWorldSelected {
+                    FlexWeight: 1;
+                    Label {
+                        Anchor: (Height: 40);
+                        Text: "Selectionnez un monde pour voir les details";
+                        Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+            }
+        }
+    }
+}

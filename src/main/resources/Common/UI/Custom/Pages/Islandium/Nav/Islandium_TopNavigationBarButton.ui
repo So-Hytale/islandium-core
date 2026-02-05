@@ -1,0 +1,3 @@
+$NavBar = "Islandium_TopNavigationBar.ui";
+
+Group { $NavBar.@ToolButton #NavActionButton { Text: "Button"; } }

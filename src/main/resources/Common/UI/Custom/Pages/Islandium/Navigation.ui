@@ -1,0 +1,85 @@
+$C = "../../Common.ui";
+
+@NavButton = TextButton {
+    Anchor: (Height: 40);
+    Padding: (Horizontal: 20);
+    Style: TextButtonStyle(
+        Default: (
+            LabelStyle: (FontSize: 14, TextColor: #7c8b99, VerticalAlignment: Center, RenderUppercase: true, RenderBold: true)
+        ),
+        Hovered: (
+            Background: #1a2836,
+            LabelStyle: (FontSize: 14, TextColor: #a0b0c0, VerticalAlignment: Center, RenderUppercase: true, RenderBold: true)
+        ),
+        Sounds: $C.@ButtonSounds,
+    );
+};
+
+@NavButtonSelected = TextButton {
+    Anchor: (Height: 40);
+    Padding: (Horizontal: 20);
+    Background: #1a2836;
+    Style: TextButtonStyle(
+        Default: (
+            LabelStyle: (FontSize: 14, TextColor: #ffd700, VerticalAlignment: Center, RenderUppercase: true, RenderBold: true)
+        ),
+        Hovered: (
+            Background: #1a2836,
+            LabelStyle: (FontSize: 14, TextColor: #ffd700, VerticalAlignment: Center, RenderUppercase: true, RenderBold: true)
+        ),
+        Sounds: $C.@ButtonSounds,
+    );
+};
+
+@TopNavigationBar = Group {
+    Anchor: (Height: 50);
+    Background: (Color: #16212f);
+    LayoutMode: Left;
+    Padding: (Horizontal: 10);
+
+    Label #NavTitle {
+        Anchor: (Width: 150);
+        Text: "ESSENTIALS";
+        Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+    }
+
+    Group {
+        Anchor: (Width: 2, Height: 30);
+        Background: (Color: #2a3a4a);
+    }
+
+    Group #NavButtons {
+        FlexWeight: 1;
+        LayoutMode: Left;
+        Padding: (Left: 10);
+    }
+
+    TextButton #CloseButton {
+        Anchor: (Width: 40, Height: 40);
+        Text: "X";
+        Style: TextButtonStyle(
+            Default: (
+                LabelStyle: (FontSize: 16, TextColor: #ff4444, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+            ),
+            Hovered: (
+                Background: #2a1a1a,
+                LabelStyle: (FontSize: 16, TextColor: #ff6666, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+            ),
+            Sounds: $C.@ButtonSounds,
+        );
+    }
+};
+
+@MainContainer = Group {
+    Anchor: (Full);
+    LayoutMode: Top;
+    Background: (Color: #0d1520);
+
+    @TopNavigationBar #TopNav {
+    }
+
+    Group #MainContent {
+        FlexWeight: 1;
+        Padding: (Full: 15);
+    }
+};

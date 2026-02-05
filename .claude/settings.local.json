@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(./gradlew build:*)",
+      "Bash(gradlew build:*)",
+      "Bash(gradle build:*)",
+      "Bash(cmd //c:*)",
+      "Bash(./gradlew dependencies:*)",
+      "Bash(gradle dependencies:*)",
+      "Bash(./gradlew compileJava:*)",
+      "Bash(gradle compileJava:*)",
+      "Bash(ls:*)",
+      "Bash(dir:*)",
+      "Bash(./gradlew.bat build)",
+      "Bash(.gradlew.bat build)",
+      "Bash(where gradle:*)",
+      "Bash(./gradlew clean build:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(cmd.exe /c \"gradlew.bat build 2>&1\")",
+      "Bash(cmd.exe /c:*)",
+      "Bash(\"/c/Users/jeremy/.gradle/wrapper/dists/gradle-8.11.1-all/2qik7nd48slq1ooc2496ixf4i/gradle-8.11.1/bin/gradle\" build --console=plain)",
+      "Bash(.\\\\gradlew build:*)",
+      "Bash(gradlew.bat build:*)",
+      "Bash(/c/Users/jeremy/.gradle/wrapper/dists/gradle-8.9-bin/90cnw93cvbtalezasaz0blq0a/gradle-8.9/bin/gradle:*)",
+      "WebFetch(domain:hytale-france.github.io)",
+      "WebFetch(domain:hytalemodding.dev)"
+    ]
+  }
+}

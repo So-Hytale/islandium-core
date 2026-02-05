@@ -1,0 +1,71 @@
+$C = "../../Common.ui";
+
+$C.@PageOverlay {
+    $C.@Container {
+        Anchor: (Width: 600, Height: 500);
+
+        #Title {
+            Group {
+                $C.@Title {
+                    @Text = "Permissions Joueur";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+
+            Label #PlayerName {
+                Text: "Chargement...";
+                Anchor: (Height: 30);
+                Style: (
+                    FontSize: 16,
+                    TextColor: #ffffff,
+                    HorizontalAlignment: Center
+                );
+            }
+
+            $C.@ContentSeparator {
+                Anchor: (Top: 10, Bottom: 10);
+            }
+
+            Label #RanksLabel {
+                Text: "Ranks:";
+                Anchor: (Height: 25);
+                Style: (FontSize: 14, TextColor: #ffd700, RenderBold: true);
+            }
+
+            Group #RanksList {
+                Anchor: (Height: 100);
+                LayoutMode: TopScrolling;
+                ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                Background: (Color: #151d28);
+                Padding: (Full: 5);
+            }
+
+            Label #PermsLabel {
+                Text: "Permissions personnelles:";
+                Anchor: (Height: 25, Top: 10);
+                Style: (FontSize: 14, TextColor: #ffd700, RenderBold: true);
+            }
+
+            Group #PermsList {
+                FlexWeight: 1;
+                LayoutMode: TopScrolling;
+                ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                Background: (Color: #151d28);
+                Padding: (Full: 5);
+            }
+
+            Label #Footer {
+                Text: "Utilisez /perm pour gerer les permissions";
+                Anchor: (Height: 30, Top: 10);
+                Style: (
+                    FontSize: 12,
+                    TextColor: #808080,
+                    HorizontalAlignment: Center
+                );
+            }
+        }
+    }
+}

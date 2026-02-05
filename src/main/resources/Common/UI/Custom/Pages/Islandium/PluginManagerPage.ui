@@ -1,0 +1,248 @@
+$C = "../../Common.ui";
+$Nav = "Nav/Islandium_TopNavigationBar.ui";
+
+$C.@PageOverlay {
+    $Nav.@IslandiumTopNavigationBar #IslandiumTopNavigationBar {}
+    $C.@Container {
+        Anchor: (Width: 900, Height: 600);
+
+        #Title {
+            Group {
+                TextButton #BackButton {
+                    Anchor: (Left: 12, Top: 4, Width: 64, Height: 24);
+                    Padding: (Left: 8, Top: 2);
+                    Text: "< Retour";
+                    Style: TextButtonStyle(
+                        Default: (LabelStyle: (FontSize: 14, TextColor: #93844c, RenderBold: true)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                    Background: #000000(0.13);
+                }
+                $C.@Title {
+                    @Text = "Gestion des Plugins";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+            Padding: (Full: 10);
+
+            // Barre de recherche
+            Group #SearchBar {
+                Anchor: (Height: 50);
+                LayoutMode: Left;
+                Padding: (Bottom: 10);
+
+                Group {
+                    Anchor: (Width: 32, Height: 36);
+                    Label {
+                        Text: ">";
+                        Style: (FontSize: 16, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+
+                $C.@TextField #SearchField {
+                    Anchor: (Width: 400, Height: 36);
+                    PlaceholderText: "Rechercher un plugin...";
+                }
+
+                Group {
+                    Anchor: (Width: 20);
+                }
+
+                Label #PluginCount {
+                    Anchor: (Height: 36);
+                    FlexWeight: 1;
+                    Text: "0 plugins";
+                    Style: (FontSize: 14, TextColor: #808080, VerticalAlignment: Center, HorizontalAlignment: End);
+                }
+
+                Group {
+                    Anchor: (Width: 20);
+                }
+
+                TextButton #RefreshButton {
+                    Anchor: (Width: 100, Height: 36);
+                    Text: "Rafraichir";
+                    Style: TextButtonStyle(
+                        Default: (
+                            Background: #2d4a8b,
+                            LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                        ),
+                        Hovered: (
+                            Background: #3d5a9b,
+                            LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                        ),
+                        Pressed: (
+                            Background: #1d3a7b,
+                            LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                        ),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                }
+            }
+
+            // En-tête du tableau
+            Group #TableHeader {
+                Anchor: (Height: 35);
+                Background: (Color: #1a2332);
+                Padding: (Horizontal: 10);
+
+                Label {
+                    Text: "PLUGINS CHARGES (Nom [Groupe] Version - Statut)";
+                    Style: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                }
+            }
+
+            // Liste des plugins
+            Group #PluginList {
+                FlexWeight: 1;
+                LayoutMode: TopScrolling;
+                ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                Background: (Color: #0a0f17);
+                Padding: (Full: 5);
+            }
+
+            // Message si aucun plugin
+            Group #NoPluginsMessage {
+                FlexWeight: 1;
+                Visible: false;
+                Background: (Color: #0a0f17);
+
+                Label {
+                    Text: "Aucun plugin trouve";
+                    Style: (FontSize: 16, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                }
+            }
+
+            // Panel d'information plugin selectionne
+            Group #PluginInfoPanel {
+                Anchor: (Height: 150, Top: 10);
+                Background: (Color: #151d28);
+                LayoutMode: Top;
+                Padding: (Full: 15);
+                Visible: false;
+
+                Group #InfoHeader {
+                    Anchor: (Height: 30);
+                    LayoutMode: Left;
+
+                    Label #SelectedPluginName {
+                        FlexWeight: 1;
+                        Text: "Plugin Name";
+                        Style: (FontSize: 18, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                    }
+
+                    Group #StatusIndicator {
+                        Anchor: (Width: 80, Height: 24);
+                        Background: (Color: #2d5a2d);
+                        Label #StatusText {
+                            Text: "ACTIF";
+                            Style: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true);
+                        }
+                    }
+                }
+
+                Group {
+                    Anchor: (Height: 10);
+                }
+
+                Group #InfoDetails {
+                    Anchor: (Height: 60);
+                    LayoutMode: Left;
+
+                    Group {
+                        Anchor: (Width: 300);
+                        LayoutMode: Top;
+
+                        Group {
+                            Anchor: (Height: 20);
+                            LayoutMode: Left;
+                            Label { Anchor: (Width: 80); Text: "Group:"; Style: (FontSize: 12, TextColor: #808080); }
+                            Label #InfoGroup { FlexWeight: 1; Text: "-"; Style: (FontSize: 12, TextColor: #ffffff); }
+                        }
+
+                        Group {
+                            Anchor: (Height: 20);
+                            LayoutMode: Left;
+                            Label { Anchor: (Width: 80); Text: "Version:"; Style: (FontSize: 12, TextColor: #808080); }
+                            Label #InfoVersion { FlexWeight: 1; Text: "-"; Style: (FontSize: 12, TextColor: #ffffff); }
+                        }
+
+                        Group {
+                            Anchor: (Height: 20);
+                            LayoutMode: Left;
+                            Label { Anchor: (Width: 80); Text: "Main:"; Style: (FontSize: 12, TextColor: #808080); }
+                            Label #InfoMain { FlexWeight: 1; Text: "-"; Style: (FontSize: 10, TextColor: #96a9be); }
+                        }
+                    }
+
+                    Group {
+                        FlexWeight: 1;
+                        LayoutMode: Top;
+                        Padding: (Left: 20);
+
+                        Label { Anchor: (Height: 18); Text: "Description:"; Style: (FontSize: 12, TextColor: #808080); }
+                        Label #InfoDescription {
+                            FlexWeight: 1;
+                            Text: "-";
+                            Style: (FontSize: 12, TextColor: #ffffff);
+                        }
+                    }
+                }
+
+                Group #InfoActions {
+                    Anchor: (Height: 36);
+                    LayoutMode: Left;
+
+                    Label #InfoNote {
+                        FlexWeight: 1;
+                        Text: "Note: Le rechargement peut causer des instabilites";
+                        Style: (FontSize: 10, TextColor: #ff8080, VerticalAlignment: Center);
+                    }
+
+                    TextButton #TogglePluginButton {
+                        Anchor: (Width: 120, Height: 36);
+                        Text: "Desactiver";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #8b6b20,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Hovered: (
+                                Background: #ab8b30,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Pressed: (
+                                Background: #6b5b10,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+
+                    TextButton #ReloadPluginButton {
+                        Anchor: (Width: 120, Left: 10, Height: 36);
+                        Text: "Recharger";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #2d4a8b,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Hovered: (
+                                Background: #3d5a9b,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Pressed: (
+                                Background: #1d3a7b,
+                                LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+                }
+            }
+        }
+    }
+}

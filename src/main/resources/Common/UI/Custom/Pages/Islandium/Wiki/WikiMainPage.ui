@@ -1,0 +1,170 @@
+$C = "../../../Common.ui";
+$Nav = "../Nav/Islandium_TopNavigationBar.ui";
+
+$C.@PageOverlay {
+    $Nav.@IslandiumTopNavigationBar #IslandiumTopNavigationBar {}
+    $C.@Container {
+        Anchor: (Width: 1000, Height: 650);
+
+        #Title {
+            Group {
+                $C.@Title {
+                    @Text = "Wiki des Entites";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+            Padding: (Full: 15);
+
+            // Search bar section
+            Group #SearchSection {
+                Anchor: (Height: 50);
+                LayoutMode: Left;
+                Padding: (Bottom: 10);
+
+                Group {
+                    Anchor: (Width: 32, Height: 40);
+                    Label {
+                        Text: ">";
+                        Style: (FontSize: 18, TextColor: #ffd700, HorizontalAlignment: Center, VerticalAlignment: Center);
+                    }
+                }
+
+                $C.@TextField #SearchField {
+                    Anchor: (Width: 500, Height: 40);
+                    PlaceholderText: "Rechercher une entite ou un item...";
+                }
+
+                Group { Anchor: (Width: 20); }
+
+                TextButton #SearchEntityBtn {
+                    Anchor: (Width: 100, Height: 40);
+                    Text: "Entites";
+                    Style: TextButtonStyle(
+                        Default: (Background: #2d4a8b, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+                        Hovered: (Background: #3d5a9b, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+                        Pressed: (Background: #1d3a7b, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                }
+
+                Group { Anchor: (Width: 10); }
+
+                TextButton #SearchItemBtn {
+                    Anchor: (Width: 100, Height: 40);
+                    Text: "Items";
+                    Style: TextButtonStyle(
+                        Default: (Background: #4a4a4a, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+                        Hovered: (Background: #5a5a5a, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+                        Pressed: (Background: #3a3a3a, LabelStyle: (FontSize: 13, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                }
+
+                Group { Anchor: (Width: 20); }
+
+                Label #ResultCount {
+                    FlexWeight: 1;
+                    Anchor: (Height: 40);
+                    Text: "0 resultats";
+                    Style: (FontSize: 14, TextColor: #808080, VerticalAlignment: Center, HorizontalAlignment: End);
+                }
+            }
+
+            // Main content area
+            Group #MainArea {
+                FlexWeight: 1;
+                LayoutMode: Left;
+
+                // Left panel - Filters
+                Group #FilterPanel {
+                    Anchor: (Width: 200);
+                    Background: (Color: #151d28);
+                    LayoutMode: Top;
+                    Padding: (Full: 10);
+
+                    Label {
+                        Anchor: (Height: 30);
+                        Text: "CATEGORIES";
+                        Style: (FontSize: 14, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                    }
+
+                    Group #CategoryFilters {
+                        LayoutMode: Top;
+                        Padding: (Top: 5);
+                    }
+
+                    Group { Anchor: (Height: 20); }
+
+                    Label {
+                        Anchor: (Height: 30);
+                        Text: "STATISTIQUES";
+                        Style: (FontSize: 14, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                    }
+
+                    Group #StatsPanel {
+                        LayoutMode: Top;
+                        Padding: (Top: 5);
+
+                        Group {
+                            Anchor: (Height: 24);
+                            LayoutMode: Left;
+                            Label { Anchor: (Width: 100); Text: "Entites:"; Style: (FontSize: 12, TextColor: #808080); }
+                            Label #StatEntityCount { FlexWeight: 1; Text: "0"; Style: (FontSize: 12, TextColor: #ffffff); }
+                        }
+
+                        Group {
+                            Anchor: (Height: 24);
+                            LayoutMode: Left;
+                            Label { Anchor: (Width: 100); Text: "Items:"; Style: (FontSize: 12, TextColor: #808080); }
+                            Label #StatItemCount { FlexWeight: 1; Text: "0"; Style: (FontSize: 12, TextColor: #ffffff); }
+                        }
+                    }
+                }
+
+                Group { Anchor: (Width: 10); }
+
+                // Right panel - Results list
+                Group #ResultsPanel {
+                    FlexWeight: 1;
+                    LayoutMode: Top;
+
+                    // Header
+                    Group #ResultsHeader {
+                        Anchor: (Height: 35);
+                        Background: (Color: #1a2332);
+                        Padding: (Horizontal: 10);
+
+                        Label #ResultsTitle {
+                            Text: "ENTITES";
+                            Style: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center);
+                        }
+                    }
+
+                    // Results list
+                    Group #ResultsList {
+                        FlexWeight: 1;
+                        LayoutMode: TopScrolling;
+                        ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                        Background: (Color: #0a0f17);
+                        Padding: (Full: 5);
+                    }
+
+                    // No results message
+                    Group #NoResultsMessage {
+                        FlexWeight: 1;
+                        Visible: false;
+                        Background: (Color: #0a0f17);
+
+                        Label {
+                            Text: "Aucun resultat trouve";
+                            Style: (FontSize: 16, TextColor: #808080, HorizontalAlignment: Center, VerticalAlignment: Center);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

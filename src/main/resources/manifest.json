@@ -1,0 +1,13 @@
+{
+  "Group": "islandium",
+  "Name": "core",
+  "Version": "1.0.0",
+  "Description": "Islandium Core",
+  "Main": "com.islandium.core.IslandiumPlugin",
+  "Website": "",
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Hytale:EntityModule": "*"
+  },
+  "IncludesAssetPack": true
+}
