@@ -63,17 +63,17 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
             String selector = "#CardGrid[" + index + "]";
             String accentColor = entry.accentColor();
 
-            // Card button with accent bar and text content
+            // Card: Button with accent bar + name + description
             cmd.appendInline("#CardGrid",
                     "Button #CardBtn { " +
                         "Anchor: (Height: 90, Bottom: 10); " +
                         "Background: (Color: #151d28); " +
-                        "Style: ButtonStyle(Hovered: (Background: #1e2d3d)); " +
+                        "Padding: (Left: 0); " +
                         "LayoutMode: Left; " +
-                        "Group { Anchor: (Width: 4); Background: (Color: " + accentColor + "); } " +
-                        "Group { FlexWeight: 1; LayoutMode: Top; Padding: (Full: 15); " +
+                        "Group #Accent { Anchor: (Width: 4); Background: (Color: " + accentColor + "); } " +
+                        "Group #Info { FlexWeight: 1; LayoutMode: Top; Padding: (Full: 15); " +
                             "Label #CardName { Anchor: (Height: 28); Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center); } " +
-                            "Label #CardDesc { Anchor: (Height: 30); Style: (FontSize: 12, TextColor: #7c8b99, Wrap: true, VerticalAlignment: Top); } " +
+                            "Label #CardDesc { Anchor: (Height: 30); Style: (FontSize: 12, TextColor: #7c8b99, VerticalAlignment: Top); } " +
                         "} " +
                     "}");
 
