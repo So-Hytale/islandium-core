@@ -13,6 +13,7 @@ import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.permissions.PermissionsModule;
 import com.hypixel.hytale.server.core.ui.builder.EventData;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
@@ -148,6 +149,24 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                     cmd.set("#" + cardId + "Desc.Text", kit.description != null ? kit.description : "");
                     cmd.set("#" + cardId + "Status.Text", statusText);
 
+                    // Set kit icon (use first item of kit, or kit.icon field)
+                    String iconItemId = null;
+                    if (kit.items != null && !kit.items.isEmpty()) {
+                        iconItemId = kit.items.get(0).itemId;
+                    } else if (kit.icon != null && !kit.icon.isEmpty()) {
+                        iconItemId = kit.icon;
+                    }
+                    if (iconItemId != null) {
+                        try {
+                            ItemStack iconStack = new ItemStack(iconItemId, 1);
+                            if (iconStack != null) {
+                                cmd.setObject("#" + cardId + "Icon", iconStack);
+                            }
+                        } catch (Exception ignored) {
+                            // Item icon not available
+                        }
+                    }
+
                     event.addEventBinding(CustomUIEventBindingType.Activating, "#" + cardId,
                         EventData.of("Action", "viewKit").append("KitId", kit.id), false);
                 } else {
@@ -172,8 +191,9 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
             cmd.appendInline("#HubGrid",
                 "Group { Anchor: (Height: 40, Top: 10); LayoutMode: Left; " +
                 "  Group { FlexWeight: 1; } " +
-                "  Button #AdminConfigBtn { Anchor: (Width: 180, Height: 32); Background: (Color: #2d4a5a); " +
-                "    Label #AdminConfigBtnLbl { Text: \"CONFIG ADMIN\"; Style: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center); } } " +
+                "  TextButton #AdminConfigBtn { Anchor: (Width: 180, Height: 32); Text: \"CONFIG ADMIN\"; " +
+                "    Style: TextButtonStyle(Default: (Background: #2d4a5a, LabelStyle: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center)), " +
+                "    Hovered: (Background: #3d5a6a, LabelStyle: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center))); } " +
                 "  Group { FlexWeight: 1; } " +
                 "}");
             event.addEventBinding(CustomUIEventBindingType.Activating, "#AdminConfigBtn",
@@ -246,6 +266,16 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                     "  Label #IQty { Anchor: (Width: 80); Style: (FontSize: 12, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
                     "}");
 
+                // Set item icon
+                try {
+                    ItemStack iconStack = new ItemStack(item.itemId, 1);
+                    if (iconStack != null) {
+                        cmd.setObject("#" + itemRowId + " #" + itemRowId + "Icon", iconStack);
+                    }
+                } catch (Exception ignored) {
+                    // Item icon not available
+                }
+
                 cmd.set("#" + itemRowId + " #IName.Text", formatBlockName(item.itemId));
                 cmd.set("#" + itemRowId + " #IQty.Text", "x" + item.quantity);
                 idx++;
@@ -282,8 +312,9 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
             cmd.appendInline("#PageContent",
                 "Group { Anchor: (Height: 55, Top: 10); LayoutMode: Left; " +
                 "  Group { FlexWeight: 1; } " +
-                "  Button #ClaimBtn { Anchor: (Width: 220, Height: 45); Background: (Color: #2a5f2a); " +
-                "    Label #ClaimBtnLbl { Text: \"RECLAMER\"; Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); } } " +
+                "  TextButton #ClaimBtn { Anchor: (Width: 220, Height: 45); Text: \"RECLAMER\"; " +
+                "    Style: TextButtonStyle(Default: (Background: #2a5f2a, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center)), " +
+                "    Hovered: (Background: #3a7f3a, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center))); } " +
                 "  Group { FlexWeight: 1; } " +
                 "}");
             event.addEventBinding(CustomUIEventBindingType.Activating, "#ClaimBtn",
