@@ -329,8 +329,10 @@ public class TeleportService {
             TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
             if (transform != null) {
                 Vector3d targetPos = new Vector3d(destination.x(), destination.y(), destination.z());
-                Vector3f currentRotation = transform.getRotation().clone();
-                Teleport teleport = new Teleport(targetPos, currentRotation);
+                Vector3f targetRotation = (destination.yaw() != 0f || destination.pitch() != 0f)
+                    ? new Vector3f(destination.pitch(), destination.yaw(), 0f)
+                    : transform.getRotation().clone();
+                Teleport teleport = new Teleport(targetPos, targetRotation);
                 store.addComponent(ref, Teleport.getComponentType(), teleport);
                 System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destination);
                 return;
