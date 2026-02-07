@@ -85,7 +85,7 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
         if (availableKits.isEmpty()) {
             cmd.appendInline("#HubGrid",
                 "Label { Anchor: (Height: 40); Text: \"Aucun kit disponible.\"; " +
-                "Style: (FontSize: 14, TextColor: #808080, HorizontalAlignment: Center); }");
+                "Style: (FontSize: 14, TextColor: #808080); }");
             appendAdminButton(cmd, event, uuid);
             return;
         }
@@ -135,11 +135,11 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                         "        Group { FlexWeight: 1; } " +
                         "      } " +
                         "      Label #" + cardId + "Name { Anchor: (Height: 28, Top: 5); " +
-                        "        Style: (FontSize: 15, TextColor: " + color + ", RenderBold: true, RenderUppercase: true, HorizontalAlignment: Center, VerticalAlignment: Center); } " +
+                        "        Style: (FontSize: 15, TextColor: " + color + ", RenderBold: true, RenderUppercase: true, VerticalAlignment: Center); } " +
                         "      Label #" + cardId + "Desc { Anchor: (Height: 40); " +
-                        "        Style: (FontSize: 11, TextColor: #7c8b99, HorizontalAlignment: Center, VerticalAlignment: Center); } " +
+                        "        Style: (FontSize: 11, TextColor: #7c8b99, VerticalAlignment: Center); } " +
                         "      Label #" + cardId + "Status { Anchor: (Height: 25); " +
-                        "        Style: (FontSize: 12, TextColor: " + statusColor + ", RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); } " +
+                        "        Style: (FontSize: 12, TextColor: " + statusColor + ", RenderBold: true, VerticalAlignment: Center); } " +
                         "    } " +
                         "  } " +
                         "}");
@@ -173,7 +173,7 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                 "Group { Anchor: (Height: 40, Top: 10); LayoutMode: Left; " +
                 "  Group { FlexWeight: 1; } " +
                 "  Button #AdminConfigBtn { Anchor: (Width: 180, Height: 32); Background: (Color: #2d4a5a); " +
-                "    Label #AdminConfigBtnLbl { Text: \"CONFIG ADMIN\"; Style: (FontSize: 12, TextColor: #ffd700, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); } } " +
+                "    Label #AdminConfigBtnLbl { Text: \"CONFIG ADMIN\"; Style: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center); } } " +
                 "  Group { FlexWeight: 1; } " +
                 "}");
             event.addEventBinding(CustomUIEventBindingType.Activating, "#AdminConfigBtn",
@@ -275,7 +275,7 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
 
         cmd.appendInline("#PageContent",
             "Label #ClaimStatus { Anchor: (Height: 30, Top: 15); " +
-            "Style: (FontSize: 14, TextColor: " + statusColor + ", RenderBold: true, HorizontalAlignment: Center); }");
+            "Style: (FontSize: 14, TextColor: " + statusColor + ", RenderBold: true); }");
         cmd.set("#ClaimStatus.Text", statusText);
 
         if (canClaim) {
@@ -283,7 +283,7 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                 "Group { Anchor: (Height: 55, Top: 10); LayoutMode: Left; " +
                 "  Group { FlexWeight: 1; } " +
                 "  Button #ClaimBtn { Anchor: (Width: 220, Height: 45); Background: (Color: #2a5f2a); " +
-                "    Label #ClaimBtnLbl { Text: \"RECLAMER\"; Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center); } } " +
+                "    Label #ClaimBtnLbl { Text: \"RECLAMER\"; Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); } } " +
                 "  Group { FlexWeight: 1; } " +
                 "}");
             event.addEventBinding(CustomUIEventBindingType.Activating, "#ClaimBtn",

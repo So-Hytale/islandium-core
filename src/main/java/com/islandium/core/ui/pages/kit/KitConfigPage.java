@@ -109,9 +109,9 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 "  Label #KCd { Anchor: (Width: 65); Style: (FontSize: 10, TextColor: #96a9be, VerticalAlignment: Center); } " +
                 "  Label #KFj { Anchor: (Width: 30); Style: (FontSize: 10, TextColor: " + (kit.giveOnFirstJoin ? "#66bb6a" : "#5a5a5a") + ", RenderBold: true, VerticalAlignment: Center); } " +
                 "  Button #ItemsBtn { Anchor: (Width: 55, Left: 3, Height: 26); Background: (Color: #2d4a5a); " +
-                "    Label #ItemsBtnLbl { Text: \"ITEMS\"; Style: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center); } } " +
+                "    Label #ItemsBtnLbl { Text: \"ITEMS\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
                 "  Button #DeleteBtn { Anchor: (Width: 55, Left: 3, Height: 26); Background: (Color: #5a2d2d); " +
-                "    Label #DeleteBtnLbl { Text: \"SUPPR\"; Style: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center); } } " +
+                "    Label #DeleteBtnLbl { Text: \"SUPPR\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
                 "}");
 
             String displayName = kit.displayName != null ? kit.displayName : kit.id;
@@ -143,7 +143,7 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                         "  Label #ItemName { FlexWeight: 1; Anchor: (Left: 6); Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
                         "  Label #ItemQty { Anchor: (Width: 60); Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
                         "  Button #RemoveItemBtn { Anchor: (Width: 40, Left: 3, Height: 22); Background: (Color: #5a2d2d); " +
-                        "    Label #RemoveBtnLbl { Text: \"X\"; Style: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center); } } " +
+                        "    Label #RemoveBtnLbl { Text: \"X\"; Style: (FontSize: 9, TextColor: #ffffff, VerticalAlignment: Center); } } " +
                         "}");
 
                     cmd.set("#" + itemRowId + " #ItemName.Text", formatBlockName(item.itemId));
@@ -159,7 +159,7 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 cmd.appendInline("#KitList",
                     "Group #" + addRowId + " { Anchor: (Height: 28); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d2520); " +
                     "  Button #AddItemBtn { Anchor: (Width: 120, Height: 24); Background: (Color: #2d5a2d); " +
-                    "    Label #AddItemBtnLbl { Text: \"+ AJOUTER ITEM\"; Style: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center); } } " +
+                    "    Label #AddItemBtnLbl { Text: \"+ AJOUTER ITEM\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
                     "}");
 
                 event.addEventBinding(CustomUIEventBindingType.Activating, "#" + addRowId + " #AddItemBtn",
@@ -302,9 +302,6 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                         var mainHand = inv.getItemInHand();
                         if (mainHand != null && !mainHand.isEmpty()) {
                             String itemId = mainHand.getItemId();
-                            if (itemId.startsWith("minecraft:")) {
-                                itemId = itemId.substring("minecraft:".length());
-                            }
                             cmd.set("#NewItemIdField.Value", itemId);
                             cmd.set("#NewItemQtyField.Value", String.valueOf(mainHand.getQuantity()));
                         }
@@ -327,9 +324,6 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 }
 
                 String itemId = data.newItemId.trim();
-                if (!itemId.contains(":")) {
-                    itemId = "minecraft:" + itemId;
-                }
 
                 int qty = 1;
                 if (data.newItemQty != null && !data.newItemQty.trim().isEmpty()) {

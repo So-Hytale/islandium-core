@@ -157,9 +157,6 @@ public class KitService {
             if (kitItem.itemId == null || kitItem.quantity <= 0) continue;
 
             String itemId = kitItem.itemId;
-            if (!itemId.contains(":")) {
-                itemId = "minecraft:" + itemId;
-            }
 
             ItemStack stack = new ItemStack(itemId, kitItem.quantity);
 
