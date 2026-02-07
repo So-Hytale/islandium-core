@@ -100,69 +100,66 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
             boolean isEditing = kit.id.equals(editingKitId);
             String bgColor = isEditing ? "#1a2a3a" : (index % 2 == 0 ? "#111b27" : "#151d28");
             String nameColor = isEditing ? "#4fc3f7" : "#ffffff";
-            String rowId = "KitRow" + index;
+            String rowId = "KR" + index;
 
-            cmd.appendInline("#KitList",
-                "Group #" + rowId + " { Anchor: (Height: 34); LayoutMode: Left; Padding: (Horizontal: 5); Background: (Color: " + bgColor + "); " +
-                "  Label #KName { Anchor: (Width: 130); Style: (FontSize: 12, TextColor: " + nameColor + ", VerticalAlignment: Center" + (isEditing ? ", RenderBold: true" : "") + "); } " +
-                "  Label #KDesc { FlexWeight: 1; Style: (FontSize: 10, TextColor: #7c8b99, VerticalAlignment: Center); } " +
-                "  Label #KCd { Anchor: (Width: 65); Style: (FontSize: 10, TextColor: #96a9be, VerticalAlignment: Center); } " +
-                "  Label #KFj { Anchor: (Width: 30); Style: (FontSize: 10, TextColor: " + (kit.giveOnFirstJoin ? "#66bb6a" : "#5a5a5a") + ", RenderBold: true, VerticalAlignment: Center); } " +
-                "  Button #ItemsBtn { Anchor: (Width: 55, Left: 3, Height: 26); Background: (Color: #2d4a5a); " +
-                "    Label #ItemsBtnLbl { Text: \"ITEMS\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
-                "  Button #DeleteBtn { Anchor: (Width: 55, Left: 3, Height: 26); Background: (Color: #5a2d2d); " +
-                "    Label #DeleteBtnLbl { Text: \"SUPPR\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
-                "}");
-
-            String displayName = kit.displayName != null ? kit.displayName : kit.id;
-            cmd.set("#" + rowId + " #KName.Text", displayName);
-            cmd.set("#" + rowId + " #KDesc.Text", kit.description != null ? kit.description : "-");
-
+            String displayName = escapeUI(kit.displayName != null ? kit.displayName : kit.id);
+            String desc = escapeUI(kit.description != null ? kit.description : "-");
             String cdText;
             if (kit.cooldownSeconds < 0) cdText = "Aucun";
             else if (kit.cooldownSeconds == 0) cdText = "Unique";
             else cdText = KitService.formatCooldown(kit.cooldownSeconds);
-            cmd.set("#" + rowId + " #KCd.Text", cdText);
+            String fjText = kit.giveOnFirstJoin ? "FJ" : "-";
+            String fjColor = kit.giveOnFirstJoin ? "#66bb6a" : "#5a5a5a";
 
-            cmd.set("#" + rowId + " #KFj.Text", kit.giveOnFirstJoin ? "FJ" : "-");
+            // Kit row - all Text set inline to avoid selector issues
+            cmd.appendInline("#KitList",
+                "Group #" + rowId + " { Anchor: (Height: 34); LayoutMode: Left; Padding: (Horizontal: 5); Background: (Color: " + bgColor + "); " +
+                "  Label #" + rowId + "N { Anchor: (Width: 130); Text: \"" + displayName + "\"; Style: (FontSize: 12, TextColor: " + nameColor + ", VerticalAlignment: Center" + (isEditing ? ", RenderBold: true" : "") + "); } " +
+                "  Label #" + rowId + "D { FlexWeight: 1; Text: \"" + desc + "\"; Style: (FontSize: 10, TextColor: #7c8b99, VerticalAlignment: Center); } " +
+                "  Label #" + rowId + "C { Anchor: (Width: 65); Text: \"" + cdText + "\"; Style: (FontSize: 10, TextColor: #96a9be, VerticalAlignment: Center); } " +
+                "  Label #" + rowId + "F { Anchor: (Width: 30); Text: \"" + fjText + "\"; Style: (FontSize: 10, TextColor: " + fjColor + ", RenderBold: true, VerticalAlignment: Center); } " +
+                "  Button #" + rowId + "IB { Anchor: (Width: 55, Left: 3, Height: 26); Background: (Color: #2d4a5a); " +
+                "    Label #" + rowId + "IBL { Text: \"ITEMS\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
+                "  Button #" + rowId + "DB { Anchor: (Width: 55, Left: 3, Height: 26); Background: (Color: #5a2d2d); " +
+                "    Label #" + rowId + "DBL { Text: \"SUPPR\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
+                "}");
 
-            event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #ItemsBtn",
+            event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #" + rowId + "IB",
                 EventData.of("Action", "editKit").append("KitId", kit.id), false);
-            event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #DeleteBtn",
+            event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #" + rowId + "DB",
                 EventData.of("Action", "deleteKit").append("KitId", kit.id), false);
 
             // If this kit is being edited, show its items below
             if (isEditing && kit.items != null) {
                 for (int itemIdx = 0; itemIdx < kit.items.size(); itemIdx++) {
                     KitItem item = kit.items.get(itemIdx);
-                    String itemRowId = "KitItemRow" + index + "_" + itemIdx;
+                    String ir = "IR" + index + "x" + itemIdx;
+                    String itemName = escapeUI(formatBlockName(item.itemId));
+                    String itemQty = "x" + item.quantity;
 
                     cmd.appendInline("#KitList",
-                        "Group #" + itemRowId + " { Anchor: (Height: 30); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
-                        "  Group #" + itemRowId + "Icon { Anchor: (Width: 26, Height: 26); Background: (Color: #1a2535); } " +
-                        "  Label #ItemName { FlexWeight: 1; Anchor: (Left: 6); Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
-                        "  Label #ItemQty { Anchor: (Width: 60); Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
-                        "  Button #RemoveItemBtn { Anchor: (Width: 40, Left: 3, Height: 22); Background: (Color: #5a2d2d); " +
-                        "    Label #RemoveBtnLbl { Text: \"X\"; Style: (FontSize: 9, TextColor: #ffffff, VerticalAlignment: Center); } } " +
+                        "Group #" + ir + " { Anchor: (Height: 30); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
+                        "  Group #" + ir + "Ic { Anchor: (Width: 26, Height: 26); Background: (Color: #1a2535); } " +
+                        "  Label #" + ir + "N { FlexWeight: 1; Anchor: (Left: 6); Text: \"" + itemName + "\"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
+                        "  Label #" + ir + "Q { Anchor: (Width: 60); Text: \"" + itemQty + "\"; Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
+                        "  Button #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Background: (Color: #5a2d2d); " +
+                        "    Label #" + ir + "RL { Text: \"X\"; Style: (FontSize: 9, TextColor: #ffffff, VerticalAlignment: Center); } } " +
                         "}");
 
-                    cmd.set("#" + itemRowId + " #ItemName.Text", formatBlockName(item.itemId));
-                    cmd.set("#" + itemRowId + " #ItemQty.Text", "x" + item.quantity);
-
                     final int finalItemIdx = itemIdx;
-                    event.addEventBinding(CustomUIEventBindingType.Activating, "#" + itemRowId + " #RemoveItemBtn",
+                    event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #" + ir + "RB",
                         EventData.of("Action", "removeItem").append("KitId", kit.id).append("ItemIndex", String.valueOf(finalItemIdx)), false);
                 }
 
                 // Add item button row
-                String addRowId = "AddItemRow" + index;
+                String ar = "AR" + index;
                 cmd.appendInline("#KitList",
-                    "Group #" + addRowId + " { Anchor: (Height: 28); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d2520); " +
-                    "  Button #AddItemBtn { Anchor: (Width: 120, Height: 24); Background: (Color: #2d5a2d); " +
-                    "    Label #AddItemBtnLbl { Text: \"+ AJOUTER ITEM\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
+                    "Group #" + ar + " { Anchor: (Height: 28); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d2520); " +
+                    "  Button #" + ar + "B { Anchor: (Width: 120, Height: 24); Background: (Color: #2d5a2d); " +
+                    "    Label #" + ar + "BL { Text: \"+ AJOUTER ITEM\"; Style: (FontSize: 10, TextColor: #ffffff, VerticalAlignment: Center); } } " +
                     "}");
 
-                event.addEventBinding(CustomUIEventBindingType.Activating, "#" + addRowId + " #AddItemBtn",
+                event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ar + " #" + ar + "B",
                     EventData.of("Action", "showAddItem").append("KitId", kit.id), false);
             }
 
@@ -218,7 +215,7 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 newKit.id = kitId;
                 newKit.displayName = (data.newKitName != null && !data.newKitName.trim().isEmpty()) ? data.newKitName.trim() : kitId;
                 newKit.description = (data.newKitDesc != null && !data.newKitDesc.trim().isEmpty()) ? data.newKitDesc.trim() : "";
-                newKit.icon = "minecraft:chest";
+                newKit.icon = "chest";
                 newKit.color = (data.newKitColor != null && !data.newKitColor.trim().isEmpty()) ? data.newKitColor.trim() : "#4fc3f7";
                 newKit.items = new ArrayList<>();
                 newKit.giveOnFirstJoin = firstJoinToggle;
@@ -399,6 +396,14 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Echappe les caracteres speciaux pour les inserer dans un appendInline.
+     */
+    private String escapeUI(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\").replace("\"", "'");
     }
 
     // =========================================
