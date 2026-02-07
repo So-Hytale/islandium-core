@@ -1114,19 +1114,34 @@ public class WorldManagerPage extends InteractiveCustomUIPage<WorldManagerPage.P
                         World targetWorld = Universe.get().getWorlds().get(selectedWorldName);
                         if (targetWorld != null) {
                             close();
-                            // D'abord retirer le joueur du monde actuel
-                            World currentWorld = ((EntityStore) store.getExternalData()).getWorld();
-                            final String targetName = selectedWorldName;
-                            currentWorld.execute(() -> {
-                                playerRef.removeFromStore();
-                                // Puis ajouter au nouveau monde
-                                targetWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
-                                    .thenRun(() -> player.sendMessage(Message.raw("Teleporte vers '" + targetName + "'!")))
-                                    .exceptionally(ex -> {
-                                        player.sendMessage(Message.raw("Erreur de teleportation: " + ex.getMessage()));
-                                        return null;
-                                    });
-                            });
+                            var islandiumPlayerOpt = plugin.getPlayerManager().getOnlinePlayer(playerRef.getUuid());
+                            if (islandiumPlayerOpt.isPresent()) {
+                                var islandiumPlayer = islandiumPlayerOpt.get();
+                                // Vérifier si un world spawn est défini
+                                var worldSpawn = plugin.getSpawnService().getWorldSpawn(selectedWorldName);
+                                if (worldSpawn != null) {
+                                    // TP aux coordonnées du world spawn (gère le cross-world)
+                                    plugin.getTeleportService().teleportInstant(islandiumPlayer, worldSpawn);
+                                    player.sendMessage(Message.raw("Teleporte vers '" + selectedWorldName + "' au spawn du monde!"));
+                                } else {
+                                    // Pas de world spawn: juste changer de monde
+                                    World currentWorld = ((EntityStore) store.getExternalData()).getWorld();
+                                    if (currentWorld == targetWorld) {
+                                        player.sendMessage(Message.raw("Vous etes deja dans ce monde!"));
+                                    } else {
+                                        final String targetName = selectedWorldName;
+                                        currentWorld.execute(() -> {
+                                            playerRef.removeFromStore();
+                                            targetWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
+                                                .thenRun(() -> player.sendMessage(Message.raw("Teleporte vers '" + targetName + "'!")))
+                                                .exceptionally(ex -> {
+                                                    player.sendMessage(Message.raw("Erreur de teleportation: " + ex.getMessage()));
+                                                    return null;
+                                                });
+                                        });
+                                    }
+                                }
+                            }
                         }
                     }
                     return;
