@@ -22,9 +22,11 @@ import java.util.List;
 
 /**
  * Page du menu principal - Hub central affichant les plugins enregistres.
- * Utilise une structure plate : chaque carte est un enfant direct du container.
+ * Utilise cmd.append() avec un fichier MenuCard.ui template (comme NavBarHelper).
  */
 public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
+
+    private static final String CARD_TEMPLATE = "Pages/Islandium/MenuCard.ui";
 
     private final IslandiumPlugin plugin;
     private final PlayerRef playerRef;
@@ -52,42 +54,26 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
         List<IslandiumUIRegistry.Entry> entries = IslandiumUIRegistry.getInstance().getEntries();
 
         if (entries.isEmpty()) {
-            cmd.appendInline("#CardGrid", "Label { Text: \"Aucun plugin enregistre.\"; Anchor: (Height: 40); Style: (FontSize: 14, TextColor: #808080, HorizontalAlignment: Center); }");
             return;
         }
 
-        // Each entry is a direct child of #CardGrid (TopScrolling layout)
-        // We use index-based selectors: #CardGrid[0], #CardGrid[1], etc.
-        int index = 0;
-        for (IslandiumUIRegistry.Entry entry : entries) {
-            String selector = "#CardGrid[" + index + "]";
-            String accentColor = entry.accentColor();
+        for (int i = 0; i < entries.size(); i++) {
+            IslandiumUIRegistry.Entry entry = entries.get(i);
+            String selector = "#CardGrid[" + i + "]";
 
-            // Card: Button with accent bar + name + description
-            cmd.appendInline("#CardGrid",
-                    "Button #CardBtn { " +
-                        "Anchor: (Height: 90, Bottom: 10); " +
-                        "Background: (Color: #151d28); " +
-                        "Padding: (Left: 0); " +
-                        "LayoutMode: Left; " +
-                        "Group #Accent { Anchor: (Width: 4); Background: (Color: " + accentColor + "); } " +
-                        "Group #Info { FlexWeight: 1; LayoutMode: Top; Padding: (Full: 15); " +
-                            "Label #CardName { Anchor: (Height: 28); Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center); } " +
-                            "Label #CardDesc { Anchor: (Height: 30); Style: (FontSize: 12, TextColor: #7c8b99, VerticalAlignment: Top); } " +
-                        "} " +
-                    "}");
+            // Append card from .ui template file (like NavBarHelper does)
+            cmd.append("#CardGrid", CARD_TEMPLATE);
 
-            // Set text
-            cmd.set(selector + " #CardBtn #CardName.Text", entry.displayName());
-            cmd.set(selector + " #CardBtn #CardDesc.Text", entry.description());
+            // Set text and accent color
+            cmd.set(selector + " #CardName.Text", entry.displayName());
+            cmd.set(selector + " #CardName.Style.TextColor", entry.accentColor());
+            cmd.set(selector + " #CardDesc.Text", entry.description());
 
-            // Bind click
+            // Bind click event
             event.addEventBinding(CustomUIEventBindingType.Activating,
-                    selector + " #CardBtn",
+                    selector + " #MenuCardBtn",
                     EventData.of("OpenPlugin", entry.id()),
                     false);
-
-            index++;
         }
     }
 
