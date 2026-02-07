@@ -37,6 +37,7 @@ public class CommandManager {
     public void registerAll() {
         // Admin commands
         register(new MuteCommand(plugin));
+        register(new EcoCommand(plugin));
 
         // Player commands
         register(new BalanceCommand(plugin));

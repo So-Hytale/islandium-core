@@ -148,52 +148,53 @@ public class IslandiumPlugin extends JavaPlugin {
     }
 
     private void registerUIPages() {
-        IslandiumUIRegistry.getInstance()
-                .register(new IslandiumUIRegistry.Entry(
-                        "ranks",
-                        "RANKS",
-                        "Gestion des rangs et permissions",
-                        "#ffd700",
-                        playerRef -> new RankManagerPage(playerRef, serviceManager.getPermissionService(), this),
-                        true,
-                        "ranks"
-                ))
-                .register(new IslandiumUIRegistry.Entry(
-                        "permissions",
-                        "PERMISSIONS",
-                        "Gestion des permissions joueurs",
-                        "#ff6b6b",
-                        playerRef -> new PlayerPermissionsManagerPage(playerRef, serviceManager.getPermissionService(), this),
-                        true,
-                        "perms", "perm"
-                ))
-                .register(new IslandiumUIRegistry.Entry(
-                        "worlds",
-                        "MONDES",
-                        "Gestion des mondes",
-                        "#4ecdc4",
-                        playerRef -> new WorldManagerPage(playerRef, this),
-                        true,
-                        "worlds", "world"
-                ))
-                .register(new IslandiumUIRegistry.Entry(
-                        "plugins",
-                        "PLUGINS",
-                        "Gestion des plugins",
-                        "#a8e6cf",
-                        playerRef -> new PluginManagerPage(playerRef, this),
-                        true,
-                        "plugins", "pl"
-                ))
-                .register(new IslandiumUIRegistry.Entry(
-                        "wiki",
-                        "WIKI",
-                        "Documentation et informations",
-                        "#82b1ff",
-                        playerRef -> new WikiMainPage(playerRef, this),
-                        true,
-                        "wiki", "drops", "entities"
-                ));
+        // Boutons desactives pour le moment
+        // IslandiumUIRegistry.getInstance()
+        //         .register(new IslandiumUIRegistry.Entry(
+        //                 "ranks",
+        //                 "RANKS",
+        //                 "Gestion des rangs et permissions",
+        //                 "#ffd700",
+        //                 playerRef -> new RankManagerPage(playerRef, serviceManager.getPermissionService(), this),
+        //                 true,
+        //                 "ranks"
+        //         ))
+        //         .register(new IslandiumUIRegistry.Entry(
+        //                 "permissions",
+        //                 "PERMISSIONS",
+        //                 "Gestion des permissions joueurs",
+        //                 "#ff6b6b",
+        //                 playerRef -> new PlayerPermissionsManagerPage(playerRef, serviceManager.getPermissionService(), this),
+        //                 true,
+        //                 "perms", "perm"
+        //         ))
+        //         .register(new IslandiumUIRegistry.Entry(
+        //                 "worlds",
+        //                 "MONDES",
+        //                 "Gestion des mondes",
+        //                 "#4ecdc4",
+        //                 playerRef -> new WorldManagerPage(playerRef, this),
+        //                 true,
+        //                 "worlds", "world"
+        //         ))
+        //         .register(new IslandiumUIRegistry.Entry(
+        //                 "plugins",
+        //                 "PLUGINS",
+        //                 "Gestion des plugins",
+        //                 "#a8e6cf",
+        //                 playerRef -> new PluginManagerPage(playerRef, this),
+        //                 true,
+        //                 "plugins", "pl"
+        //         ))
+        //         .register(new IslandiumUIRegistry.Entry(
+        //                 "wiki",
+        //                 "WIKI",
+        //                 "Documentation et informations",
+        //                 "#82b1ff",
+        //                 playerRef -> new WikiMainPage(playerRef, this),
+        //                 true,
+        //                 "wiki", "drops", "entities"
+        //         ));
     }
 
     private void initializeAPI() {

@@ -1,17 +1,21 @@
-Button #MenuCardBtn {
-    Anchor: (Height: 70, Bottom: 8);
-    Background: (Color: #151d28);
-    Padding: (Horizontal: 15);
+Group {
+    Anchor: (Height: 78);
 
-    Label #CardName {
-        Anchor: (Height: 35, Top: 8);
-        Text: "Plugin";
-        Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
-    }
+    Button #MenuCardBtn {
+        Anchor: (Height: 70);
+        Background: (Color: #151d28);
+        Padding: (Horizontal: 15);
 
-    Label #CardDesc {
-        Anchor: (Height: 20, Top: 43);
-        Text: "Description";
-        Style: (FontSize: 12, TextColor: #7c8b99, VerticalAlignment: Top);
+        Label #CardName {
+            Anchor: (Height: 35, Top: 8);
+            Text: "Plugin";
+            Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
+        }
+
+        Label #CardDesc {
+            Anchor: (Height: 20, Top: 43);
+            Text: "Description";
+            Style: (FontSize: 12, TextColor: #7c8b99);
+        }
     }
 }

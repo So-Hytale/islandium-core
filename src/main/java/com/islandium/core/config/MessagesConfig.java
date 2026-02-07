@@ -157,6 +157,15 @@ public class MessagesConfig {
         msgs.put("pay.self", "&cTu ne peux pas t'envoyer de l'argent!");
         msgs.put("pay.invalid-amount", "&cMontant invalide!");
 
+        // Economy Admin
+        msgs.put("economy.invalid-amount", "&cMontant invalide!");
+        msgs.put("economy.eco.give", "&a+{amount} &aajouté au solde de &e{player}&a!");
+        msgs.put("economy.eco.take", "&c-{amount} &cretiré du solde de &e{player}&c.");
+        msgs.put("economy.eco.set", "&6Solde de &e{player}&6 défini à &e{amount}&6.");
+        msgs.put("economy.eco.reset", "&6Solde de &e{player}&6 réinitialisé à &e{amount}&6.");
+        msgs.put("economy.eco.not-enough", "&cLe joueur &e{player}&c n'a pas assez d'argent!");
+        msgs.put("economy.eco.usage", "&cUsage: /eco <give|take|set|reset> <joueur> <montant>");
+
         // Kit
         msgs.put("kit.received", "&aKit &e{kit}&a reçu!");
         msgs.put("kit.not-found", "&cKit &e{kit}&c introuvable.");
