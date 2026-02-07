@@ -33,7 +33,12 @@ public class SQLExecutor {
                 stmt.executeUpdate();
 
             } catch (SQLException e) {
-                throw new RuntimeException("SQL execution failed: " + sql, e);
+                System.err.println("[SQLExecutor] SQL ERROR: " + e.getMessage());
+                System.err.println("[SQLExecutor] SQL State: " + e.getSQLState());
+                System.err.println("[SQLExecutor] Error Code: " + e.getErrorCode());
+                System.err.println("[SQLExecutor] Query: " + sql);
+                e.printStackTrace();
+                throw new RuntimeException("SQL execution failed: " + e.getMessage(), e);
             }
         });
     }
