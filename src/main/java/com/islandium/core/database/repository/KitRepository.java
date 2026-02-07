@@ -55,29 +55,28 @@ public class KitRepository {
      */
     public CompletableFuture<Void> save(@NotNull KitDefinition kit) {
         String itemsJson = GSON.toJson(kit.items != null ? kit.items : new ArrayList<>());
-        return sql.execute("""
-            INSERT INTO essentials_kits (name, display_name, description, icon, color, cooldown_seconds, permission, give_on_first_join, items, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                display_name = VALUES(display_name),
-                description = VALUES(description),
-                icon = VALUES(icon),
-                color = VALUES(color),
-                cooldown_seconds = VALUES(cooldown_seconds),
-                permission = VALUES(permission),
-                give_on_first_join = VALUES(give_on_first_join),
-                items = VALUES(items)
-            """,
-            kit.id,
-            kit.displayName != null ? kit.displayName : kit.id,
-            kit.description,
-            kit.icon != null ? kit.icon : "minecraft:chest",
-            kit.color != null ? kit.color : "#4fc3f7",
-            kit.cooldownSeconds,
-            kit.permission,
-            kit.giveOnFirstJoin ? 1 : 0,
-            itemsJson,
-            System.currentTimeMillis()
+        String displayName = kit.displayName != null ? kit.displayName : kit.id;
+        String description = kit.description;
+        String icon = kit.icon != null ? kit.icon : "chest";
+        String color = kit.color != null ? kit.color : "#4fc3f7";
+        Integer cooldown = kit.cooldownSeconds;
+        String permission = kit.permission;
+        Integer firstJoin = kit.giveOnFirstJoin ? 1 : 0;
+        Long createdAt = System.currentTimeMillis();
+
+        return sql.execute(
+            "INSERT INTO essentials_kits (name, display_name, description, icon, color, cooldown_seconds, permission, give_on_first_join, items, created_at) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+            "ON DUPLICATE KEY UPDATE " +
+            "display_name = VALUES(display_name), " +
+            "description = VALUES(description), " +
+            "icon = VALUES(icon), " +
+            "color = VALUES(color), " +
+            "cooldown_seconds = VALUES(cooldown_seconds), " +
+            "permission = VALUES(permission), " +
+            "give_on_first_join = VALUES(give_on_first_join), " +
+            "items = VALUES(items)",
+            kit.id, displayName, description, icon, color, cooldown, permission, firstJoin, itemsJson, createdAt
         );
     }
 
@@ -129,12 +128,12 @@ public class KitRepository {
      * Enregistre un claim de kit (insert ou update).
      */
     public CompletableFuture<Void> recordClaim(@NotNull String playerUuid, @NotNull String kitName) {
-        return sql.execute("""
-            INSERT INTO essentials_kit_cooldowns (player_uuid, kit_name, last_used)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE last_used = VALUES(last_used)
-            """,
-            playerUuid, kitName, System.currentTimeMillis()
+        Long now = System.currentTimeMillis();
+        return sql.execute(
+            "INSERT INTO essentials_kit_cooldowns (player_uuid, kit_name, last_used) " +
+            "VALUES (?, ?, ?) " +
+            "ON DUPLICATE KEY UPDATE last_used = VALUES(last_used)",
+            playerUuid, kitName, now
         );
     }
 

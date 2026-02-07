@@ -253,7 +253,9 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 newKit.permission = (data.newKitPerm != null && !data.newKitPerm.trim().isEmpty()) ? data.newKitPerm.trim() : null;
 
                 kitService.addKit(newKit).exceptionally(ex -> {
-                    player.sendMessage(Message.raw("Erreur sauvegarde BDD: " + ex.getMessage()));
+                    String cause = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+                    player.sendMessage(Message.raw("Erreur sauvegarde BDD: " + cause));
+                    plugin.log(java.util.logging.Level.SEVERE, "Failed to save kit: " + cause, ex);
                     return null;
                 });
 
