@@ -57,6 +57,12 @@ public class PlayerJoinListener extends IslandiumListener {
                     .thenApply(v -> essentialsPlayer);
             })
             .thenCompose(essentialsPlayer -> {
+                // Charger les cooldowns de kits du joueur
+                return plugin.getServiceManager().getKitService()
+                    .loadPlayerCooldowns(uuid)
+                    .thenApply(v -> essentialsPlayer);
+            })
+            .thenCompose(essentialsPlayer -> {
                 // Publier l'événement de connexion sur Redis
                 return plugin.getRedisManager().getPublisher()
                     .publishPlayerJoin(uuid.toString(), essentialsPlayer.getName(), plugin.getServerName())

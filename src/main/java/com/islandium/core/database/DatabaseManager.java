@@ -176,16 +176,21 @@ public class DatabaseManager {
                 pitch FLOAT NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)).thenCompose(v -> executor.execute("""
-            -- Table kits
+            -- Table kits (enrichie)
             CREATE TABLE IF NOT EXISTS essentials_kits (
                 name VARCHAR(32) PRIMARY KEY,
-                cooldown_seconds INT UNSIGNED DEFAULT 0,
+                display_name VARCHAR(64) NOT NULL,
+                description VARCHAR(255),
+                icon VARCHAR(64) DEFAULT 'minecraft:chest',
+                color VARCHAR(16) DEFAULT '#4fc3f7',
+                cooldown_seconds INT DEFAULT -1,
                 permission VARCHAR(128),
+                give_on_first_join TINYINT(1) DEFAULT 0,
                 items TEXT NOT NULL,
                 created_at BIGINT NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)).thenCompose(v -> executor.execute("""
-            -- Table usage kits
+            -- Table usage kits (cooldowns joueurs)
             CREATE TABLE IF NOT EXISTS essentials_kit_cooldowns (
                 player_uuid CHAR(36) NOT NULL,
                 kit_name VARCHAR(32) NOT NULL,

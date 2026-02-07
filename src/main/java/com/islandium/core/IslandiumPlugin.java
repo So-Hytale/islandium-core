@@ -17,6 +17,7 @@ import com.islandium.core.ui.pages.permission.PlayerPermissionsManagerPage;
 import com.islandium.core.ui.pages.permission.RankManagerPage;
 import com.islandium.core.ui.pages.world.WorldManagerPage;
 import com.islandium.core.ui.pages.plugin.PluginManagerPage;
+import com.islandium.core.ui.pages.kit.KitPage;
 import com.islandium.core.ui.pages.wiki.WikiMainPage;
 import com.islandium.core.wiki.WikiManager;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -148,6 +149,18 @@ public class IslandiumPlugin extends JavaPlugin {
     }
 
     private void registerUIPages() {
+        // Kit page
+        IslandiumUIRegistry.getInstance()
+            .register(new IslandiumUIRegistry.Entry(
+                "kits",
+                "KITS",
+                "Reclame tes kits",
+                "#4fc3f7",
+                playerRef -> new KitPage(playerRef, this),
+                true,
+                "kit", "kits"
+            ));
+
         // Boutons desactives pour le moment
         // IslandiumUIRegistry.getInstance()
         //         .register(new IslandiumUIRegistry.Entry(

@@ -11,8 +11,10 @@ import com.islandium.core.service.messaging.CrossServerMessengerImpl;
 import com.islandium.core.service.moderation.ModerationServiceImpl;
 import com.islandium.core.service.permission.PermissionServiceImpl;
 import com.islandium.core.service.back.BackService;
+import com.islandium.core.service.kit.KitService;
 import com.islandium.core.service.spawn.SpawnService;
 import com.islandium.core.service.teleport.TeleportService;
+import com.islandium.core.database.repository.KitRepository;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +37,7 @@ public class ServiceManager {
     private SpawnService spawnService;
     private TeleportService teleportService;
     private BackService backService;
+    private KitService kitService;
 
     public ServiceManager(@NotNull IslandiumPlugin plugin) {
         this.plugin = plugin;
@@ -59,6 +62,10 @@ public class ServiceManager {
         this.teleportService = new TeleportService(plugin);
         this.backService = new BackService(plugin);
 
+        // Kit service
+        var kitRepository = new KitRepository(sql);
+        this.kitService = new KitService(plugin, kitRepository);
+
         // Load spawn data
         spawnService.load();
 
@@ -66,7 +73,8 @@ public class ServiceManager {
         teleportService.setWarmupSeconds(plugin.getConfigManager().getMainConfig().getTeleportWarmup());
 
         // Initialize permission service (loads ranks from DB)
-        return permissionService.initialize();
+        return permissionService.initialize()
+            .thenCompose(v -> kitService.loadKits());
     }
 
     /**
@@ -137,5 +145,10 @@ public class ServiceManager {
     @NotNull
     public BackService getBackService() {
         return backService;
+    }
+
+    @NotNull
+    public KitService getKitService() {
+        return kitService;
     }
 }

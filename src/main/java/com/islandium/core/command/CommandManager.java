@@ -12,6 +12,8 @@ import com.islandium.core.command.spawn.BackCommand;
 import com.islandium.core.command.spawn.SetSpawnCommand;
 import com.islandium.core.command.spawn.SpawnCommand;
 import com.islandium.core.command.world.WorldsCommand;
+import com.islandium.core.command.kit.KitCommand;
+import com.islandium.core.command.kit.KitAdminCommand;
 import com.islandium.core.command.wiki.WikiCommand;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,6 +66,10 @@ public class CommandManager {
 
         // Plugin management
         register(new PluginsCommand(plugin));
+
+        // Kit commands
+        register(new KitCommand(plugin));
+        register(new KitAdminCommand(plugin));
 
         // Wiki command
         register(new WikiCommand(plugin));
