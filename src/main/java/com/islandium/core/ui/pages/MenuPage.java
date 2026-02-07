@@ -22,13 +22,9 @@ import java.util.List;
 
 /**
  * Page du menu principal - Hub central affichant les plugins enregistres.
+ * Utilise une structure plate : chaque carte est un enfant direct du container.
  */
 public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
-
-    private static final int COLUMNS = 3;
-    private static final int CARD_WIDTH = 270;
-    private static final int CARD_HEIGHT = 110;
-    private static final int CARD_GAP = 12;
 
     private final IslandiumPlugin plugin;
     private final PlayerRef playerRef;
@@ -46,11 +42,11 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
         // Close button
         event.addEventBinding(CustomUIEventBindingType.Activating, "#CloseButton", EventData.of("Action", "close"), false);
 
-        // Build the card grid
-        buildCardGrid(cmd, event);
+        // Build the card list
+        buildCardList(cmd, event);
     }
 
-    private void buildCardGrid(UICommandBuilder cmd, UIEventBuilder event) {
+    private void buildCardList(UICommandBuilder cmd, UIEventBuilder event) {
         cmd.clear("#CardGrid");
 
         List<IslandiumUIRegistry.Entry> entries = IslandiumUIRegistry.getInstance().getEntries();
@@ -60,66 +56,39 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
             return;
         }
 
-        // Create rows of 3 cards
-        int totalRows = (int) Math.ceil((double) entries.size() / COLUMNS);
-        int entryIndex = 0;
+        // Each entry is a direct child of #CardGrid (TopScrolling layout)
+        // We use index-based selectors: #CardGrid[0], #CardGrid[1], etc.
+        int index = 0;
+        for (IslandiumUIRegistry.Entry entry : entries) {
+            String selector = "#CardGrid[" + index + "]";
+            String accentColor = entry.accentColor();
 
-        for (int row = 0; row < totalRows; row++) {
-            String rowSelector = "#CardGrid[" + row + "]";
+            // Card button with accent bar and text content
+            cmd.appendInline("#CardGrid",
+                    "Button #CardBtn { " +
+                        "Anchor: (Height: 90, Bottom: 10); " +
+                        "Background: (Color: #151d28); " +
+                        "Style: ButtonStyle(Hovered: (Background: #1e2d3d)); " +
+                        "LayoutMode: Left; " +
+                        "Group { Anchor: (Width: 4); Background: (Color: " + accentColor + "); } " +
+                        "Group { FlexWeight: 1; LayoutMode: Top; Padding: (Full: 15); " +
+                            "Label #CardName { Anchor: (Height: 28); Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center); } " +
+                            "Label #CardDesc { Anchor: (Height: 30); Style: (FontSize: 12, TextColor: #7c8b99, Wrap: true, VerticalAlignment: Top); } " +
+                        "} " +
+                    "}");
 
-            // Row container
-            int rowHeight = CARD_HEIGHT + (row < totalRows - 1 ? CARD_GAP : 0);
-            cmd.appendInline("#CardGrid", "Group #Row { Anchor: (Height: " + rowHeight + "); LayoutMode: Left; }");
+            // Set text
+            cmd.set(selector + " #CardBtn #CardName.Text", entry.displayName());
+            cmd.set(selector + " #CardBtn #CardDesc.Text", entry.description());
 
-            for (int col = 0; col < COLUMNS && entryIndex < entries.size(); col++) {
-                IslandiumUIRegistry.Entry entry = entries.get(entryIndex);
-                String cardSelector = rowSelector + " #Row[" + col + "]";
+            // Bind click
+            event.addEventBinding(CustomUIEventBindingType.Activating,
+                    selector + " #CardBtn",
+                    EventData.of("OpenPlugin", entry.id()),
+                    false);
 
-                // Card with gap
-                int leftMargin = col > 0 ? CARD_GAP : 0;
-                String cardUi = buildCardUi(entry, leftMargin);
-                cmd.appendInline(rowSelector + " #Row", cardUi);
-
-                // Set dynamic text
-                cmd.set(cardSelector + " #CardBtn #CardName.Text", entry.displayName());
-                cmd.set(cardSelector + " #CardBtn #CardDesc.Text", entry.description());
-
-                // Bind click event
-                event.addEventBinding(CustomUIEventBindingType.Activating,
-                        cardSelector + " #CardBtn",
-                        EventData.of("OpenPlugin", entry.id()),
-                        false);
-
-                entryIndex++;
-            }
-
-            // Fill remaining columns with empty spacers
-            for (int col = entries.size() - (row * COLUMNS); col < COLUMNS && row == totalRows - 1; col++) {
-                int leftMargin = col > 0 ? CARD_GAP : 0;
-                cmd.appendInline(rowSelector + " #Row", "Group { Anchor: (Width: " + CARD_WIDTH + ", Left: " + leftMargin + "); }");
-            }
+            index++;
         }
-    }
-
-    private String buildCardUi(IslandiumUIRegistry.Entry entry, int leftMargin) {
-        String accentColor = entry.accentColor();
-        String leftAttr = leftMargin > 0 ? ", Left: " + leftMargin : "";
-
-        return "Button #CardBtn { " +
-                "Anchor: (Width: " + CARD_WIDTH + ", Height: " + CARD_HEIGHT + leftAttr + "); " +
-                "Background: (Color: #151d28); " +
-                "Style: ButtonStyle(Hovered: (Background: #1e2d3d)); " +
-                "LayoutMode: Left; " +
-
-                // Accent bar
-                "Group { Anchor: (Width: 4); Background: (Color: " + accentColor + "); } " +
-
-                // Content area
-                "Group { FlexWeight: 1; LayoutMode: Top; Padding: (Full: 15); " +
-                    "Label #CardName { Anchor: (Height: 28); Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center); } " +
-                    "Label #CardDesc { Anchor: (Height: 40); Style: (FontSize: 12, TextColor: #7c8b99, Wrap: true, VerticalAlignment: Top); } " +
-                "} " +
-            "}";
     }
 
     @Override
