@@ -67,6 +67,9 @@ public class CommandManager {
         // Wiki command
         register(new WikiCommand(plugin));
 
+        // Menu command
+        register(new MenuCommand(plugin));
+
         plugin.log(Level.INFO, "Registered " + commands.size() + " commands");
     }
 

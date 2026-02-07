@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 /**
  * Registre des pages UI pour Essentials.
- * Inspiré du système AdminUIIndexRegistry.
+ * Les plugins peuvent enregistrer des Entry pour apparaitre dans le menu principal (./menu).
  */
 public class IslandiumUIRegistry {
 
@@ -43,11 +43,21 @@ public class IslandiumUIRegistry {
     }
 
     /**
-     * Entrée du registre UI.
+     * Entree du registre UI.
+     *
+     * @param id             Identifiant unique
+     * @param displayName    Nom affiche dans le menu
+     * @param description    Description courte affichee sous le nom
+     * @param accentColor    Couleur d'accent hex (ex: "#ffd700")
+     * @param guiSupplier    Factory pour creer la page UI
+     * @param showsInNavBar  Si visible dans la barre de navigation
+     * @param commandShortcuts Alias de commandes
      */
     public record Entry(
             @NotNull String id,
             @NotNull String displayName,
+            @NotNull String description,
+            @NotNull String accentColor,
             @NotNull Function<PlayerRef, ? extends InteractiveCustomUIPage<?>> guiSupplier,
             boolean showsInNavBar,
             @NotNull String... commandShortcuts
