@@ -191,11 +191,12 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
             cmd.appendInline("#HubGrid",
                 "Group { Anchor: (Height: 40, Top: 10); LayoutMode: Left; " +
                 "  Group { FlexWeight: 1; } " +
-                "  TextButton #AdminConfigBtn { Anchor: (Width: 180, Height: 32); Text: \"CONFIG ADMIN\"; " +
-                "    Style: TextButtonStyle(Default: (Background: #2d4a5a, LabelStyle: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center)), " +
-                "    Hovered: (Background: #3d5a6a, LabelStyle: (FontSize: 12, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center))); } " +
+                "  TextButton #AdminConfigBtn { Anchor: (Width: 180, Height: 32); " +
+                "    Style: TextButtonStyle(Default: (Background: #2d4a5a, LabelStyle: (FontSize: 12, TextColor: #ffd700, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
+                "    Hovered: (Background: #3d5a6a, LabelStyle: (FontSize: 12, TextColor: #ffd700, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
                 "  Group { FlexWeight: 1; } " +
                 "}");
+            cmd.set("#AdminConfigBtn.Text", "CONFIG ADMIN");
             event.addEventBinding(CustomUIEventBindingType.Activating, "#AdminConfigBtn",
                 EventData.of("Action", "openKitConfig"), false);
         }
@@ -312,11 +313,12 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
             cmd.appendInline("#PageContent",
                 "Group { Anchor: (Height: 55, Top: 10); LayoutMode: Left; " +
                 "  Group { FlexWeight: 1; } " +
-                "  TextButton #ClaimBtn { Anchor: (Width: 220, Height: 45); Text: \"RECLAMER\"; " +
-                "    Style: TextButtonStyle(Default: (Background: #2a5f2a, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center)), " +
-                "    Hovered: (Background: #3a7f3a, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center))); } " +
+                "  TextButton #ClaimBtn { Anchor: (Width: 220, Height: 45); " +
+                "    Style: TextButtonStyle(Default: (Background: #2a5f2a, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
+                "    Hovered: (Background: #3a7f3a, LabelStyle: (FontSize: 16, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
                 "  Group { FlexWeight: 1; } " +
                 "}");
+            cmd.set("#ClaimBtn.Text", "RECLAMER");
             event.addEventBinding(CustomUIEventBindingType.Activating, "#ClaimBtn",
                 EventData.of("Action", "claimKit").append("KitId", kitId), false);
         }
