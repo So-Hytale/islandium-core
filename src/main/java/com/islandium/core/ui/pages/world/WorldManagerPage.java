@@ -1142,7 +1142,23 @@ public class WorldManagerPage extends InteractiveCustomUIPage<WorldManagerPage.P
                 }
                 case "setSpawn" -> {
                     if (selectedWorldName != null) {
-                        player.sendMessage(Message.raw("Utilisez /setspawn pour definir le spawn du monde."));
+                        var islandiumPlayerOpt = plugin.getPlayerManager().getOnlinePlayer(playerRef.getUuid());
+                        if (islandiumPlayerOpt.isPresent()) {
+                            var myLoc = islandiumPlayerOpt.get().getLocation();
+                            if (myLoc != null) {
+                                var spawnLoc = com.islandium.core.api.location.ServerLocation.of(
+                                    plugin.getServerName(),
+                                    selectedWorldName,
+                                    myLoc.x(), myLoc.y(), myLoc.z(),
+                                    myLoc.yaw(), myLoc.pitch()
+                                );
+                                plugin.getSpawnService().setWorldSpawn(selectedWorldName, spawnLoc);
+                                player.sendMessage(Message.raw("Spawn du monde '" + selectedWorldName + "' defini a " +
+                                    String.format("%.1f, %.1f, %.1f", myLoc.x(), myLoc.y(), myLoc.z()) + "!"));
+                            } else {
+                                player.sendMessage(Message.raw("Impossible de recuperer votre position!"));
+                            }
+                        }
                     }
                     return;
                 }

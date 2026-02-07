@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -36,7 +38,11 @@ public class SpawnService {
             if (Files.exists(spawnFile)) {
                 String content = Files.readString(spawnFile);
                 this.spawnData = GSON.fromJson(content, SpawnData.class);
-                plugin.log(Level.INFO, "Spawn loaded: " + (spawnData.spawn != null ? spawnData.spawn : "not set"));
+                if (this.spawnData.worldSpawns == null) {
+                    this.spawnData.worldSpawns = new HashMap<>();
+                }
+                plugin.log(Level.INFO, "Spawn loaded: " + (spawnData.spawn != null ? spawnData.spawn : "not set")
+                    + ", world spawns: " + spawnData.worldSpawns.size());
             } else {
                 this.spawnData = new SpawnData();
                 save();
@@ -96,9 +102,48 @@ public class SpawnService {
     }
 
     /**
+     * Définit le spawn d'un monde spécifique.
+     */
+    public void setWorldSpawn(@NotNull String worldName, @NotNull ServerLocation location) {
+        spawnData.worldSpawns.put(worldName, location.serialize());
+        save();
+        plugin.log(Level.INFO, "World spawn set for '" + worldName + "': " + location);
+    }
+
+    /**
+     * Obtient le spawn d'un monde spécifique.
+     */
+    @Nullable
+    public ServerLocation getWorldSpawn(@NotNull String worldName) {
+        String serialized = spawnData.worldSpawns.get(worldName);
+        if (serialized == null || serialized.isEmpty()) {
+            return null;
+        }
+        return ServerLocation.deserialize(serialized);
+    }
+
+    /**
+     * Vérifie si un monde a un spawn défini.
+     */
+    public boolean isWorldSpawnSet(@NotNull String worldName) {
+        String serialized = spawnData.worldSpawns.get(worldName);
+        return serialized != null && !serialized.isEmpty();
+    }
+
+    /**
+     * Supprime le spawn d'un monde.
+     */
+    public void clearWorldSpawn(@NotNull String worldName) {
+        spawnData.worldSpawns.remove(worldName);
+        save();
+        plugin.log(Level.INFO, "World spawn cleared for '" + worldName + "'");
+    }
+
+    /**
      * Classe interne pour la sérialisation JSON.
      */
     private static class SpawnData {
         String spawn;
+        Map<String, String> worldSpawns = new HashMap<>();
     }
 }
