@@ -165,7 +165,8 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
 
                     cmd.appendInline("#KitList",
                         "Group #" + ir + " { Anchor: (Height: 30); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
-                        "  Group #" + ir + "Ic { Anchor: (Width: 26, Height: 26); Background: (Color: #1a2535); Padding: (Full: 2); } " +
+                        "  Group { Anchor: (Width: 26, Height: 26); Background: (Color: #1a2535); Padding: (Full: 2); " +
+                        "    ItemIcon #" + ir + "Ic { Anchor: (Width: 22, Height: 22); Visible: true; } } " +
                         "  Label #" + ir + "N { FlexWeight: 1; Anchor: (Left: 6); Text: \"" + itemName + "\"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
                         "  Label #" + ir + "Q { Anchor: (Width: 60); Text: \"" + itemQty + "\"; Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
                         "  TextButton #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Text: \"X\"; " +
@@ -175,7 +176,7 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
 
                     // Set item icon
                     try {
-                        ItemStack itemStack = new ItemStack(item.itemId, item.quantity);
+                        ItemStack itemStack = new ItemStack(item.itemId, 1);
                         cmd.setObject("#" + ir + "Ic", itemStack);
                     } catch (Exception ignored) {}
 
