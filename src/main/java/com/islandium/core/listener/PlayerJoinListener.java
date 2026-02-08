@@ -88,38 +88,27 @@ public class PlayerJoinListener extends IslandiumListener {
      * Gère la téléportation au spawn, le message de bienvenue et les kits de première connexion.
      */
     private void handleSpawnAndWelcome(IslandiumPlayer player, @Nullable Player hytalePlayer) {
-        // Vérifier si c'est un nouveau joueur (première connexion)
-        boolean isNewPlayer = isFirstJoin(player);
+        // TODO: Remettre isFirstJoin quand le système sera validé
+        // boolean isNewPlayer = isFirstJoin(player);
 
-        if (isNewPlayer) {
-            // Téléporter au spawn uniquement à la première connexion
-            ServerLocation spawn = plugin.getSpawnService().getSpawn();
-            if (spawn != null) {
-                plugin.getTeleportService().teleportInstant(player, spawn);
-                player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
-            }
+        // Téléporter au spawn à chaque connexion
+        ServerLocation spawn = plugin.getSpawnService().getSpawn();
+        if (spawn != null) {
+            plugin.getTeleportService().teleportInstant(player, spawn);
+            player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
+        }
 
-            // Envoyer un message de bienvenue global (objet Message Hytale)
-            var welcomeMessage = plugin.getMessages().getMessagePrefixed(
-                    "welcome.new-player",
-                    "player", player.getName()
-            );
-
-            // Broadcast à tous les joueurs en ligne
-            broadcastMessage(welcomeMessage);
-
-            // Donner les kits de première connexion (avec délai pour laisser l'inventaire se charger)
-            if (hytalePlayer != null) {
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(3000); // Attendre que l'inventaire soit prêt
-                        plugin.getServiceManager().getKitService().giveFirstJoinKits(hytalePlayer);
-                        plugin.log(java.util.logging.Level.INFO, "Gave first-join kits to new player " + player.getName());
-                    } catch (Exception e) {
-                        plugin.log(java.util.logging.Level.WARNING, "Failed to give first-join kits to " + player.getName() + ": " + e.getMessage());
-                    }
-                }, "FirstJoinKit-" + player.getName()).start();
-            }
+        // Donner les kits de première connexion (avec délai pour laisser l'inventaire se charger)
+        if (hytalePlayer != null) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000); // Attendre que l'inventaire soit prêt
+                    plugin.getServiceManager().getKitService().giveFirstJoinKits(hytalePlayer);
+                    plugin.log(java.util.logging.Level.INFO, "Gave first-join kits to player " + player.getName());
+                } catch (Exception e) {
+                    plugin.log(java.util.logging.Level.WARNING, "Failed to give first-join kits to " + player.getName() + ": " + e.getMessage());
+                }
+            }, "FirstJoinKit-" + player.getName()).start();
         }
     }
 
