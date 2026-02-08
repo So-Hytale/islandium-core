@@ -44,9 +44,14 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
     private boolean editFirstJoinToggle = false;
 
     public KitConfigPage(@Nonnull PlayerRef playerRef, IslandiumPlugin plugin) {
+        this(playerRef, plugin, null);
+    }
+
+    public KitConfigPage(@Nonnull PlayerRef playerRef, IslandiumPlugin plugin, String editingKitId) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageData.CODEC);
         this.plugin = plugin;
         this.playerRef = playerRef;
+        this.editingKitId = editingKitId;
     }
 
     @Override
@@ -288,14 +293,9 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                     return null;
                 });
 
-                createMode = false;
                 editingKitId = kitId;
-                cmd.set("#CreateForm.Visible", false);
                 player.sendMessage(Message.raw("Kit '" + newKit.displayName + "' cree! Ajoutez des items."));
-
-                buildKitList(cmd, event);
-                updateStatus(cmd);
-                sendUpdate(cmd, event, false);
+                reopenPage(ref, store, player);
                 return;
             }
             case "deleteKit" -> {
@@ -310,18 +310,10 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
 
                     if (data.kitId.equals(editingKitId)) {
                         editingKitId = null;
-                        cmd.set("#AddItemForm.Visible", false);
-                    }
-                    if (data.kitId.equals(editKitId)) {
-                        editMode = false;
-                        editKitId = null;
-                        cmd.set("#EditForm.Visible", false);
                     }
 
                     player.sendMessage(Message.raw("Kit '" + name + "' supprime!"));
-                    buildKitList(cmd, event);
-                    updateStatus(cmd);
-                    sendUpdate(cmd, event, false);
+                    reopenPage(ref, store, player);
                 }
                 return;
             }
@@ -329,15 +321,10 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 if (data.kitId != null) {
                     if (data.kitId.equals(editingKitId)) {
                         editingKitId = null;
-                        addItemMode = false;
-                        cmd.set("#AddItemForm.Visible", false);
                     } else {
                         editingKitId = data.kitId;
-                        addItemMode = false;
-                        cmd.set("#AddItemForm.Visible", false);
                     }
-                    buildKitList(cmd, event);
-                    sendUpdate(cmd, event, false);
+                    reopenPage(ref, store, player);
                 }
                 return;
             }
@@ -412,11 +399,8 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 });
 
                 player.sendMessage(Message.raw("Kit '" + kit.displayName + "' mis a jour!"));
-                editMode = false;
-                editKitId = null;
-                cmd.set("#EditForm.Visible", false);
-                buildKitList(cmd, event);
-                sendUpdate(cmd, event, false);
+                editingKitId = null;
+                reopenPage(ref, store, player);
                 return;
             }
             case "showAddItem" -> {
@@ -481,10 +465,7 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                     player.sendMessage(Message.raw("Item " + formatBlockName(itemId) + " x" + qty + " ajoute au kit!"));
                 }
 
-                addItemMode = false;
-                cmd.set("#AddItemForm.Visible", false);
-                buildKitList(cmd, event);
-                sendUpdate(cmd, event, false);
+                reopenPage(ref, store, player);
                 return;
             }
             case "removeItem" -> {
@@ -502,12 +483,19 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                         }
                     } catch (NumberFormatException ignored) {}
 
-                    buildKitList(cmd, event);
-                    sendUpdate(cmd, event, false);
+                    reopenPage(ref, store, player);
                 }
                 return;
             }
         }
+    }
+
+    /**
+     * Rouvre la page pour forcer un build() complet (necessaire pour setObject/ItemIcon).
+     */
+    private void reopenPage(Ref<EntityStore> ref, Store<EntityStore> store, Player player) {
+        player.getPageManager().openCustomPage(ref, store,
+            new KitConfigPage(playerRef, plugin, editingKitId));
     }
 
     private void updateStatus(UICommandBuilder cmd) {
