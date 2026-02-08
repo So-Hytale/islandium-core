@@ -88,32 +88,41 @@ public class PlayerJoinListener extends IslandiumListener {
      * Gère la téléportation au spawn, le message de bienvenue et les kits de première connexion.
      */
     private void handleSpawnAndWelcome(IslandiumPlayer player, @Nullable Player hytalePlayer) {
-        // TODO: Remettre isFirstJoin quand le système sera validé
-        // boolean isNewPlayer = isFirstJoin(player);
+        boolean isNewPlayer = isFirstJoin(player);
+        java.util.UUID uuid = player.getUniqueId();
 
-        // Téléporter au spawn à chaque connexion
-        ServerLocation spawn = plugin.getSpawnService().getSpawn();
-        plugin.log(java.util.logging.Level.INFO, "[JoinTP] spawn=" + spawn + " hytalePlayer=" + (hytalePlayer != null ? "OK" : "NULL"));
-        if (spawn != null) {
-            plugin.getTeleportService().teleportInstant(player, spawn);
-            player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
-            plugin.log(java.util.logging.Level.INFO, "[JoinTP] teleportInstant called for " + player.getName());
-        } else {
-            plugin.log(java.util.logging.Level.WARNING, "[JoinTP] No spawn set! Cannot teleport " + player.getName());
-        }
+        // Attendre que le joueur soit chargé dans le monde avant de TP + donner les kits
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000); // Attendre que le joueur soit dans le monde
 
-        // Donner les kits de première connexion (avec délai pour laisser l'inventaire se charger)
-        if (hytalePlayer != null) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(3000); // Attendre que l'inventaire soit prêt
-                    plugin.getServiceManager().getKitService().giveFirstJoinKits(hytalePlayer);
-                    plugin.log(java.util.logging.Level.INFO, "Gave first-join kits to player " + player.getName());
-                } catch (Exception e) {
-                    plugin.log(java.util.logging.Level.WARNING, "Failed to give first-join kits to " + player.getName() + ": " + e.getMessage());
+                if (isNewPlayer) {
+                    // Téléporter au spawn uniquement à la première connexion
+                    ServerLocation spawn = plugin.getSpawnService().getSpawn();
+                    plugin.log(java.util.logging.Level.INFO, "[JoinTP] spawn=" + spawn + " hytalePlayer=" + (hytalePlayer != null ? "OK" : "NULL"));
+                    if (spawn != null) {
+                        plugin.getTeleportService().teleportInstant(player, spawn);
+                        player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
+                        plugin.log(java.util.logging.Level.INFO, "[JoinTP] teleportInstant called for " + player.getName());
+                    }
+
+                    // Message de bienvenue
+                    var welcomeMessage = plugin.getMessages().getMessagePrefixed(
+                            "welcome.new-player",
+                            "player", player.getName()
+                    );
+                    broadcastMessage(welcomeMessage);
+
+                    // Donner les kits de première connexion
+                    if (hytalePlayer != null) {
+                        plugin.getServiceManager().getKitService().giveFirstJoinKits(hytalePlayer, uuid);
+                        plugin.log(java.util.logging.Level.INFO, "Gave first-join kits to new player " + player.getName());
+                    }
                 }
-            }, "FirstJoinKit-" + player.getName()).start();
-        }
+            } catch (Exception e) {
+                plugin.log(java.util.logging.Level.WARNING, "Failed spawn/kits for " + player.getName() + ": " + e.getMessage());
+            }
+        }, "JoinSpawnKit-" + player.getName()).start();
     }
 
     /**

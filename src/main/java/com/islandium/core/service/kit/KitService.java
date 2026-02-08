@@ -214,8 +214,11 @@ public class KitService {
      * Donne tous les kits first-join a un joueur.
      */
     public void giveFirstJoinKits(@NotNull Player player) {
-        UUID uuid = getPlayerUuid(player);
-        plugin.log(Level.INFO, "[FirstJoinKit] getPlayerUuid returned: " + uuid);
+        giveFirstJoinKits(player, getPlayerUuid(player));
+    }
+
+    public void giveFirstJoinKits(@NotNull Player player, @Nullable UUID uuid) {
+        plugin.log(Level.INFO, "[FirstJoinKit] UUID: " + uuid);
         if (uuid == null) return;
 
         String uuidStr = uuid.toString();
