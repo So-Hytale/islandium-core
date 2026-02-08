@@ -1,0 +1,38 @@
+$C = "../../../Common.ui";
+
+$C.@PageOverlay {
+    $C.@Container {
+        Anchor: (Width: 700, Height: 500);
+
+        #Title {
+            Group {
+                $C.@Title {
+                    @Text = "Kit View - Test Icons";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+            Padding: (Full: 15);
+
+            // Header
+            Group {
+                Anchor: (Height: 30);
+                Label #KitCount {
+                    Text: "Chargement...";
+                    Style: (FontSize: 14, TextColor: #4fc3f7, RenderBold: true, VerticalAlignment: Center);
+                }
+            }
+
+            // Items list (scrollable)
+            Group #ItemsList {
+                FlexWeight: 1;
+                LayoutMode: TopScrolling;
+                ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                Background: (Color: #0a0f17);
+                Padding: (Full: 10);
+            }
+        }
+    }
+}

@@ -168,34 +168,15 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                     String itemName = escapeUI(formatBlockName(item.itemId));
                     String itemQty = "x" + item.quantity;
 
-                    // Step 1: Create the row Group (empty shell)
+                    // Row with item info
                     cmd.appendInline("#KitList",
-                        "Group #" + ir + " { Anchor: (Height: 36); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); }");
-
-                    // Step 2: Try to add item icon (same pattern as WikiEntityDetailPage)
-                    try {
-                        ItemStack itemStack = new ItemStack(item.itemId, item.quantity);
-                        cmd.appendInline("#" + ir,
-                            "Group #" + ir + "IC { Anchor: (Width: 30, Height: 30); Background: (Color: #1a1a2e); Padding: (Full: 2); }");
-                        cmd.setObject("#" + ir + " #" + ir + "IC", itemStack);
-                        cmd.appendInline("#" + ir, "Group { Anchor: (Width: 6); }");
-                    } catch (Exception | Error ignored) {
-                        // Item icon failed - continue without icon
-                    }
-
-                    // Step 3: Add labels and remove button as children
-                    cmd.appendInline("#" + ir,
-                        "Label #" + ir + "N { FlexWeight: 1; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }");
-                    cmd.set("#" + ir + " #" + ir + "N.Text", itemName);
-
-                    cmd.appendInline("#" + ir,
-                        "Label #" + ir + "Q { Anchor: (Width: 60); Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); }");
-                    cmd.set("#" + ir + " #" + ir + "Q.Text", itemQty);
-
-                    cmd.appendInline("#" + ir,
-                        "TextButton #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Text: \"X\"; " +
-                        "  Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
-                        "  Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); }");
+                        "Group #" + ir + " { Anchor: (Height: 30); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
+                        "  Label #" + ir + "N { FlexWeight: 1; Anchor: (Left: 6); Text: \"" + itemName + "\"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
+                        "  Label #" + ir + "Q { Anchor: (Width: 60); Text: \"" + itemQty + "\"; Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
+                        "  TextButton #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Text: \"X\"; " +
+                        "    Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
+                        "    Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
+                        "}");
 
                     final int finalItemIdx = itemIdx;
                     event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #" + ir + "RB",
