@@ -1,0 +1,43 @@
+Group #KitItemRow {
+    Anchor: (Height: 32);
+    LayoutMode: Left;
+    Padding: (Left: 40, Right: 5);
+    Background: (Color: #0d1925);
+
+    Group {
+        Anchor: (Width: 28, Height: 28);
+        Background: (Color: #1a2535);
+        Padding: (Full: 2);
+
+        ItemIcon #RowItemIcon {
+            Anchor: (Width: 24, Height: 24);
+            Visible: true;
+        }
+    }
+
+    Label #RowItemName {
+        FlexWeight: 1;
+        Anchor: (Left: 6);
+        Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center);
+    }
+
+    Label #RowItemQty {
+        Anchor: (Width: 60);
+        Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center);
+    }
+
+    TextButton #RowRemoveBtn {
+        Anchor: (Width: 40, Left: 3, Height: 22);
+        Text: "X";
+        Style: TextButtonStyle(
+            Default: (
+                Background: #5a2d2d,
+                LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+            ),
+            Hovered: (
+                Background: #7a3d3d,
+                LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+            )
+        );
+    }
+}

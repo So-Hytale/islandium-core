@@ -160,22 +160,25 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 for (int itemIdx = 0; itemIdx < kit.items.size(); itemIdx++) {
                     KitItem item = kit.items.get(itemIdx);
                     String ir = "IR" + index + "x" + itemIdx;
-                    String itemName = escapeUI(formatBlockName(item.itemId));
+                    String itemName = formatBlockName(item.itemId);
                     String itemQty = "x" + item.quantity;
 
-                    cmd.appendInline("#KitList",
-                        "Group #" + ir + " { Anchor: (Height: 30); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
-                        "  Group { Anchor: (Width: 26, Height: 26); Background: (Color: #1a2535); Padding: (Full: 3); " +
-                        "    Label { Text: \"#\"; Style: (FontSize: 10, TextColor: #4fc3f7, VerticalAlignment: Center); } } " +
-                        "  Label #" + ir + "N { FlexWeight: 1; Anchor: (Left: 6); Text: \"" + itemName + "\"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
-                        "  Label #" + ir + "Q { Anchor: (Width: 60); Text: \"" + itemQty + "\"; Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
-                        "  TextButton #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Text: \"X\"; " +
-                        "    Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
-                        "    Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
-                        "}");
+                    // Create a container, then append the .ui template into it
+                    cmd.appendInline("#KitList", "Group #" + ir + " { }");
+                    cmd.append("Pages/Islandium/Kit/KitItemRow.ui", "#" + ir);
+
+                    // Set text values
+                    cmd.set("#" + ir + " #RowItemName.TextSpans", Message.raw(itemName));
+                    cmd.set("#" + ir + " #RowItemQty.TextSpans", Message.raw(itemQty));
+
+                    // Set item icon
+                    try {
+                        ItemStack itemStack = new ItemStack(item.itemId, 1);
+                        cmd.setObject("#" + ir + " #RowItemIcon", itemStack);
+                    } catch (Exception ignored) {}
 
                     final int finalItemIdx = itemIdx;
-                    event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #" + ir + "RB",
+                    event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #RowRemoveBtn",
                         EventData.of("Action", "removeItem").append("KitId", kit.id).append("ItemIndex", String.valueOf(finalItemIdx)), false);
                 }
 
