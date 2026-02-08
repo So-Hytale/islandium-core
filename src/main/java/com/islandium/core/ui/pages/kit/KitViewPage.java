@@ -12,6 +12,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
+import com.hypixel.hytale.server.core.ui.ItemGridSlot;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -66,14 +67,14 @@ public class KitViewPage extends InteractiveCustomUIPage<KitViewPage.PageData> {
             cmd.set("#Row" + i + " #Name" + i + ".Text", fi.kitName + " - " + fi.itemId);
             cmd.set("#Row" + i + " #Qty" + i + ".Text", "x" + fi.quantity);
 
-            // Set item icon on the pre-defined ItemSlot
-            // DISABLED FOR TEST - uncomment to test setObject
-            //try {
-            //    ItemStack itemStack = new ItemStack(fi.itemId, fi.quantity);
-            //    cmd.setObject("#Row" + i + " #Slot" + i, itemStack);
-            //} catch (Exception | Error ignored) {
-            //    // Item not found
-            //}
+            // Set item icon using ItemGridSlot (the correct wrapper for setObject on ItemSlot)
+            try {
+                ItemStack itemStack = new ItemStack(fi.itemId, fi.quantity);
+                ItemGridSlot gridSlot = new ItemGridSlot(itemStack);
+                cmd.setObject("#Slot" + i, gridSlot);
+            } catch (Exception | Error ignored) {
+                // Item not found
+            }
         }
     }
 
