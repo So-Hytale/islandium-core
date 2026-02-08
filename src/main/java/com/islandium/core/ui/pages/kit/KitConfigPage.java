@@ -165,7 +165,7 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
 
                     // Create a container, then append the .ui template into it
                     cmd.appendInline("#KitList", "Group #" + ir + " { }");
-                    cmd.append("Pages/Islandium/Kit/KitItemRow.ui", "#" + ir);
+                    cmd.append("#" + ir, "Pages/Islandium/Kit/KitItemRow.ui");
 
                     // Set text values
                     cmd.set("#" + ir + " #RowItemName.TextSpans", Message.raw(itemName));
