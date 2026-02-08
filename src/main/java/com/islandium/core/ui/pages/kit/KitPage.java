@@ -51,6 +51,10 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
         event.addEventBinding(CustomUIEventBindingType.Activating, "#BackBtn",
             EventData.of("Action", "back"), false);
 
+        // Close button
+        event.addEventBinding(CustomUIEventBindingType.Activating, "#CloseButton",
+            EventData.of("Action", "close"), false);
+
         // Build kit grid
         buildKitGrid(cmd, event, uuid);
     }
@@ -326,6 +330,10 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
         if (data.action == null) return;
 
         switch (data.action) {
+            case "close" -> {
+                close();
+                return;
+            }
             case "openKitConfig" -> {
                 plugin.getServiceManager().getKitService(); // ensure loaded
                 var page = new KitConfigPage(playerRef, plugin);
