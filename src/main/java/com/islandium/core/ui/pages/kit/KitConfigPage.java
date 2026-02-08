@@ -160,25 +160,40 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 for (int itemIdx = 0; itemIdx < kit.items.size(); itemIdx++) {
                     KitItem item = kit.items.get(itemIdx);
                     String ir = "IR" + index + "x" + itemIdx;
-                    String itemName = formatBlockName(item.itemId);
+                    String itemName = escapeUI(formatBlockName(item.itemId));
                     String itemQty = "x" + item.quantity;
 
-                    // Create a container, then append the .ui template into it
-                    cmd.appendInline("#KitList", "Group #" + ir + " { }");
-                    cmd.append("#" + ir, "Pages/Islandium/Kit/KitItemRow.ui");
+                    // Step 1: Create the row Group (empty shell)
+                    cmd.appendInline("#KitList",
+                        "Group #" + ir + " { Anchor: (Height: 36); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); }");
 
-                    // Set text values
-                    cmd.set("#" + ir + " #RowItemName.TextSpans", Message.raw(itemName));
-                    cmd.set("#" + ir + " #RowItemQty.TextSpans", Message.raw(itemQty));
-
-                    // Set item icon
+                    // Step 2: Try to add item icon (same pattern as WikiEntityDetailPage)
                     try {
-                        ItemStack itemStack = new ItemStack(item.itemId, 1);
-                        cmd.setObject("#" + ir + " #RowItemIcon", itemStack);
-                    } catch (Exception ignored) {}
+                        ItemStack itemStack = new ItemStack(item.itemId, item.quantity);
+                        cmd.appendInline("#" + ir,
+                            "Group #" + ir + "IC { Anchor: (Width: 30, Height: 30); Background: (Color: #1a1a2e); Padding: (Full: 2); }");
+                        cmd.setObject("#" + ir + " #" + ir + "IC", itemStack);
+                        cmd.appendInline("#" + ir, "Group { Anchor: (Width: 6); }");
+                    } catch (Exception | Error ignored) {
+                        // Item icon failed - continue without icon
+                    }
+
+                    // Step 3: Add labels and remove button as children
+                    cmd.appendInline("#" + ir,
+                        "Label #" + ir + "N { FlexWeight: 1; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }");
+                    cmd.set("#" + ir + " #" + ir + "N.Text", itemName);
+
+                    cmd.appendInline("#" + ir,
+                        "Label #" + ir + "Q { Anchor: (Width: 60); Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); }");
+                    cmd.set("#" + ir + " #" + ir + "Q.Text", itemQty);
+
+                    cmd.appendInline("#" + ir,
+                        "TextButton #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Text: \"X\"; " +
+                        "  Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
+                        "  Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); }");
 
                     final int finalItemIdx = itemIdx;
-                    event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #RowRemoveBtn",
+                    event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #" + ir + "RB",
                         EventData.of("Action", "removeItem").append("KitId", kit.id).append("ItemIndex", String.valueOf(finalItemIdx)), false);
                 }
 
