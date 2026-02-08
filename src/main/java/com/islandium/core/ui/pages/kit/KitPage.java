@@ -126,13 +126,24 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                     else if (j == cardsPerRow - 1) padding = "Padding: (Left: 10);";
                     else padding = "Padding: (Horizontal: 5);";
 
+                    // Get first item of the kit to show as icon
+                    String firstItemId = null;
+                    if (kit.items != null && !kit.items.isEmpty()) {
+                        firstItemId = kit.items.get(0).itemId;
+                    }
+
                     cmd.appendInline("#" + rowId,
                         "Group { FlexWeight: 1; " + padding +
-                        "  Button #" + cardId + " { Background: (Color: #151d28); " +
+                        "  Button #" + cardId + " { " +
+                        "    Style: ButtonStyle(Default: (Background: #151d28), Hovered: (Background: #1e2d3d)); " +
                         "    Group { LayoutMode: Top; Padding: (Full: 12); " +
                         "      Group { Anchor: (Height: 50); LayoutMode: Left; " +
                         "        Group { FlexWeight: 1; } " +
-                        "        Group #" + cardId + "Icon { Anchor: (Width: 48, Height: 48); Background: (Color: #1a2535); } " +
+                        (firstItemId != null ?
+                        "        ItemSlot #" + cardId + "Slot { Anchor: (Width: 48, Height: 48); ShowQualityBackground: false; ShowQuantity: false; } "
+                        :
+                        "        Group #" + cardId + "Icon { Anchor: (Width: 48, Height: 48); Background: (Color: #1a2535); } "
+                        ) +
                         "        Group { FlexWeight: 1; } " +
                         "      } " +
                         "      Label #" + cardId + "Name { Anchor: (Height: 28, Top: 5); " +
@@ -144,6 +155,12 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                         "    } " +
                         "  } " +
                         "}");
+
+                    // Set the ItemSlot icon
+                    if (firstItemId != null) {
+                        cmd.set("#" + cardId + "Slot.ItemId", firstItemId);
+                        cmd.set("#" + cardId + "Slot.Visible", true);
+                    }
 
                     cmd.set("#" + cardId + "Name.Text", kit.displayName != null ? kit.displayName : kit.id);
                     cmd.set("#" + cardId + "Desc.Text", kit.description != null ? kit.description : "");
@@ -242,11 +259,14 @@ public class KitPage extends InteractiveCustomUIPage<KitPage.PageData> {
                 String itemRowId = "ItemRow" + idx;
 
                 cmd.appendInline("#PageContent",
-                    "Group #" + itemRowId + " { Anchor: (Height: 36); LayoutMode: Left; Padding: (Horizontal: 10); Background: (Color: " + bgColor + "); " +
-                    "  Group #" + itemRowId + "Icon { Anchor: (Width: 32, Height: 32); Background: (Color: #1a2535); } " +
+                    "Group #" + itemRowId + " { Anchor: (Height: 40); LayoutMode: Left; Padding: (Horizontal: 10, Vertical: 2); Background: (Color: " + bgColor + "); " +
+                    "  ItemSlot #" + itemRowId + "Slot { Anchor: (Width: 36, Height: 36); ShowQualityBackground: false; ShowQuantity: false; } " +
                     "  Label #IName { FlexWeight: 1; Anchor: (Left: 8); Style: (FontSize: 12, TextColor: #ffffff, VerticalAlignment: Center); } " +
                     "  Label #IQty { Anchor: (Width: 80); Style: (FontSize: 12, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
                     "}");
+
+                cmd.set("#" + itemRowId + "Slot.ItemId", item.itemId);
+                cmd.set("#" + itemRowId + "Slot.Visible", true);
 
                 cmd.set("#" + itemRowId + " #IName.Text", formatBlockName(item.itemId));
                 cmd.set("#" + itemRowId + " #IQty.Text", "x" + item.quantity);

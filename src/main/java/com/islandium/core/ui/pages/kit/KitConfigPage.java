@@ -168,15 +168,19 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                     String itemName = escapeUI(formatBlockName(item.itemId));
                     String itemQty = "x" + item.quantity;
 
-                    // Row with item info
+                    // Row with item info + ItemSlot icon
                     cmd.appendInline("#KitList",
-                        "Group #" + ir + " { Anchor: (Height: 30); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
+                        "Group #" + ir + " { Anchor: (Height: 34); LayoutMode: Left; Padding: (Left: 40, Right: 5); Background: (Color: #0d1925); " +
+                        "  ItemSlot #" + ir + "S { Anchor: (Width: 28, Height: 28); ShowQualityBackground: false; ShowQuantity: false; } " +
                         "  Label #" + ir + "N { FlexWeight: 1; Anchor: (Left: 6); Text: \"" + itemName + "\"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); } " +
                         "  Label #" + ir + "Q { Anchor: (Width: 60); Text: \"" + itemQty + "\"; Style: (FontSize: 11, TextColor: #66bb6a, RenderBold: true, VerticalAlignment: Center); } " +
                         "  TextButton #" + ir + "RB { Anchor: (Width: 40, Left: 3, Height: 22); Text: \"X\"; " +
                         "    Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
                         "    Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
                         "}");
+
+                    cmd.set("#" + ir + "S.ItemId", item.itemId);
+                    cmd.set("#" + ir + "S.Visible", true);
 
                     final int finalItemIdx = itemIdx;
                     event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #" + ir + "RB",
