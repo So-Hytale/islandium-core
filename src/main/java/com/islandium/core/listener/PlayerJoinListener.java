@@ -6,8 +6,10 @@ import com.islandium.core.api.player.IslandiumPlayer;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.listener.base.IslandiumListener;
 import com.hypixel.hytale.event.EventRegistry;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Listener pour la connexion des joueurs.
@@ -27,6 +29,7 @@ public class PlayerJoinListener extends IslandiumListener {
         var playerRef = event.getPlayerRef();
         var uuid = playerRef.getUuid();
         var name = playerRef.getUsername();
+        Player hytalePlayer = event.getPlayer();
 
         // Vérifier si le joueur est banni
         plugin.getServiceManager().getModerationService()
@@ -44,11 +47,11 @@ public class PlayerJoinListener extends IslandiumListener {
                 }
 
                 // Charger les données du joueur
-                loadPlayerData(uuid, name, playerRef);
+                loadPlayerData(uuid, name, playerRef, hytalePlayer);
             });
     }
 
-    private void loadPlayerData(java.util.UUID uuid, String name, com.hypixel.hytale.server.core.universe.PlayerRef playerRef) {
+    private void loadPlayerData(java.util.UUID uuid, String name, com.hypixel.hytale.server.core.universe.PlayerRef playerRef, @Nullable Player hytalePlayer) {
         plugin.getPlayerManager().handlePlayerJoin(uuid, name, playerRef)
             .thenCompose(essentialsPlayer -> {
                 // Synchroniser les permissions avec le système natif Hytale
@@ -72,8 +75,8 @@ public class PlayerJoinListener extends IslandiumListener {
                 // Le joueur est chargé et prêt
                 plugin.log(java.util.logging.Level.FINE, "Player " + name + " data loaded and permissions synced");
 
-                // Téléporter au spawn et gérer le message de bienvenue
-                handleSpawnAndWelcome(essentialsPlayer);
+                // Téléporter au spawn et gérer le message de bienvenue + kits
+                handleSpawnAndWelcome(essentialsPlayer, hytalePlayer);
             })
             .exceptionally(ex -> {
                 plugin.log(java.util.logging.Level.SEVERE, "Failed to load player data for " + name + ": " + ex.getMessage());
@@ -82,21 +85,20 @@ public class PlayerJoinListener extends IslandiumListener {
     }
 
     /**
-     * Gère la téléportation au spawn et le message de bienvenue.
+     * Gère la téléportation au spawn, le message de bienvenue et les kits de première connexion.
      */
-    private void handleSpawnAndWelcome(IslandiumPlayer player) {
-        // Vérifier si le spawn est défini
-        ServerLocation spawn = plugin.getSpawnService().getSpawn();
-        if (spawn != null) {
-            // Téléporter instantanément au spawn (pas de warmup à la connexion)
-            plugin.getTeleportService().teleportInstant(player, spawn);
-            player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
-        }
-
+    private void handleSpawnAndWelcome(IslandiumPlayer player, @Nullable Player hytalePlayer) {
         // Vérifier si c'est un nouveau joueur (première connexion)
         boolean isNewPlayer = isFirstJoin(player);
 
         if (isNewPlayer) {
+            // Téléporter au spawn uniquement à la première connexion
+            ServerLocation spawn = plugin.getSpawnService().getSpawn();
+            if (spawn != null) {
+                plugin.getTeleportService().teleportInstant(player, spawn);
+                player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
+            }
+
             // Envoyer un message de bienvenue global (objet Message Hytale)
             var welcomeMessage = plugin.getMessages().getMessagePrefixed(
                     "welcome.new-player",
@@ -105,6 +107,19 @@ public class PlayerJoinListener extends IslandiumListener {
 
             // Broadcast à tous les joueurs en ligne
             broadcastMessage(welcomeMessage);
+
+            // Donner les kits de première connexion (avec délai pour laisser l'inventaire se charger)
+            if (hytalePlayer != null) {
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(3000); // Attendre que l'inventaire soit prêt
+                        plugin.getServiceManager().getKitService().giveFirstJoinKits(hytalePlayer);
+                        plugin.log(java.util.logging.Level.INFO, "Gave first-join kits to new player " + player.getName());
+                    } catch (Exception e) {
+                        plugin.log(java.util.logging.Level.WARNING, "Failed to give first-join kits to " + player.getName() + ": " + e.getMessage());
+                    }
+                }, "FirstJoinKit-" + player.getName()).start();
+            }
         }
     }
 
