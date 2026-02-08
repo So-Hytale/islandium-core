@@ -67,12 +67,13 @@ public class KitViewPage extends InteractiveCustomUIPage<KitViewPage.PageData> {
             cmd.set("#Row" + i + " #Qty" + i + ".Text", "x" + fi.quantity);
 
             // Set item icon on the pre-defined ItemSlot
-            try {
-                ItemStack itemStack = new ItemStack(fi.itemId, fi.quantity);
-                cmd.setObject("#Row" + i + " #Slot" + i, itemStack);
-            } catch (Exception | Error ignored) {
-                // Item not found
-            }
+            // DISABLED FOR TEST - uncomment to test setObject
+            //try {
+            //    ItemStack itemStack = new ItemStack(fi.itemId, fi.quantity);
+            //    cmd.setObject("#Row" + i + " #Slot" + i, itemStack);
+            //} catch (Exception | Error ignored) {
+            //    // Item not found
+            //}
         }
     }
 
