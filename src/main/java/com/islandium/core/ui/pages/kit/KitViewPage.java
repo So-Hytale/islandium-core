@@ -67,14 +67,9 @@ public class KitViewPage extends InteractiveCustomUIPage<KitViewPage.PageData> {
             cmd.set("#Row" + i + " #Name" + i + ".Text", fi.kitName + " - " + fi.itemId);
             cmd.set("#Row" + i + " #Qty" + i + ".Text", "x" + fi.quantity);
 
-            // Set item icon using ItemGridSlot (the correct wrapper for setObject on ItemSlot)
-            try {
-                ItemStack itemStack = new ItemStack(fi.itemId, fi.quantity);
-                ItemGridSlot gridSlot = new ItemGridSlot(itemStack);
-                cmd.setObject("#Slot" + i, gridSlot);
-            } catch (Exception | Error ignored) {
-                // Item not found
-            }
+            // Set item icon: just set .ItemId property + make visible (HyTreasury pattern)
+            cmd.set("#Slot" + i + ".ItemId", fi.itemId);
+            cmd.set("#Slot" + i + ".Visible", true);
         }
     }
 
