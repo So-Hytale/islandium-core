@@ -46,9 +46,9 @@ $C.@PageOverlay {
 
             // Formulaire creation kit (masque)
             Group #CreateForm {
-                Anchor: (Height: 180);
+                Anchor: (Height: 210);
                 LayoutMode: Top;
-                Padding: (Horizontal: 20, Vertical: 8);
+                Padding: (Horizontal: 20, Vertical: 10);
                 Background: (Color: #1a2a1a);
                 Visible: false;
 
@@ -154,9 +154,9 @@ $C.@PageOverlay {
 
             // Formulaire edition kit (masque)
             Group #EditForm {
-                Anchor: (Height: 165);
+                Anchor: (Height: 200);
                 LayoutMode: Top;
-                Padding: (Horizontal: 20, Vertical: 8);
+                Padding: (Horizontal: 20, Vertical: 10);
                 Background: (Color: #1a2a3a);
                 Visible: false;
 
