@@ -175,11 +175,7 @@ public class DatabaseManager {
                 yaw FLOAT NOT NULL,
                 pitch FLOAT NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-        """)).thenCompose(v -> executor.execute(
-            "DROP TABLE IF EXISTS essentials_kits"
-        )).thenCompose(v -> executor.execute(
-            "DROP TABLE IF EXISTS essentials_kit_cooldowns"
-        )).thenCompose(v -> executor.execute("""
+        """)).thenCompose(v -> executor.execute("""
             -- Table kits (enrichie)
             CREATE TABLE IF NOT EXISTS essentials_kits (
                 name VARCHAR(32) PRIMARY KEY,

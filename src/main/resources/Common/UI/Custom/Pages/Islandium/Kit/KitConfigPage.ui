@@ -152,6 +152,110 @@ $C.@PageOverlay {
                 }
             }
 
+            // Formulaire edition kit (masque)
+            Group #EditForm {
+                Anchor: (Height: 165);
+                LayoutMode: Top;
+                Padding: (Horizontal: 20, Vertical: 8);
+                Background: (Color: #1a2a3a);
+                Visible: false;
+
+                Label #EditFormTitle {
+                    Anchor: (Height: 22);
+                    Style: (FontSize: 13, TextColor: #4fc3f7, RenderBold: true);
+                }
+
+                // Ligne 1: Nom + Couleur
+                Group {
+                    Anchor: (Height: 35);
+                    LayoutMode: Left;
+
+                    Label { Anchor: (Width: 40); Text: "Nom:"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }
+                    $C.@TextField #EditKitNameField { Anchor: (Width: 200, Height: 28); PlaceholderText: "Nom du kit"; }
+
+                    Label { Anchor: (Width: 55, Left: 10); Text: "Couleur:"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }
+                    $C.@TextField #EditKitColorField { Anchor: (Width: 80, Height: 28); PlaceholderText: "#4fc3f7"; }
+                }
+
+                // Ligne 2: Description
+                Group {
+                    Anchor: (Height: 35);
+                    LayoutMode: Left;
+
+                    Label { Anchor: (Width: 75); Text: "Description:"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }
+                    $C.@TextField #EditKitDescField { Anchor: (Width: 500, Height: 28); PlaceholderText: "Description du kit"; }
+                }
+
+                // Ligne 3: Cooldown + Permission
+                Group {
+                    Anchor: (Height: 35);
+                    LayoutMode: Left;
+
+                    Label { Anchor: (Width: 70); Text: "Cooldown:"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }
+                    $C.@TextField #EditKitCooldownField { Anchor: (Width: 80, Height: 28); PlaceholderText: "3600"; }
+                    Label { Anchor: (Width: 130, Left: 5); Text: "(sec, 0=unique, -1=aucun)"; Style: (FontSize: 9, TextColor: #7c8b99, VerticalAlignment: Center); }
+
+                    Label { Anchor: (Width: 70, Left: 10); Text: "Permission:"; Style: (FontSize: 11, TextColor: #96a9be, VerticalAlignment: Center); }
+                    $C.@TextField #EditKitPermField { Anchor: (Width: 150, Height: 28); PlaceholderText: "(vide = tous)"; }
+                }
+
+                // Ligne 4: Boutons
+                Group {
+                    Anchor: (Height: 35);
+                    LayoutMode: Left;
+
+                    TextButton #EditToggleFirstJoinBtn {
+                        Anchor: (Width: 160, Height: 28);
+                        Text: "First Join: NON";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #5a2d2d,
+                                LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Hovered: (
+                                Background: #7a3d3d,
+                                LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+
+                    Group { FlexWeight: 1; }
+
+                    TextButton #ConfirmEditBtn {
+                        Anchor: (Width: 100, Height: 28);
+                        Text: "SAUVEGARDER";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #2d5a2d,
+                                LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Hovered: (
+                                Background: #3d7a3d,
+                                LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+
+                    TextButton #CancelEditBtn {
+                        Anchor: (Width: 80, Left: 5, Height: 28);
+                        Text: "ANNULER";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #5a2d2d,
+                                LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Hovered: (
+                                Background: #7a3d3d,
+                                LabelStyle: (FontSize: 11, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+                }
+            }
+
             // Formulaire ajout item (masque)
             Group #AddItemForm {
                 Anchor: (Height: 45);

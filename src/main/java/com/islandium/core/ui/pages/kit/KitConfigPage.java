@@ -39,6 +39,9 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
     private boolean firstJoinToggle = false;
     private String editingKitId = null;
     private boolean addItemMode = false;
+    private boolean editMode = false;
+    private String editKitId = null;
+    private boolean editFirstJoinToggle = false;
 
     public KitConfigPage(@Nonnull PlayerRef playerRef, IslandiumPlugin plugin) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageData.CODEC);
@@ -69,6 +72,21 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
 
         event.addEventBinding(CustomUIEventBindingType.Activating, "#ToggleFirstJoinBtn",
             EventData.of("Action", "toggleFirstJoin"), false);
+
+        // Edit form events
+        event.addEventBinding(CustomUIEventBindingType.Activating, "#ConfirmEditBtn",
+            EventData.of("Action", "confirmEdit")
+                .append("@EditName", "#EditKitNameField.Value")
+                .append("@EditDesc", "#EditKitDescField.Value")
+                .append("@EditColor", "#EditKitColorField.Value")
+                .append("@EditCooldown", "#EditKitCooldownField.Value")
+                .append("@EditPerm", "#EditKitPermField.Value"), false);
+
+        event.addEventBinding(CustomUIEventBindingType.Activating, "#CancelEditBtn",
+            EventData.of("Action", "cancelEdit"), false);
+
+        event.addEventBinding(CustomUIEventBindingType.Activating, "#EditToggleFirstJoinBtn",
+            EventData.of("Action", "editToggleFirstJoin"), false);
 
         // Add item form events
         event.addEventBinding(CustomUIEventBindingType.Activating, "#ConfirmAddItemBtn",
@@ -112,27 +130,32 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
             String fjText = kit.giveOnFirstJoin ? "FJ" : "-";
             String fjColor = kit.giveOnFirstJoin ? "#66bb6a" : "#5a5a5a";
 
-            // Kit row - TextButton with TextButtonStyle for hover + centering
+            // Kit row with ITEMS, EDIT, SUPPR buttons
             cmd.appendInline("#KitList",
                 "Group #" + rowId + " { Anchor: (Height: 34); LayoutMode: Left; Padding: (Horizontal: 5); Background: (Color: " + bgColor + "); " +
-                "  Label #" + rowId + "N { Anchor: (Width: 130); Text: \"" + displayName + "\"; Style: (FontSize: 12, TextColor: " + nameColor + ", VerticalAlignment: Center" + (isEditing ? ", RenderBold: true" : "") + "); } " +
+                "  Label #" + rowId + "N { Anchor: (Width: 120); Text: \"" + displayName + "\"; Style: (FontSize: 12, TextColor: " + nameColor + ", VerticalAlignment: Center" + (isEditing ? ", RenderBold: true" : "") + "); } " +
                 "  Label #" + rowId + "D { FlexWeight: 1; Text: \"" + desc + "\"; Style: (FontSize: 10, TextColor: #7c8b99, VerticalAlignment: Center); } " +
-                "  Label #" + rowId + "C { Anchor: (Width: 65); Text: \"" + cdText + "\"; Style: (FontSize: 10, TextColor: #96a9be, VerticalAlignment: Center); } " +
-                "  Label #" + rowId + "F { Anchor: (Width: 30); Text: \"" + fjText + "\"; Style: (FontSize: 10, TextColor: " + fjColor + ", RenderBold: true, VerticalAlignment: Center); } " +
-                "  TextButton #" + rowId + "IB { Anchor: (Width: 55, Left: 3, Height: 26); Text: \"ITEMS\"; " +
+                "  Label #" + rowId + "C { Anchor: (Width: 60); Text: \"" + cdText + "\"; Style: (FontSize: 10, TextColor: #96a9be, VerticalAlignment: Center); } " +
+                "  Label #" + rowId + "F { Anchor: (Width: 25); Text: \"" + fjText + "\"; Style: (FontSize: 10, TextColor: " + fjColor + ", RenderBold: true, VerticalAlignment: Center); } " +
+                "  TextButton #" + rowId + "IB { Anchor: (Width: 50, Left: 3, Height: 26); Text: \"ITEMS\"; " +
                 "    Style: TextButtonStyle(Default: (Background: #2d4a5a, LabelStyle: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
                 "    Hovered: (Background: #3d5a6a, LabelStyle: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
-                "  TextButton #" + rowId + "DB { Anchor: (Width: 55, Left: 3, Height: 26); Text: \"SUPPR\"; " +
+                "  TextButton #" + rowId + "EB { Anchor: (Width: 45, Left: 3, Height: 26); Text: \"EDIT\"; " +
+                "    Style: TextButtonStyle(Default: (Background: #4a4a2d, LabelStyle: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
+                "    Hovered: (Background: #6a6a3d, LabelStyle: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
+                "  TextButton #" + rowId + "DB { Anchor: (Width: 50, Left: 3, Height: 26); Text: \"SUPPR\"; " +
                 "    Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
                 "    Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 10, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
                 "}");
 
             event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #" + rowId + "IB",
                 EventData.of("Action", "editKit").append("KitId", kit.id), false);
+            event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #" + rowId + "EB",
+                EventData.of("Action", "showEditKit").append("KitId", kit.id), false);
             event.addEventBinding(CustomUIEventBindingType.Activating, "#" + rowId + " #" + rowId + "DB",
                 EventData.of("Action", "deleteKit").append("KitId", kit.id), false);
 
-            // If this kit is being edited, show its items below
+            // If this kit is being edited (items view), show its items below
             if (isEditing && kit.items != null) {
                 for (int itemIdx = 0; itemIdx < kit.items.size(); itemIdx++) {
                     KitItem item = kit.items.get(itemIdx);
@@ -149,6 +172,12 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                         "    Style: TextButtonStyle(Default: (Background: #5a2d2d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center)), " +
                         "    Hovered: (Background: #7a3d3d, LabelStyle: (FontSize: 9, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center))); } " +
                         "}");
+
+                    // Set item icon
+                    try {
+                        ItemStack itemStack = new ItemStack(item.itemId, item.quantity);
+                        cmd.setObject("#" + ir + "Ic", itemStack);
+                    } catch (Exception ignored) {}
 
                     final int finalItemIdx = itemIdx;
                     event.addEventBinding(CustomUIEventBindingType.Activating, "#" + ir + " #" + ir + "RB",
@@ -187,7 +216,9 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
             case "showCreate" -> {
                 createMode = true;
                 firstJoinToggle = false;
+                editMode = false;
                 cmd.set("#CreateForm.Visible", true);
+                cmd.set("#EditForm.Visible", false);
                 cmd.set("#ToggleFirstJoinBtn.Text", "First Join: NON");
                 sendUpdate(cmd, event, false);
                 return;
@@ -268,6 +299,11 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                         editingKitId = null;
                         cmd.set("#AddItemForm.Visible", false);
                     }
+                    if (data.kitId.equals(editKitId)) {
+                        editMode = false;
+                        editKitId = null;
+                        cmd.set("#EditForm.Visible", false);
+                    }
 
                     player.sendMessage(Message.raw("Kit '" + name + "' supprime!"));
                     buildKitList(cmd, event);
@@ -290,6 +326,84 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                     buildKitList(cmd, event);
                     sendUpdate(cmd, event, false);
                 }
+                return;
+            }
+            case "showEditKit" -> {
+                if (data.kitId != null) {
+                    KitDefinition kit = kitService.getKit(data.kitId);
+                    if (kit == null) return;
+
+                    editMode = true;
+                    editKitId = data.kitId;
+                    editFirstJoinToggle = kit.giveOnFirstJoin;
+                    createMode = false;
+                    cmd.set("#CreateForm.Visible", false);
+
+                    cmd.set("#EditForm.Visible", true);
+                    cmd.set("#EditFormTitle.Text", "EDITER: " + (kit.displayName != null ? kit.displayName : kit.id));
+                    cmd.set("#EditKitNameField.Value", kit.displayName != null ? kit.displayName : "");
+                    cmd.set("#EditKitDescField.Value", kit.description != null ? kit.description : "");
+                    cmd.set("#EditKitColorField.Value", kit.color != null ? kit.color : "#4fc3f7");
+                    cmd.set("#EditKitCooldownField.Value", String.valueOf(kit.cooldownSeconds));
+                    cmd.set("#EditKitPermField.Value", kit.permission != null ? kit.permission : "");
+                    cmd.set("#EditToggleFirstJoinBtn.Text", "First Join: " + (kit.giveOnFirstJoin ? "OUI" : "NON"));
+
+                    sendUpdate(cmd, event, false);
+                }
+                return;
+            }
+            case "cancelEdit" -> {
+                editMode = false;
+                editKitId = null;
+                cmd.set("#EditForm.Visible", false);
+                sendUpdate(cmd, event, false);
+                return;
+            }
+            case "editToggleFirstJoin" -> {
+                editFirstJoinToggle = !editFirstJoinToggle;
+                cmd.set("#EditToggleFirstJoinBtn.Text", "First Join: " + (editFirstJoinToggle ? "OUI" : "NON"));
+                sendUpdate(cmd, event, false);
+                return;
+            }
+            case "confirmEdit" -> {
+                if (editKitId == null) return;
+                KitDefinition kit = kitService.getKit(editKitId);
+                if (kit == null) {
+                    player.sendMessage(Message.raw("Kit introuvable!"));
+                    return;
+                }
+
+                if (data.editName != null && !data.editName.trim().isEmpty()) {
+                    kit.displayName = data.editName.trim();
+                }
+                if (data.editDesc != null) {
+                    kit.description = data.editDesc.trim();
+                }
+                if (data.editColor != null && !data.editColor.trim().isEmpty()) {
+                    kit.color = data.editColor.trim();
+                }
+                if (data.editCooldown != null && !data.editCooldown.trim().isEmpty()) {
+                    try {
+                        kit.cooldownSeconds = Integer.parseInt(data.editCooldown.trim());
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(Message.raw("Cooldown invalide! Utilise un nombre entier."));
+                        return;
+                    }
+                }
+                kit.permission = (data.editPerm != null && !data.editPerm.trim().isEmpty()) ? data.editPerm.trim() : null;
+                kit.giveOnFirstJoin = editFirstJoinToggle;
+
+                kitService.updateKit(kit).exceptionally(ex -> {
+                    player.sendMessage(Message.raw("Erreur sauvegarde BDD: " + ex.getMessage()));
+                    return null;
+                });
+
+                player.sendMessage(Message.raw("Kit '" + kit.displayName + "' mis a jour!"));
+                editMode = false;
+                editKitId = null;
+                cmd.set("#EditForm.Visible", false);
+                buildKitList(cmd, event);
+                sendUpdate(cmd, event, false);
                 return;
             }
             case "showAddItem" -> {
@@ -430,6 +544,11 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
                 .addField(new KeyedCodec<>("@NewKitPerm", Codec.STRING), (d, v) -> d.newKitPerm = v, d -> d.newKitPerm)
                 .addField(new KeyedCodec<>("@NewItemId", Codec.STRING), (d, v) -> d.newItemId = v, d -> d.newItemId)
                 .addField(new KeyedCodec<>("@NewItemQty", Codec.STRING), (d, v) -> d.newItemQty = v, d -> d.newItemQty)
+                .addField(new KeyedCodec<>("@EditName", Codec.STRING), (d, v) -> d.editName = v, d -> d.editName)
+                .addField(new KeyedCodec<>("@EditDesc", Codec.STRING), (d, v) -> d.editDesc = v, d -> d.editDesc)
+                .addField(new KeyedCodec<>("@EditColor", Codec.STRING), (d, v) -> d.editColor = v, d -> d.editColor)
+                .addField(new KeyedCodec<>("@EditCooldown", Codec.STRING), (d, v) -> d.editCooldown = v, d -> d.editCooldown)
+                .addField(new KeyedCodec<>("@EditPerm", Codec.STRING), (d, v) -> d.editPerm = v, d -> d.editPerm)
                 .build();
 
         public String action;
@@ -443,5 +562,10 @@ public class KitConfigPage extends InteractiveCustomUIPage<KitConfigPage.PageDat
         public String newKitPerm;
         public String newItemId;
         public String newItemQty;
+        public String editName;
+        public String editDesc;
+        public String editColor;
+        public String editCooldown;
+        public String editPerm;
     }
 }
