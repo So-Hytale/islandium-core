@@ -93,9 +93,13 @@ public class PlayerJoinListener extends IslandiumListener {
 
         // Téléporter au spawn à chaque connexion
         ServerLocation spawn = plugin.getSpawnService().getSpawn();
+        plugin.log(java.util.logging.Level.INFO, "[JoinTP] spawn=" + spawn + " hytalePlayer=" + (hytalePlayer != null ? "OK" : "NULL"));
         if (spawn != null) {
             plugin.getTeleportService().teleportInstant(player, spawn);
             player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
+            plugin.log(java.util.logging.Level.INFO, "[JoinTP] teleportInstant called for " + player.getName());
+        } else {
+            plugin.log(java.util.logging.Level.WARNING, "[JoinTP] No spawn set! Cannot teleport " + player.getName());
         }
 
         // Donner les kits de première connexion (avec délai pour laisser l'inventaire se charger)

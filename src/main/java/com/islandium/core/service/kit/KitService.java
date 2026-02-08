@@ -215,22 +215,37 @@ public class KitService {
      */
     public void giveFirstJoinKits(@NotNull Player player) {
         UUID uuid = getPlayerUuid(player);
+        plugin.log(Level.INFO, "[FirstJoinKit] getPlayerUuid returned: " + uuid);
         if (uuid == null) return;
 
         String uuidStr = uuid.toString();
         Map<String, Long> playerCooldowns = cooldownsCache.get(uuidStr);
 
-        for (KitDefinition kit : getKits()) {
-            if (!kit.giveOnFirstJoin) continue;
+        List<KitDefinition> allKits = getKits();
+        plugin.log(Level.INFO, "[FirstJoinKit] Total kits loaded: " + allKits.size());
 
-            // Deja donne?
-            if (playerCooldowns != null && playerCooldowns.containsKey(kit.id)) continue;
+        for (KitDefinition kit : allKits) {
+            plugin.log(Level.INFO, "[FirstJoinKit] Kit '" + kit.id + "' giveOnFirstJoin=" + kit.giveOnFirstJoin
+                + " items=" + (kit.items != null ? kit.items.size() : 0));
 
-            // Check permission
-            if (!hasKitPermission(uuid, kit)) continue;
+            if (!kit.giveOnFirstJoin) {
+                plugin.log(Level.INFO, "[FirstJoinKit] SKIP '" + kit.id + "': giveOnFirstJoin=false");
+                continue;
+            }
+
+            if (playerCooldowns != null && playerCooldowns.containsKey(kit.id)) {
+                plugin.log(Level.INFO, "[FirstJoinKit] SKIP '" + kit.id + "': already claimed");
+                continue;
+            }
+
+            if (!hasKitPermission(uuid, kit)) {
+                plugin.log(Level.INFO, "[FirstJoinKit] SKIP '" + kit.id + "': no permission");
+                continue;
+            }
 
             // Give items
-            giveItems(player, kit);
+            boolean success = giveItems(player, kit);
+            plugin.log(Level.INFO, "[FirstJoinKit] giveItems for '" + kit.id + "' returned: " + success);
 
             // Record claim
             cooldownsCache.computeIfAbsent(uuidStr, k -> new ConcurrentHashMap<>());
@@ -241,7 +256,7 @@ public class KitService {
             });
 
             player.sendMessage(Message.raw("Kit " + kit.displayName + " recu!"));
-            plugin.log(Level.INFO, "Gave first-join kit '" + kit.id + "' to " + uuidStr);
+            plugin.log(Level.INFO, "[FirstJoinKit] Gave kit '" + kit.id + "' to " + uuidStr);
         }
     }
 
