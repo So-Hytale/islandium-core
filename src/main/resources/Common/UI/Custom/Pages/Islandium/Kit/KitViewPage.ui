@@ -25,13 +25,83 @@ $C.@PageOverlay {
                 }
             }
 
-            // Items list (scrollable)
+            // Pre-defined item rows with ItemSlot (10 max)
             Group #ItemsList {
                 FlexWeight: 1;
                 LayoutMode: TopScrolling;
                 ScrollbarStyle: $C.@DefaultScrollbarStyle;
                 Background: (Color: #0a0f17);
                 Padding: (Full: 10);
+
+                Group #Row0 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #121a26); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot0 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name0 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty0 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row1 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #151d28); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot1 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name1 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty1 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row2 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #121a26); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot2 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name2 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty2 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row3 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #151d28); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot3 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name3 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty3 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row4 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #121a26); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot4 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name4 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty4 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row5 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #151d28); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot5 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name5 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty5 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row6 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #121a26); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot6 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name6 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty6 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row7 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #151d28); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot7 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name7 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty7 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row8 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #121a26); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot8 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name8 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty8 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
+
+                Group #Row9 { Anchor: (Height: 48, Bottom: 2); Background: (Color: #151d28); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; Visible: false;
+                    ItemSlot #Slot9 { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }
+                    Group { Anchor: (Width: 10); }
+                    Label #Name9 { FlexWeight: 1; Style: (FontSize: 13, TextColor: #ffffff, RenderBold: true, VerticalAlignment: Center); }
+                    Label #Qty9 { Anchor: (Width: 70); Style: (FontSize: 13, TextColor: #66bb6a, VerticalAlignment: Center); }
+                }
             }
         }
     }
