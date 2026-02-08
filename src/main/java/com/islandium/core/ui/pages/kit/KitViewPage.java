@@ -68,12 +68,13 @@ public class KitViewPage extends InteractiveCustomUIPage<KitViewPage.PageData> {
                         String.format("Group #%s { Anchor: (Height: 48, Bottom: 2); Background: (Color: %s); Padding: (Horizontal: 10, Vertical: 4); LayoutMode: Left; }",
                             rowId, bgColor));
 
-                    // Step 2: Try item icon
+                    // Step 2: Item icon using ItemSlot (native element from HyTreasury pattern)
+                    String slotId = "IS" + index + "x" + i;
                     try {
                         ItemStack itemStack = new ItemStack(item.itemId, item.quantity);
                         cmd.appendInline("#" + rowId,
-                            "Group #ItemSlot { Anchor: (Width: 40, Height: 40); Background: (Color: #1a1a2e); Padding: (Full: 4); }");
-                        cmd.setObject("#" + rowId + " #ItemSlot", itemStack);
+                            "ItemSlot #" + slotId + " { Anchor: (Width: 40, Height: 40); ShowQualityBackground: false; ShowQuantity: false; }");
+                        cmd.setObject("#" + rowId + " #" + slotId, itemStack);
                         cmd.appendInline("#" + rowId, "Group { Anchor: (Width: 10); }");
                     } catch (Exception | Error e) {
                         // Icon failed - add placeholder
