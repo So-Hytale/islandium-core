@@ -156,6 +156,7 @@ public class IslandiumPlugin extends JavaPlugin {
                 "KITS",
                 "Reclame tes kits",
                 "#4fc3f7",
+                "Pages/Islandium/MenuCardKits.ui",
                 playerRef -> new KitPage(playerRef, this),
                 true,
                 "kit", "kits"
