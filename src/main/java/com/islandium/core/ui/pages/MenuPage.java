@@ -27,7 +27,7 @@ import java.util.List;
 public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
 
     private static final String ROW_TEMPLATE = "Pages/Islandium/MenuRow.ui";
-    private static final String CARD_TEMPLATE = "Pages/Islandium/MenuCard.ui";
+    private static final String DEFAULT_ICON = "Pages/Islandium/Icons/default.png";
     private static final int COLUMNS = 3;
 
     private final IslandiumPlugin plugin;
@@ -70,26 +70,40 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
 
                 if (entryIndex < entries.size()) {
                     IslandiumUIRegistry.Entry entry = entries.get(entryIndex);
+                    String iconPath = entry.iconPath() != null ? entry.iconPath() : DEFAULT_ICON;
 
-                    // Append card template into the row
-                    cmd.append(rowSelector, CARD_TEMPLATE);
-                    String cardSelector = rowSelector + "[" + col + "]";
+                    // Build card inline with icon baked in
+                    String cardId = "Card_" + entry.id();
+                    StringBuilder card = new StringBuilder();
+                    card.append("Group { FlexWeight: 1; Padding: (Horizontal: 5); ");
+                    card.append("  Button #").append(cardId).append(" { ");
+                    card.append("    Style: ButtonStyle(Default: (Background: #151d28), Hovered: (Background: #1e2d3d)); ");
+                    card.append("    Group { LayoutMode: Top; Padding: (Full: 12); ");
+                    // Icon centered
+                    card.append("      Group { Anchor: (Height: 88); LayoutMode: Left; ");
+                    card.append("        Group { FlexWeight: 1; } ");
+                    card.append("        Group { Anchor: (Width: 88, Height: 88); Background: PatchStyle(TexturePath: \"").append(iconPath).append("\"); } ");
+                    card.append("        Group { FlexWeight: 1; } ");
+                    card.append("      } ");
+                    // Title
+                    card.append("      Label { Anchor: (Height: 30, Top: 8); ");
+                    card.append("        Text: \"").append(entry.displayName()).append("\"; ");
+                    card.append("        Style: (FontSize: 15, TextColor: ").append(entry.accentColor()).append(", RenderBold: true, RenderUppercase: true, HorizontalAlignment: Center, VerticalAlignment: Center); ");
+                    card.append("      } ");
+                    // Description
+                    card.append("      Label { Anchor: (Height: 20); ");
+                    card.append("        Text: \"").append(entry.description()).append("\"; ");
+                    card.append("        Style: (FontSize: 11, TextColor: #7c8b99, HorizontalAlignment: Center); ");
+                    card.append("      } ");
+                    card.append("    } ");
+                    card.append("  } ");
+                    card.append("} ");
 
-                    // Set title text and accent color
-                    cmd.set(cardSelector + " #CardName.Text", entry.displayName());
-                    cmd.set(cardSelector + " #CardName.Style.TextColor", entry.accentColor());
-
-                    // Set description
-                    cmd.set(cardSelector + " #CardDesc.Text", entry.description());
-
-                    // Set icon if provided
-                    if (entry.iconPath() != null) {
-                        cmd.set(cardSelector + " #CardIcon.Background.TexturePath", entry.iconPath());
-                    }
+                    cmd.appendInline(rowSelector, card.toString());
 
                     // Bind click event
                     event.addEventBinding(CustomUIEventBindingType.Activating,
-                            cardSelector + " #MenuCardBtn",
+                            "#" + cardId,
                             EventData.of("OpenPlugin", entry.id()),
                             false);
                 } else {
