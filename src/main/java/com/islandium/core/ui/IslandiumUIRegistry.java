@@ -49,6 +49,7 @@ public class IslandiumUIRegistry {
      * @param displayName    Nom affiche dans le menu
      * @param description    Description courte affichee sous le nom
      * @param accentColor    Couleur d'accent hex (ex: "#ffd700")
+     * @param iconPath       Chemin vers l'icone PNG (ex: "Icons/prison.png"), null pour icone par defaut
      * @param guiSupplier    Factory pour creer la page UI
      * @param showsInNavBar  Si visible dans la barre de navigation
      * @param commandShortcuts Alias de commandes
@@ -58,8 +59,24 @@ public class IslandiumUIRegistry {
             @NotNull String displayName,
             @NotNull String description,
             @NotNull String accentColor,
+            @Nullable String iconPath,
             @NotNull Function<PlayerRef, ? extends InteractiveCustomUIPage<?>> guiSupplier,
             boolean showsInNavBar,
             @NotNull String... commandShortcuts
-    ) {}
+    ) {
+        /**
+         * Constructeur sans iconPath (retrocompatibilite).
+         */
+        public Entry(
+                @NotNull String id,
+                @NotNull String displayName,
+                @NotNull String description,
+                @NotNull String accentColor,
+                @NotNull Function<PlayerRef, ? extends InteractiveCustomUIPage<?>> guiSupplier,
+                boolean showsInNavBar,
+                @NotNull String... commandShortcuts
+        ) {
+            this(id, displayName, description, accentColor, null, guiSupplier, showsInNavBar, commandShortcuts);
+        }
+    }
 }

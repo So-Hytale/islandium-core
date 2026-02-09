@@ -22,11 +22,13 @@ import java.util.List;
 
 /**
  * Page du menu principal - Hub central affichant les plugins enregistres.
- * Utilise cmd.append() avec un fichier MenuCard.ui template (comme NavBarHelper).
+ * Grille de cartes style Prison avec icones, titres et descriptions.
  */
 public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
 
+    private static final String ROW_TEMPLATE = "Pages/Islandium/MenuRow.ui";
     private static final String CARD_TEMPLATE = "Pages/Islandium/MenuCard.ui";
+    private static final int COLUMNS = 3;
 
     private final IslandiumPlugin plugin;
     private final PlayerRef playerRef;
@@ -44,36 +46,57 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
         // Close button
         event.addEventBinding(CustomUIEventBindingType.Activating, "#CloseButton", EventData.of("Action", "close"), false);
 
-        // Build the card list
-        buildCardList(cmd, event);
+        // Build the card grid
+        buildCardGrid(cmd, event);
     }
 
-    private void buildCardList(UICommandBuilder cmd, UIEventBuilder event) {
-        cmd.clear("#CardGrid");
-
+    private void buildCardGrid(UICommandBuilder cmd, UIEventBuilder event) {
         List<IslandiumUIRegistry.Entry> entries = IslandiumUIRegistry.getInstance().getEntries();
 
         if (entries.isEmpty()) {
             return;
         }
 
-        for (int i = 0; i < entries.size(); i++) {
-            IslandiumUIRegistry.Entry entry = entries.get(i);
-            String selector = "#CardGrid[" + i + "]";
+        int totalRows = (int) Math.ceil((double) entries.size() / COLUMNS);
 
-            // Append card from .ui template file (like NavBarHelper does)
-            cmd.append("#CardGrid", CARD_TEMPLATE);
+        for (int row = 0; row < totalRows; row++) {
+            // Append a row container
+            cmd.append("#CardGrid", ROW_TEMPLATE);
+            String rowSelector = "#CardGrid[" + row + "]";
 
-            // Set text and accent color
-            cmd.set(selector + " #CardName.Text", entry.displayName());
-            cmd.set(selector + " #CardName.Style.TextColor", entry.accentColor());
-            cmd.set(selector + " #CardDesc.Text", entry.description());
+            // Fill row with cards (up to COLUMNS per row)
+            for (int col = 0; col < COLUMNS; col++) {
+                int entryIndex = row * COLUMNS + col;
 
-            // Bind click event
-            event.addEventBinding(CustomUIEventBindingType.Activating,
-                    selector + " #MenuCardBtn",
-                    EventData.of("OpenPlugin", entry.id()),
-                    false);
+                if (entryIndex < entries.size()) {
+                    IslandiumUIRegistry.Entry entry = entries.get(entryIndex);
+
+                    // Append card template into the row
+                    cmd.append(rowSelector, CARD_TEMPLATE);
+                    String cardSelector = rowSelector + "[" + col + "]";
+
+                    // Set title text and accent color
+                    cmd.set(cardSelector + " #CardName.Text", entry.displayName());
+                    cmd.set(cardSelector + " #CardName.Style.TextColor", entry.accentColor());
+
+                    // Set description
+                    cmd.set(cardSelector + " #CardDesc.Text", entry.description());
+
+                    // Set icon if provided
+                    if (entry.iconPath() != null) {
+                        cmd.set(cardSelector + " #CardIcon.Background.TexturePath", entry.iconPath());
+                    }
+
+                    // Bind click event
+                    event.addEventBinding(CustomUIEventBindingType.Activating,
+                            cardSelector + " #MenuCardBtn",
+                            EventData.of("OpenPlugin", entry.id()),
+                            false);
+                } else {
+                    // Empty spacer to keep grid alignment
+                    cmd.appendInline(rowSelector, "Group { FlexWeight: 1; Padding: (Horizontal: 5); }");
+                }
+            }
         }
     }
 

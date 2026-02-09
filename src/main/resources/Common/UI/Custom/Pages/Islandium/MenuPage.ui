@@ -1,8 +1,10 @@
 $C = "../../Common.ui";
 
+@DefaultIcon = PatchStyle(TexturePath: "Pages/Islandium/Icons/default.png");
+
 $C.@PageOverlay {
     $C.@Container {
-        Anchor: (Width: 900, Height: 560);
+        Anchor: (Width: 1050, Height: 650);
 
         #Title {
             Group {
@@ -44,12 +46,12 @@ $C.@PageOverlay {
                 }
             }
 
-            // Card grid area
+            // Card grid area - grille de cartes style Prison
             Group #CardGrid {
                 FlexWeight: 1;
                 LayoutMode: TopScrolling;
                 ScrollbarStyle: $C.@DefaultScrollbarStyle;
-                Padding: (Full: 20);
+                Padding: (Full: 25);
             }
         }
     }

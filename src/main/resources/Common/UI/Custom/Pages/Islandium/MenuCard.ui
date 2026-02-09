@@ -1,21 +1,38 @@
+$C = "../../Common.ui";
+
 Group {
-    Anchor: (Height: 78);
+    FlexWeight: 1;
+    Padding: (Horizontal: 5);
 
     Button #MenuCardBtn {
-        Anchor: (Height: 70);
-        Background: (Color: #151d28);
-        Padding: (Horizontal: 15);
+        Style: ButtonStyle(Default: (Background: #151d28), Hovered: (Background: #1e2d3d), Sounds: $C.@ButtonSounds);
 
-        Label #CardName {
-            Anchor: (Height: 35, Top: 8);
-            Text: "Plugin";
-            Style: (FontSize: 16, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, VerticalAlignment: Center);
-        }
+        Group {
+            LayoutMode: Top;
+            Padding: (Full: 12);
 
-        Label #CardDesc {
-            Anchor: (Height: 20, Top: 43);
-            Text: "Description";
-            Style: (FontSize: 12, TextColor: #7c8b99);
+            // Icon centered
+            Group {
+                Anchor: (Height: 88);
+                LayoutMode: Left;
+                Group { FlexWeight: 1; }
+                Group #CardIcon { Anchor: (Width: 88, Height: 88); Background: PatchStyle(TexturePath: "Pages/Islandium/Icons/default.png"); }
+                Group { FlexWeight: 1; }
+            }
+
+            // Title
+            Label #CardName {
+                Anchor: (Height: 30, Top: 8);
+                Text: "Plugin";
+                Style: (FontSize: 15, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+            }
+
+            // Description
+            Label #CardDesc {
+                Anchor: (Height: 20);
+                Text: "Description";
+                Style: (FontSize: 11, TextColor: #7c8b99, HorizontalAlignment: Center);
+            }
         }
     }
 }
