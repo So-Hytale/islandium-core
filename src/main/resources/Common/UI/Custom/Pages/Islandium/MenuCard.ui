@@ -9,22 +9,16 @@ Group {
 
         Group {
             LayoutMode: Top;
-            Padding: (Full: 12);
+            Padding: (Full: 15);
 
-            // Icon centered
-            Group {
-                Anchor: (Height: 88);
-                LayoutMode: Left;
-                Group { FlexWeight: 1; }
-                Group #CardIcon { Anchor: (Width: 88, Height: 88); Background: PatchStyle(TexturePath: "Pages/Islandium/Icons/default.png"); }
-                Group { FlexWeight: 1; }
-            }
+            // Spacer top
+            Group { Anchor: (Height: 40); }
 
             // Title
             Label #CardName {
-                Anchor: (Height: 30, Top: 8);
+                Anchor: (Height: 35);
                 Text: "Plugin";
-                Style: (FontSize: 15, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, HorizontalAlignment: Center, VerticalAlignment: Center);
+                Style: (FontSize: 18, TextColor: #ffffff, RenderBold: true, RenderUppercase: true, HorizontalAlignment: Center, VerticalAlignment: Center);
             }
 
             // Description
@@ -33,6 +27,9 @@ Group {
                 Text: "Description";
                 Style: (FontSize: 11, TextColor: #7c8b99, HorizontalAlignment: Center);
             }
+
+            // Spacer bottom
+            Group { Anchor: (Height: 40); }
         }
     }
 }

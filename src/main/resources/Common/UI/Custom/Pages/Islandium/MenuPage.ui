@@ -1,7 +1,5 @@
 $C = "../../Common.ui";
 
-@DefaultIcon = PatchStyle(TexturePath: "Pages/Islandium/Icons/default.png");
-
 $C.@PageOverlay {
     $C.@Container {
         Anchor: (Width: 1050, Height: 650);

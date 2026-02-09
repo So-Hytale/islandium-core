@@ -1,0 +1,4 @@
+Group {
+    FlexWeight: 1;
+    Padding: (Horizontal: 5);
+}

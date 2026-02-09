@@ -49,7 +49,7 @@ public class IslandiumUIRegistry {
      * @param displayName    Nom affiche dans le menu
      * @param description    Description courte affichee sous le nom
      * @param accentColor    Couleur d'accent hex (ex: "#ffd700")
-     * @param iconPath       Chemin vers l'icone PNG (ex: "Icons/prison.png"), null pour icone par defaut
+     * @param iconPath       Chemin vers un template .ui de carte custom (ex: "Pages/Islandium/MenuCardPrison.ui"), null pour carte par defaut
      * @param guiSupplier    Factory pour creer la page UI
      * @param showsInNavBar  Si visible dans la barre de navigation
      * @param commandShortcuts Alias de commandes
