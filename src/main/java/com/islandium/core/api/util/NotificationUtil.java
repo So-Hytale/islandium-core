@@ -3,40 +3,34 @@ package com.islandium.core.api.util;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.io.PacketHandler;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.util.EventTitleUtil;
+import com.hypixel.hytale.server.core.universe.Universe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Utilitaire centralisé pour envoyer des notifications visuelles (toast) aux joueurs.
- * Utilise EventTitleUtil pour afficher un titre à l'écran avec icône et couleur.
+ * Utilitaire centralise pour envoyer des notifications visuelles (toast) aux joueurs.
+ * Utilise l'API native NotificationUtil de Hytale.
  */
 public final class NotificationUtil {
-
-    private static final float FADE_IN = 0.2f;
-    private static final float FADE_OUT = 0.2f;
 
     private NotificationUtil() {}
 
     /**
-     * Envoie une notification visuelle à un joueur.
+     * Envoie une notification visuelle a un joueur.
      */
     public static void send(@NotNull Player player, @NotNull NotificationType type, @NotNull String message) {
         send(player, type, message, null);
     }
 
     /**
-     * Envoie une notification visuelle à un joueur avec sous-titre.
+     * Envoie une notification visuelle a un joueur avec sous-titre.
      */
     public static void send(@NotNull Player player, @NotNull NotificationType type,
                             @NotNull String message, @Nullable String subtitle) {
         try {
-            var ref = player.getReference();
-            if (ref == null || !ref.isValid()) return;
-
-            var store = ref.getStore();
-            var playerRef = store.getComponent(ref, PlayerRef.getComponentType());
+            PlayerRef playerRef = Universe.get().getPlayer(player.getUuid());
             if (playerRef == null) return;
 
             sendToRef(playerRef, type, message, subtitle);
@@ -88,18 +82,17 @@ public final class NotificationUtil {
 
     private static void sendToRef(@NotNull PlayerRef playerRef, @NotNull NotificationType type,
                                   @NotNull String message, @Nullable String subtitle) {
+        PacketHandler packetHandler = playerRef.getPacketHandler();
+        if (packetHandler == null) return;
+
         Message primaryMsg = Message.raw(message).color(type.getColor());
         Message secondaryMsg = subtitle != null ? Message.raw(subtitle) : Message.raw("");
 
-        EventTitleUtil.showEventTitleToPlayer(
-            playerRef,
+        com.hypixel.hytale.server.core.util.NotificationUtil.sendNotification(
+            packetHandler,
             primaryMsg,
             secondaryMsg,
-            false,
-            null,
-            type.getDuration(),
-            FADE_IN,
-            FADE_OUT
+            type.getStyle()
         );
     }
 }

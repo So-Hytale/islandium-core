@@ -122,6 +122,16 @@ public class TeleportService {
             System.out.println("[ISLANDIUM-TP] hytalePlayer is null for " + player.getName() + ", proceeding with warmup");
         }
 
+        // Bypass warmup dans le monde cellule
+        ServerLocation playerLoc = player.getLocation();
+        if (playerLoc != null && "cellule".equalsIgnoreCase(playerLoc.world())) {
+            doTeleport(player, destination);
+            player.sendNotification(NotificationType.SUCCESS,
+                    ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+
         // Message de warmup
         player.sendNotification(NotificationType.INFO,
                 ColorUtil.stripColors(plugin.getConfigManager().getMessages()

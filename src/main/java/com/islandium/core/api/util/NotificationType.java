@@ -1,24 +1,26 @@
 package com.islandium.core.api.util;
 
+import com.hypixel.hytale.protocol.packets.interface_.NotificationStyle;
+
 /**
  * Types de notifications visuelles (toast) affichées aux joueurs.
- * Chaque type a une couleur, une icône (ItemStack) et une durée configurable.
+ * Chaque type a une couleur, une icône (ItemStack) et un style natif Hytale.
  */
 public enum NotificationType {
 
-    SUCCESS("#55FF55", "Deco_Star_Yellow", 1.5f),
-    ERROR("#FF5555", "Deco_Cross_Red", 1.5f),
-    INFO("#55FFFF", "Deco_Info_Blue", 1.5f),
-    WARNING("#FFFF55", "Deco_Warning_Yellow", 1.5f);
+    SUCCESS("#55FF55", "Deco_Star_Yellow", NotificationStyle.Success),
+    ERROR("#FF5555", "Deco_Cross_Red", NotificationStyle.Danger),
+    INFO("#55FFFF", "Deco_Info_Blue", NotificationStyle.Default),
+    WARNING("#FFFF55", "Deco_Warning_Yellow", NotificationStyle.Warning);
 
     private final String color;
     private String itemId;
-    private float duration;
+    private final NotificationStyle style;
 
-    NotificationType(String color, String itemId, float duration) {
+    NotificationType(String color, String itemId, NotificationStyle style) {
         this.color = color;
         this.itemId = itemId;
-        this.duration = duration;
+        this.style = style;
     }
 
     public String getColor() {
@@ -33,11 +35,7 @@ public enum NotificationType {
         this.itemId = itemId;
     }
 
-    public float getDuration() {
-        return duration;
-    }
-
-    public void setDuration(float duration) {
-        this.duration = duration;
+    public NotificationStyle getStyle() {
+        return style;
     }
 }
