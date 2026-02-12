@@ -2,6 +2,7 @@ package com.islandium.core.api.player;
 
 import com.hypixel.hytale.server.core.Message;
 import com.islandium.core.api.location.ServerLocation;
+import com.islandium.core.api.util.NotificationType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -193,6 +194,21 @@ public interface IslandiumPlayer {
      * Envoie un message Hytale au joueur.
      */
     void sendMessage(@NotNull Message message);
+
+    /**
+     * Envoie une notification visuelle (toast) au joueur.
+     * Fallback vers sendMessage si le joueur n'est pas un Player local.
+     */
+    default void sendNotification(@NotNull NotificationType type, @NotNull String message) {
+        sendMessage(message);
+    }
+
+    /**
+     * Envoie une notification visuelle (toast) avec sous-titre au joueur.
+     */
+    default void sendNotification(@NotNull NotificationType type, @NotNull String message, @Nullable String subtitle) {
+        sendMessage(message);
+    }
 
     // === Permissions ===
 

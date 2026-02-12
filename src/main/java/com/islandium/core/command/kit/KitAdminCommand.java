@@ -5,6 +5,8 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.api.util.ColorUtil;
+import com.islandium.core.api.util.NotificationType;
+import com.islandium.core.api.util.NotificationUtil;
 import com.islandium.core.command.base.IslandiumCommand;
 import com.islandium.core.ui.pages.kit.KitConfigPage;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +26,12 @@ public class KitAdminCommand extends IslandiumCommand {
     @Override
     public CompletableFuture<Void> execute(CommandContext ctx) {
         if (!isPlayer(ctx)) {
-            sendRaw(ctx, "&cCette commande est reservee aux joueurs!");
+            sendNotification(ctx, NotificationType.ERROR, "Cette commande est reservee aux joueurs!");
             return complete();
         }
 
         if (!hasPermission(ctx, "essentials.kit.admin")) {
-            sendRaw(ctx, "&cTu n'as pas la permission!");
+            sendNotification(ctx, NotificationType.ERROR, "Tu n'as pas la permission!");
             return complete();
         }
 
@@ -37,7 +39,7 @@ public class KitAdminCommand extends IslandiumCommand {
 
         var ref = player.getReference();
         if (ref == null || !ref.isValid()) {
-            sendRaw(ctx, "&cErreur: impossible d'ouvrir l'interface.");
+            sendNotification(ctx, NotificationType.ERROR, "Impossible d'ouvrir l'interface.");
             return complete();
         }
 
@@ -47,7 +49,7 @@ public class KitAdminCommand extends IslandiumCommand {
         return CompletableFuture.runAsync(() -> {
             var playerRef = store.getComponent(ref, PlayerRef.getComponentType());
             if (playerRef == null) {
-                ctx.sendMessage(ColorUtil.parse("&cErreur: PlayerRef non trouve."));
+                NotificationUtil.send(ctx, NotificationType.ERROR, "PlayerRef non trouve.");
                 return;
             }
 

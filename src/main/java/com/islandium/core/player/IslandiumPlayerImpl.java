@@ -4,6 +4,8 @@ import com.islandium.core.api.location.ServerLocation;
 import com.islandium.core.api.player.IslandiumPlayer;
 import com.islandium.core.api.player.PlayerState;
 import com.islandium.core.api.util.ColorUtil;
+import com.islandium.core.api.util.NotificationType;
+import com.islandium.core.api.util.NotificationUtil;
 import com.islandium.core.IslandiumPlugin;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -317,6 +319,26 @@ public class IslandiumPlayerImpl implements IslandiumPlayer {
             player.sendMessage(message);
         } else if (hytalePlayer instanceof PlayerRef ref) {
             ref.sendMessage(message);
+        }
+    }
+
+    @Override
+    public void sendNotification(@NotNull NotificationType type, @NotNull String message) {
+        if (!isOnline()) return;
+        if (hytalePlayer instanceof Player player) {
+            NotificationUtil.send(player, type, message);
+        } else {
+            sendMessage(message);
+        }
+    }
+
+    @Override
+    public void sendNotification(@NotNull NotificationType type, @NotNull String message, @Nullable String subtitle) {
+        if (!isOnline()) return;
+        if (hytalePlayer instanceof Player player) {
+            NotificationUtil.send(player, type, message, subtitle);
+        } else {
+            sendMessage(message);
         }
     }
 

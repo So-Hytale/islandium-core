@@ -4,6 +4,8 @@ import com.islandium.core.api.location.ServerLocation;
 import com.islandium.core.api.moderation.PunishmentType;
 import com.islandium.core.api.player.IslandiumPlayer;
 import com.islandium.core.IslandiumPlugin;
+import com.islandium.core.api.util.ColorUtil;
+import com.islandium.core.api.util.NotificationType;
 import com.islandium.core.listener.base.IslandiumListener;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -102,7 +104,8 @@ public class PlayerJoinListener extends IslandiumListener {
                     plugin.log(java.util.logging.Level.INFO, "[JoinTP] spawn=" + spawn + " hytalePlayer=" + (hytalePlayer != null ? "OK" : "NULL"));
                     if (spawn != null) {
                         plugin.getTeleportService().teleportInstant(player, spawn);
-                        player.sendMessage(plugin.getMessages().getMessagePrefixed("spawn.teleported"));
+                        player.sendNotification(NotificationType.SUCCESS,
+                                ColorUtil.stripColors(plugin.getMessages().getPrefixed("spawn.teleported")));
                         plugin.log(java.util.logging.Level.INFO, "[JoinTP] teleportInstant called for " + player.getName());
                     }
 

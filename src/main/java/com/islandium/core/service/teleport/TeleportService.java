@@ -15,6 +15,8 @@ import com.hypixel.hytale.component.Ref;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.api.location.ServerLocation;
 import com.islandium.core.api.player.IslandiumPlayer;
+import com.islandium.core.api.util.ColorUtil;
+import com.islandium.core.api.util.NotificationType;
 import com.islandium.core.player.IslandiumPlayerImpl;
 import com.islandium.core.service.back.BackService;
 import org.jetbrains.annotations.NotNull;
@@ -98,8 +100,8 @@ public class TeleportService {
                     // Téléportation instantanée en créatif
                     System.out.println("[ISLANDIUM-TP] Creative mode detected, instant teleport for " + player.getName());
                     doTeleport(player, destination);
-                    player.sendMessage(plugin.getConfigManager().getMessages()
-                            .getMessagePrefixed("teleport.success"));
+                    player.sendNotification(NotificationType.SUCCESS,
+                            ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
                     if (onComplete != null) onComplete.run();
                     return;
                 }
@@ -112,8 +114,8 @@ public class TeleportService {
             if (player.hasPermission("islandium.teleport.nowarmup")) {
                 System.out.println("[ISLANDIUM-TP] Player " + player.getName() + " has nowarmup permission, instant teleport");
                 doTeleport(player, destination);
-                player.sendMessage(plugin.getConfigManager().getMessages()
-                        .getMessagePrefixed("teleport.success"));
+                player.sendNotification(NotificationType.SUCCESS,
+                        ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
                 if (onComplete != null) onComplete.run();
                 return;
             }
@@ -121,8 +123,9 @@ public class TeleportService {
         }
 
         // Message de warmup
-        player.sendMessage(plugin.getConfigManager().getMessages()
-                .getMessagePrefixed("teleport.warmup", "seconds", String.valueOf(warmupSeconds)));
+        player.sendNotification(NotificationType.INFO,
+                ColorUtil.stripColors(plugin.getConfigManager().getMessages()
+                        .getPrefixed("teleport.warmup", "seconds", String.valueOf(warmupSeconds))));
 
         // Créer la tâche de téléportation
         TeleportTask task = new TeleportTask(player, startLocation, destination, onComplete);
@@ -204,8 +207,8 @@ public class TeleportService {
         doTeleport(task.getPlayer(), task.getDestination());
 
         // Message de succès
-        task.getPlayer().sendMessage(plugin.getConfigManager().getMessages()
-                .getMessagePrefixed("teleport.success"));
+        task.getPlayer().sendNotification(NotificationType.SUCCESS,
+                ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
 
         if (task.getOnComplete() != null) {
             task.getOnComplete().run();
@@ -377,8 +380,8 @@ public class TeleportService {
 
             // Message d'annulation
             if (task.getPlayer().isOnline()) {
-                task.getPlayer().sendMessage(plugin.getConfigManager().getMessages()
-                        .getMessagePrefixed("teleport.cancelled"));
+                task.getPlayer().sendNotification(NotificationType.WARNING,
+                        ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.cancelled")));
             }
         }
     }

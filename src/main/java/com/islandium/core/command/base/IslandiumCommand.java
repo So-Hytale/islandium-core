@@ -9,6 +9,8 @@ import com.islandium.core.api.player.IslandiumPlayer;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.config.MessagesConfig;
 import com.islandium.core.api.util.ColorUtil;
+import com.islandium.core.api.util.NotificationType;
+import com.islandium.core.api.util.NotificationUtil;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -51,6 +53,41 @@ public abstract class IslandiumCommand extends AbstractCommand {
      */
     protected void sendRaw(@NotNull CommandContext ctx, @NotNull String message) {
         ctx.sendMessage(ColorUtil.parse(message));
+    }
+
+    /**
+     * Envoie une notification visuelle (toast) au joueur.
+     * Fallback vers le chat si le sender n'est pas un joueur.
+     */
+    protected void sendNotification(@NotNull CommandContext ctx, @NotNull NotificationType type, @NotNull String message) {
+        if (!ctx.isPlayer()) { sendRaw(ctx, message); return; }
+        NotificationUtil.send(ctx.senderAs(Player.class), type, message);
+    }
+
+    /**
+     * Envoie une notification visuelle avec sous-titre.
+     */
+    protected void sendNotification(@NotNull CommandContext ctx, @NotNull NotificationType type,
+                                    @NotNull String message, @NotNull String subtitle) {
+        if (!ctx.isPlayer()) { sendRaw(ctx, message); return; }
+        NotificationUtil.send(ctx.senderAs(Player.class), type, message, subtitle);
+    }
+
+    /**
+     * Envoie une notification visuelle depuis une clé de config (avec préfixe).
+     */
+    protected void sendNotificationKey(@NotNull CommandContext ctx, @NotNull NotificationType type,
+                                       @NotNull String key, Object... args) {
+        String resolved = ColorUtil.stripColors(messages().getPrefixed(key, args));
+        sendNotification(ctx, type, resolved);
+    }
+
+    /**
+     * Envoie une notification d'erreur depuis une clé de config et retourne un CompletableFuture.
+     */
+    protected CompletableFuture<Void> errorNotification(@NotNull CommandContext ctx, @NotNull String messageKey, Object... args) {
+        sendNotificationKey(ctx, NotificationType.ERROR, messageKey, args);
+        return complete();
     }
 
     /**

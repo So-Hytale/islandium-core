@@ -1,6 +1,7 @@
 package com.islandium.core.command.admin;
 
 import com.islandium.core.IslandiumPlugin;
+import com.islandium.core.api.util.NotificationType;
 import com.islandium.core.command.base.IslandiumCommand;
 import com.islandium.core.api.economy.EconomyService;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -26,7 +27,7 @@ public class EcoCommand extends IslandiumCommand {
     @Override
     public CompletableFuture<Void> execute(CommandContext ctx) {
         if (!hasPermission(ctx, "islandium.eco.admin")) {
-            return error(ctx, "no-permission");
+            return errorNotification(ctx, "no-permission");
         }
 
         String action = ctx.get(actionArg).toLowerCase();
@@ -37,7 +38,7 @@ public class EcoCommand extends IslandiumCommand {
 
         return plugin.getPlayerManager().getPlayer(targetName).thenCompose(targetOpt -> {
             if (targetOpt.isEmpty()) {
-                return error(ctx, "player-not-found", "player", targetName);
+                return errorNotification(ctx, "player-not-found", "player", targetName);
             }
 
             var target = targetOpt.get();
@@ -45,39 +46,39 @@ public class EcoCommand extends IslandiumCommand {
 
             switch (action) {
                 case "give" -> {
-                    if (rawAmount <= 0) return error(ctx, "economy.invalid-amount");
+                    if (rawAmount <= 0) return errorNotification(ctx, "economy.invalid-amount");
                     return economy.addBalance(target.getUniqueId(), amount, "Admin: " + ctx.sender().getDisplayName()).thenAccept(v -> {
                         String formatted = economy.format(amount);
-                        sendMessage(ctx, "economy.eco.give", "amount", formatted, "player", targetName);
+                        sendNotificationKey(ctx, NotificationType.SUCCESS, "economy.eco.give", "amount", formatted, "player", targetName);
                     });
                 }
                 case "take" -> {
-                    if (rawAmount <= 0) return error(ctx, "economy.invalid-amount");
+                    if (rawAmount <= 0) return errorNotification(ctx, "economy.invalid-amount");
                     return economy.removeBalance(target.getUniqueId(), amount, "Admin: " + ctx.sender().getDisplayName()).thenAccept(success -> {
                         if (success) {
                             String formatted = economy.format(amount);
-                            sendMessage(ctx, "economy.eco.take", "amount", formatted, "player", targetName);
+                            sendNotificationKey(ctx, NotificationType.SUCCESS, "economy.eco.take", "amount", formatted, "player", targetName);
                         } else {
-                            sendMessage(ctx, "economy.eco.not-enough", "player", targetName);
+                            sendNotificationKey(ctx, NotificationType.ERROR, "economy.eco.not-enough", "player", targetName);
                         }
                     });
                 }
                 case "set" -> {
-                    if (rawAmount < 0) return error(ctx, "economy.invalid-amount");
+                    if (rawAmount < 0) return errorNotification(ctx, "economy.invalid-amount");
                     return economy.setBalance(target.getUniqueId(), amount).thenAccept(v -> {
                         String formatted = economy.format(amount);
-                        sendMessage(ctx, "economy.eco.set", "amount", formatted, "player", targetName);
+                        sendNotificationKey(ctx, NotificationType.SUCCESS, "economy.eco.set", "amount", formatted, "player", targetName);
                     });
                 }
                 case "reset" -> {
                     BigDecimal startingBalance = economy.getStartingBalance();
                     return economy.setBalance(target.getUniqueId(), startingBalance).thenAccept(v -> {
                         String formatted = economy.format(startingBalance);
-                        sendMessage(ctx, "economy.eco.reset", "player", targetName, "amount", formatted);
+                        sendNotificationKey(ctx, NotificationType.SUCCESS, "economy.eco.reset", "player", targetName, "amount", formatted);
                     });
                 }
                 default -> {
-                    return error(ctx, "economy.eco.usage");
+                    return errorNotification(ctx, "economy.eco.usage");
                 }
             }
         });
