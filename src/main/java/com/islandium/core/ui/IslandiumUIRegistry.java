@@ -52,6 +52,7 @@ public class IslandiumUIRegistry {
      * @param iconPath       Chemin vers un template .ui de carte custom (ex: "Pages/Islandium/MenuCardPrison.ui"), null pour carte par defaut
      * @param guiSupplier    Factory pour creer la page UI
      * @param showsInNavBar  Si visible dans la barre de navigation
+     * @param worldFilter    Nom du monde requis pour afficher cette entry (null = visible partout)
      * @param commandShortcuts Alias de commandes
      */
     public record Entry(
@@ -62,10 +63,11 @@ public class IslandiumUIRegistry {
             @Nullable String iconPath,
             @NotNull Function<PlayerRef, ? extends InteractiveCustomUIPage<?>> guiSupplier,
             boolean showsInNavBar,
+            @Nullable String worldFilter,
             @NotNull String... commandShortcuts
     ) {
         /**
-         * Constructeur sans iconPath (retrocompatibilite).
+         * Constructeur sans iconPath ni worldFilter (retrocompatibilite).
          */
         public Entry(
                 @NotNull String id,
@@ -76,7 +78,7 @@ public class IslandiumUIRegistry {
                 boolean showsInNavBar,
                 @NotNull String... commandShortcuts
         ) {
-            this(id, displayName, description, accentColor, null, guiSupplier, showsInNavBar, commandShortcuts);
+            this(id, displayName, description, accentColor, null, guiSupplier, showsInNavBar, null, commandShortcuts);
         }
     }
 }

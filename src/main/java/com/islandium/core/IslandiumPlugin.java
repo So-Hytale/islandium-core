@@ -159,6 +159,7 @@ public class IslandiumPlugin extends JavaPlugin {
                 "Pages/Islandium/MenuCardKits.ui",
                 playerRef -> new KitPage(playerRef, this),
                 true,
+                (String) null,
                 "kit", "kits"
             ));
 

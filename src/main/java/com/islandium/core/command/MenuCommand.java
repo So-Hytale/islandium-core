@@ -38,6 +38,8 @@ public class MenuCommand extends IslandiumCommand {
         var store = ref.getStore();
         var world = ((com.hypixel.hytale.server.core.universe.world.storage.EntityStore) store.getExternalData()).getWorld();
 
+        String worldName = world.getName();
+
         return CompletableFuture.runAsync(() -> {
             var playerRef = store.getComponent(ref, PlayerRef.getComponentType());
 
@@ -46,7 +48,7 @@ public class MenuCommand extends IslandiumCommand {
                 return;
             }
 
-            MenuPage page = new MenuPage(playerRef, plugin);
+            MenuPage page = new MenuPage(playerRef, plugin, worldName);
             player.getPageManager().openCustomPage(ref, store, page);
         }, world);
     }

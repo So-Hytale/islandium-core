@@ -33,11 +33,13 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
 
     private final IslandiumPlugin plugin;
     private final PlayerRef playerRef;
+    private final String playerWorldName;
 
-    public MenuPage(@Nonnull PlayerRef playerRef, IslandiumPlugin plugin) {
+    public MenuPage(@Nonnull PlayerRef playerRef, IslandiumPlugin plugin, @Nonnull String playerWorldName) {
         super(playerRef, CustomPageLifetime.CanDismiss, PageData.CODEC);
         this.plugin = plugin;
         this.playerRef = playerRef;
+        this.playerWorldName = playerWorldName;
     }
 
     @Override
@@ -52,7 +54,9 @@ public class MenuPage extends InteractiveCustomUIPage<MenuPage.PageData> {
     }
 
     private void buildCardGrid(UICommandBuilder cmd, UIEventBuilder event) {
-        List<IslandiumUIRegistry.Entry> entries = IslandiumUIRegistry.getInstance().getEntries();
+        List<IslandiumUIRegistry.Entry> entries = IslandiumUIRegistry.getInstance().getEntries().stream()
+                .filter(e -> e.worldFilter() == null || e.worldFilter().equals(playerWorldName))
+                .toList();
 
         if (entries.isEmpty()) {
             return;
