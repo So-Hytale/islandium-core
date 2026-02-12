@@ -13,8 +13,10 @@ import com.islandium.core.service.permission.PermissionServiceImpl;
 import com.islandium.core.service.back.BackService;
 import com.islandium.core.service.kit.KitService;
 import com.islandium.core.service.spawn.SpawnService;
+import com.islandium.core.service.server.ServerService;
 import com.islandium.core.service.teleport.TeleportService;
 import com.islandium.core.database.repository.KitRepository;
+import com.islandium.core.database.repository.ServerRepository;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -38,6 +40,7 @@ public class ServiceManager {
     private TeleportService teleportService;
     private BackService backService;
     private KitService kitService;
+    private ServerService serverService;
 
     public ServiceManager(@NotNull IslandiumPlugin plugin) {
         this.plugin = plugin;
@@ -66,6 +69,10 @@ public class ServiceManager {
         var kitRepository = new KitRepository(sql);
         this.kitService = new KitService(plugin, kitRepository);
 
+        // Server service
+        var serverRepository = new ServerRepository(sql);
+        this.serverService = new ServerService(plugin, serverRepository);
+
         // Load spawn data
         spawnService.load();
 
@@ -74,7 +81,8 @@ public class ServiceManager {
 
         // Initialize permission service (loads ranks from DB)
         return permissionService.initialize()
-            .thenCompose(v -> kitService.loadKits());
+            .thenCompose(v -> kitService.loadKits())
+            .thenCompose(v -> serverService.loadServers());
     }
 
     /**
@@ -150,5 +158,10 @@ public class ServiceManager {
     @NotNull
     public KitService getKitService() {
         return kitService;
+    }
+
+    @NotNull
+    public ServerService getServerService() {
+        return serverService;
     }
 }

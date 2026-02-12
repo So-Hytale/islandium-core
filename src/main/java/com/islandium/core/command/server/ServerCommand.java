@@ -4,7 +4,8 @@ import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.command.base.IslandiumCommand;
-import com.islandium.core.config.MainConfig;
+import com.islandium.core.server.ServerData;
+import com.islandium.core.service.server.ServerService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,13 +26,16 @@ public class ServerCommand extends IslandiumCommand {
         setAllowsExtraArguments(true);
     }
 
+    private ServerService serverService() {
+        return plugin.getServiceManager().getServerService();
+    }
+
     @Override
     public CompletableFuture<Void> execute(CommandContext ctx) {
         Player player = requirePlayer(ctx);
 
         // Parser l'argument manuellement
         String[] parts = ctx.getInputString().split("\\s+");
-        // parts[0] = "server", parts[1] = nom du serveur (optionnel)
 
         // Si pas d'argument, affiche le serveur actuel
         if (parts.length < 2) {
@@ -45,40 +49,33 @@ public class ServerCommand extends IslandiumCommand {
             targetServer = "lobby";
         }
 
-        MainConfig config = plugin.getConfigManager().getMainConfig();
-        MainConfig.ServerInfo serverInfo = config.getServer(targetServer);
+        ServerData serverData = serverService().getServer(targetServer);
 
-        if (serverInfo == null) {
+        if (serverData == null) {
             return showAvailableServers(ctx, targetServer);
         }
 
-        String currentServer = config.getServerName();
+        String currentServer = plugin.getConfigManager().getMainConfig().getServerName();
         if (currentServer.equalsIgnoreCase(targetServer)) {
-            sendMessage(ctx, "server.already-connected", "server", serverInfo.displayName);
+            sendMessage(ctx, "server.already-connected", "server", serverData.getDisplayName());
             return complete();
         }
 
         // Transfert vers le serveur cible
-        sendMessage(ctx, "server.connecting", "server", serverInfo.displayName);
-        player.getPlayerRef().referToServer(serverInfo.host, serverInfo.port, null);
+        sendMessage(ctx, "server.connecting", "server", serverData.getDisplayName());
+        player.getPlayerRef().referToServer(serverData.getHost(), serverData.getPort(), null);
 
         return complete();
     }
 
     private CompletableFuture<Void> showCurrentServer(CommandContext ctx) {
-        MainConfig config = plugin.getConfigManager().getMainConfig();
-        String currentServerName = config.getServerName();
+        String currentServerName = plugin.getConfigManager().getMainConfig().getServerName();
 
         // Cherche le displayName du serveur actuel
-        String displayName = config.getServers().entrySet().stream()
-            .filter(e -> e.getKey().equalsIgnoreCase(currentServerName))
-            .map(e -> e.getValue().displayName)
-            .findFirst()
-            .orElse(currentServerName);
+        ServerData current = serverService().getServer(currentServerName);
+        String displayName = current != null ? current.getDisplayName() : currentServerName;
 
         sendMessage(ctx, "server.current", "server", displayName);
-
-        // Affiche aussi la liste des serveurs disponibles
         showServerList(ctx);
 
         return complete();
@@ -91,7 +88,7 @@ public class ServerCommand extends IslandiumCommand {
     }
 
     private void showServerList(CommandContext ctx) {
-        Map<String, MainConfig.ServerInfo> servers = plugin.getConfigManager().getMainConfig().getServers();
+        Map<String, ServerData> servers = serverService().getServers();
         String currentServer = plugin.getConfigManager().getMainConfig().getServerName();
 
         if (servers.isEmpty()) {
@@ -101,19 +98,19 @@ public class ServerCommand extends IslandiumCommand {
 
         sendMessage(ctx, "server.list-header");
 
-        for (Map.Entry<String, MainConfig.ServerInfo> entry : servers.entrySet()) {
+        for (Map.Entry<String, ServerData> entry : servers.entrySet()) {
             String name = entry.getKey();
-            MainConfig.ServerInfo info = entry.getValue();
+            ServerData info = entry.getValue();
             boolean isCurrent = name.equalsIgnoreCase(currentServer);
 
             if (isCurrent) {
                 sendMessage(ctx, "server.list-entry-current",
                     "name", name,
-                    "display", info.displayName);
+                    "display", info.getDisplayName());
             } else {
                 sendMessage(ctx, "server.list-entry",
                     "name", name,
-                    "display", info.displayName);
+                    "display", info.getDisplayName());
             }
         }
     }
@@ -123,7 +120,7 @@ public class ServerCommand extends IslandiumCommand {
         String[] parts = ctx.getInputString().split("\\s+");
         String current = parts.length >= 2 ? parts[1] : "";
 
-        Map<String, MainConfig.ServerInfo> servers = plugin.getConfigManager().getMainConfig().getServers();
+        Map<String, ServerData> servers = serverService().getServers();
 
         List<String> suggestions = servers.keySet().stream()
             .filter(name -> name.toLowerCase().startsWith(current.toLowerCase()))

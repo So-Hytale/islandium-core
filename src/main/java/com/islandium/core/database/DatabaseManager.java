@@ -275,6 +275,15 @@ public class DatabaseManager {
                 INDEX idx_player (player_uuid),
                 INDEX idx_expires (expires_at)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)).thenCompose(v -> executor.execute("""
+            -- Table serveurs
+            CREATE TABLE IF NOT EXISTS essentials_servers (
+                name VARCHAR(32) PRIMARY KEY,
+                host VARCHAR(128) NOT NULL,
+                port INT NOT NULL DEFAULT 25565,
+                display_name VARCHAR(64) NOT NULL,
+                created_at BIGINT NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)).thenRun(() -> plugin.log(Level.INFO, "Database migrations completed!"));
     }
 }

@@ -7,6 +7,7 @@ import com.islandium.core.command.permission.PermCommand;
 import com.islandium.core.command.permission.RankCommand;
 import com.islandium.core.command.permission.RanksCommand;
 import com.islandium.core.command.player.*;
+import com.islandium.core.command.server.ServerAdminCommand;
 import com.islandium.core.command.server.ServerCommand;
 import com.islandium.core.command.spawn.BackCommand;
 import com.islandium.core.command.spawn.SetSpawnCommand;
@@ -59,6 +60,7 @@ public class CommandManager {
 
         // Server commands
         register(new ServerCommand(plugin));
+        register(new ServerAdminCommand(plugin));
 
         // Spawn commands
         register(new SpawnCommand(plugin));
