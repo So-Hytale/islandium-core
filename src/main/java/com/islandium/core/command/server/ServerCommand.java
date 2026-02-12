@@ -1,8 +1,6 @@
 package com.islandium.core.command.server;
 
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
-import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.command.base.IslandiumCommand;
@@ -20,25 +18,27 @@ import java.util.stream.Collectors;
  */
 public class ServerCommand extends IslandiumCommand {
 
-    private final OptionalArg<String> serverArg;
-
     public ServerCommand(@NotNull IslandiumPlugin plugin) {
         super(plugin, "server", "Change de serveur ou affiche le serveur actuel");
         addAliases("srv", "hub", "lobby");
         requirePermission("islandium.server");
-        serverArg = withOptionalArg("serveur", "Nom du serveur cible", ArgTypes.STRING);
+        setAllowsExtraArguments(true);
     }
 
     @Override
     public CompletableFuture<Void> execute(CommandContext ctx) {
         Player player = requirePlayer(ctx);
 
+        // Parser l'argument manuellement
+        String[] parts = ctx.getInputString().split("\\s+");
+        // parts[0] = "server", parts[1] = nom du serveur (optionnel)
+
         // Si pas d'argument, affiche le serveur actuel
-        if (!ctx.provided(serverArg)) {
+        if (parts.length < 2) {
             return showCurrentServer(ctx);
         }
 
-        String targetServer = ctx.get(serverArg);
+        String targetServer = parts[1];
 
         // Alias pour lobby/hub
         if (targetServer.equalsIgnoreCase("hub")) {
@@ -60,7 +60,7 @@ public class ServerCommand extends IslandiumCommand {
 
         // Transfert vers le serveur cible
         sendMessage(ctx, "server.connecting", "server", serverInfo.displayName);
-        player.getPlayerRef().referToServer(serverInfo.host, serverInfo.port);
+        player.getPlayerRef().referToServer(serverInfo.host, serverInfo.port, null);
 
         return complete();
     }
@@ -120,10 +120,13 @@ public class ServerCommand extends IslandiumCommand {
 
     @Override
     public CompletableFuture<List<String>> tabComplete(CommandContext ctx, String partial) {
+        String[] parts = ctx.getInputString().split("\\s+");
+        String current = parts.length >= 2 ? parts[1] : "";
+
         Map<String, MainConfig.ServerInfo> servers = plugin.getConfigManager().getMainConfig().getServers();
 
         List<String> suggestions = servers.keySet().stream()
-            .filter(name -> name.toLowerCase().startsWith(partial.toLowerCase()))
+            .filter(name -> name.toLowerCase().startsWith(current.toLowerCase()))
             .collect(Collectors.toList());
 
         return CompletableFuture.completedFuture(suggestions);
