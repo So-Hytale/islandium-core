@@ -51,7 +51,7 @@ public class ServerSelectPage extends InteractiveCustomUIPage<ServerSelectPage.P
         Map<String, ServerData> servers = serverService.getServers();
 
         if (servers.isEmpty()) {
-            cmd.appendInline("#ServerList", "Label { Text: \"Aucun serveur disponible\"; Anchor: (Height: 40); Style: (FontSize: 14, TextColor: #808080); }");
+            cmd.appendInline("#ServerList", "Label { Text: \"Aucun serveur disponible\"; Anchor: (Height: 60); Style: (FontSize: 14, TextColor: #607080); }");
             return;
         }
 
@@ -62,22 +62,24 @@ public class ServerSelectPage extends InteractiveCustomUIPage<ServerSelectPage.P
             boolean isCurrent = name.equalsIgnoreCase(currentServerName);
             String btnId = "Srv" + index;
 
-            String displayText = isCurrent ? data.getDisplayName() + " (actuel)" : data.getDisplayName();
-            String bgColor = isCurrent ? "#1a2a3a" : "#1e3a5f";
-            String hoverColor = isCurrent ? "#1a2a3a" : "#2a4f7f";
-            String pressColor = isCurrent ? "#1a2a3a" : "#153050";
-            String textColor = isCurrent ? "#607080" : "#ffffff";
+            String bgDefault = isCurrent ? "#1a2533" : "#151d28";
+            String bgHover = isCurrent ? "#1a2533" : "#1e2d3d";
+            String titleColor = isCurrent ? "#4a5a6a" : "#ffffff";
+            String subColor = isCurrent ? "#3a4a5a" : "#7c8b99";
+            String statusText = isCurrent ? "Connecte" : data.getHost() + ":" + data.getPort();
 
             cmd.appendInline("#ServerList",
-                "TextButton #" + btnId + " { " +
-                    "Anchor: (Height: 44, Bottom: 6); " +
-                    "Text: \"" + displayText + "\"; " +
-                    "Style: TextButtonStyle(" +
-                        "Default: (Background: " + bgColor + ", LabelStyle: (FontSize: 15, TextColor: " + textColor + ", RenderBold: true))," +
-                        "Hovered: (Background: " + hoverColor + ", LabelStyle: (FontSize: 15, TextColor: " + textColor + ", RenderBold: true))," +
-                        "Pressed: (Background: " + pressColor + ", LabelStyle: (FontSize: 15, TextColor: " + textColor + ", RenderBold: true))," +
-                    "); " +
+                "Button #" + btnId + " { " +
+                    "Anchor: (Height: 60, Bottom: 8); " +
+                    "Style: ButtonStyle(Default: (Background: " + bgDefault + "), Hovered: (Background: " + bgHover + ")); " +
+                    "Group { LayoutMode: Top; Padding: (Horizontal: 15, Top: 10); " +
+                        "Label #T" + index + " { Anchor: (Height: 24); Style: (FontSize: 16, TextColor: " + titleColor + ", RenderBold: true); } " +
+                        "Label #S" + index + " { Anchor: (Height: 18); Style: (FontSize: 11, TextColor: " + subColor + "); } " +
+                    "} " +
                 "}");
+
+            cmd.set("#T" + index + ".Text", data.getDisplayName());
+            cmd.set("#S" + index + ".Text", statusText);
 
             if (!isCurrent) {
                 event.addEventBinding(CustomUIEventBindingType.Activating, "#" + btnId, EventData.of("SelectServer", name), false);
