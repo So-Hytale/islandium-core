@@ -2,10 +2,12 @@ package com.islandium.core.command.server;
 
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.islandium.core.IslandiumPlugin;
 import com.islandium.core.command.base.IslandiumCommand;
 import com.islandium.core.server.ServerData;
 import com.islandium.core.service.server.ServerService;
+import com.islandium.core.ui.pages.server.ServerSelectPage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -37,9 +39,9 @@ public class ServerCommand extends IslandiumCommand {
         // Parser l'argument manuellement
         String[] parts = ctx.getInputString().split("\\s+");
 
-        // Si pas d'argument, affiche le serveur actuel
+        // Si pas d'argument, ouvre l'UI de selection
         if (parts.length < 2) {
-            return showCurrentServer(ctx);
+            return openSelectUI(player);
         }
 
         String targetServer = parts[1];
@@ -68,51 +70,27 @@ public class ServerCommand extends IslandiumCommand {
         return complete();
     }
 
-    private CompletableFuture<Void> showCurrentServer(CommandContext ctx) {
-        String currentServerName = plugin.getConfigManager().getMainConfig().getServerName();
+    private CompletableFuture<Void> openSelectUI(Player player) {
+        var ref = player.getReference();
+        if (ref == null || !ref.isValid()) {
+            return complete();
+        }
 
-        // Cherche le displayName du serveur actuel
-        ServerData current = serverService().getServer(currentServerName);
-        String displayName = current != null ? current.getDisplayName() : currentServerName;
+        var store = ref.getStore();
+        var world = ((com.hypixel.hytale.server.core.universe.world.storage.EntityStore) store.getExternalData()).getWorld();
 
-        sendMessage(ctx, "server.current", "server", displayName);
-        showServerList(ctx);
+        return CompletableFuture.runAsync(() -> {
+            var playerRef = store.getComponent(ref, PlayerRef.getComponentType());
+            if (playerRef == null) return;
 
-        return complete();
+            ServerSelectPage page = new ServerSelectPage(playerRef, plugin);
+            player.getPageManager().openCustomPage(ref, store, page);
+        }, world);
     }
 
     private CompletableFuture<Void> showAvailableServers(CommandContext ctx, String attempted) {
         sendMessage(ctx, "server.not-found", "server", attempted);
-        showServerList(ctx);
         return complete();
-    }
-
-    private void showServerList(CommandContext ctx) {
-        Map<String, ServerData> servers = serverService().getServers();
-        String currentServer = plugin.getConfigManager().getMainConfig().getServerName();
-
-        if (servers.isEmpty()) {
-            sendMessage(ctx, "server.no-servers");
-            return;
-        }
-
-        sendMessage(ctx, "server.list-header");
-
-        for (Map.Entry<String, ServerData> entry : servers.entrySet()) {
-            String name = entry.getKey();
-            ServerData info = entry.getValue();
-            boolean isCurrent = name.equalsIgnoreCase(currentServer);
-
-            if (isCurrent) {
-                sendMessage(ctx, "server.list-entry-current",
-                    "name", name,
-                    "display", info.getDisplayName());
-            } else {
-                sendMessage(ctx, "server.list-entry",
-                    "name", name,
-                    "display", info.getDisplayName());
-            }
-        }
     }
 
     @Override
