@@ -1117,28 +1117,24 @@ public class WorldManagerPage extends InteractiveCustomUIPage<WorldManagerPage.P
                             var islandiumPlayerOpt = plugin.getPlayerManager().getOnlinePlayer(playerRef.getUuid());
                             if (islandiumPlayerOpt.isPresent()) {
                                 var islandiumPlayer = islandiumPlayerOpt.get();
-                                // Vérifier si un world spawn est défini
+                                // Verifier si un world spawn est defini
                                 var worldSpawn = plugin.getSpawnService().getWorldSpawn(selectedWorldName);
                                 if (worldSpawn != null) {
-                                    // TP aux coordonnées du world spawn (gère le cross-world)
+                                    // TP aux coordonnees du world spawn (gere le cross-world)
                                     plugin.getTeleportService().teleportInstant(islandiumPlayer, worldSpawn);
                                     player.sendMessage(Message.raw("Teleporte vers '" + selectedWorldName + "' au spawn du monde!"));
                                 } else {
-                                    // Pas de world spawn: juste changer de monde
+                                    // Pas de world spawn: utiliser TeleportService avec position par defaut (0, 100, 0)
                                     World currentWorld = ((EntityStore) store.getExternalData()).getWorld();
                                     if (currentWorld == targetWorld) {
                                         player.sendMessage(Message.raw("Vous etes deja dans ce monde!"));
                                     } else {
-                                        final String targetName = selectedWorldName;
-                                        currentWorld.execute(() -> {
-                                            playerRef.removeFromStore();
-                                            targetWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
-                                                .thenRun(() -> player.sendMessage(Message.raw("Teleporte vers '" + targetName + "'!")))
-                                                .exceptionally(ex -> {
-                                                    player.sendMessage(Message.raw("Erreur de teleportation: " + ex.getMessage()));
-                                                    return null;
-                                                });
-                                        });
+                                        var defaultSpawn = com.islandium.core.api.location.ServerLocation.of(
+                                            plugin.getServerName(), selectedWorldName,
+                                            0.0, 100.0, 0.0, 0f, 0f
+                                        );
+                                        plugin.getTeleportService().teleportInstant(islandiumPlayer, defaultSpawn);
+                                        player.sendMessage(Message.raw("Teleporte vers '" + selectedWorldName + "' (position par defaut)!"));
                                     }
                                 }
                             }

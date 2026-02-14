@@ -28,7 +28,7 @@ import java.util.concurrent.*;
 import java.util.logging.Level;
 
 /**
- * Service de téléportation avec warmup et annulation si mouvement.
+ * Service de teleportation avec warmup et annulation si mouvement.
  */
 public class TeleportService {
 
@@ -39,6 +39,10 @@ public class TeleportService {
     // Configuration
     private int warmupSeconds = 5;
     private double movementThreshold = 0.5; // Distance max avant annulation
+
+    // Nombre max de retries pour appliquer la position apres cross-world
+    private static final int MAX_POSITION_RETRIES = 5;
+    private static final long RETRY_DELAY_MS = 200;
 
     public TeleportService(@NotNull IslandiumPlugin plugin) {
         this.plugin = plugin;
@@ -64,12 +68,12 @@ public class TeleportService {
     }
 
     /**
-     * Téléporte un joueur avec warmup.
-     * Le warmup est ignoré si le joueur est en mode créatif.
+     * Teleporte un joueur avec warmup.
+     * Le warmup est ignore si le joueur est en mode creatif.
      *
-     * @param player      Le joueur à téléporter
+     * @param player      Le joueur a teleporter
      * @param destination La destination
-     * @param onComplete  Callback quand la téléportation est terminée (succès ou échec)
+     * @param onComplete  Callback quand la teleportation est terminee (succes ou echec)
      */
     public void teleportWithWarmup(
             @NotNull IslandiumPlayer player,
@@ -78,7 +82,7 @@ public class TeleportService {
     ) {
         UUID uuid = player.getUniqueId();
 
-        // Annuler toute téléportation en cours
+        // Annuler toute teleportation en cours
         cancelPendingTeleport(uuid);
 
         // Obtenir la position initiale
@@ -89,16 +93,12 @@ public class TeleportService {
             return;
         }
 
-        // Vérifier si le joueur est en mode créatif (bypass warmup)
-        // Utiliser Player.getGameMode() car il est sur la classe Player
+        // Verifier si le joueur est en mode creatif (bypass warmup)
         Player hytalePlayer = player.getHytalePlayer();
         if (hytalePlayer != null) {
             try {
                 GameMode gameMode = hytalePlayer.getGameMode();
-                System.out.println("[ISLANDIUM-TP] Player " + player.getName() + " gamemode: " + gameMode);
                 if (gameMode == GameMode.Creative) {
-                    // Téléportation instantanée en créatif
-                    System.out.println("[ISLANDIUM-TP] Creative mode detected, instant teleport for " + player.getName());
                     doTeleport(player, destination);
                     player.sendNotification(NotificationType.SUCCESS,
                             ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
@@ -106,20 +106,17 @@ public class TeleportService {
                     return;
                 }
             } catch (Exception e) {
-                System.out.println("[ISLANDIUM-TP] Could not check game mode: " + e.getMessage());
-                e.printStackTrace();
+                System.out.println("[ISLANDIUM-TP] Could not check game mode for " + player.getName() + ": " + e.getMessage());
             }
         } else {
             // Fallback: essayer de bypass le warmup via permission
             if (player.hasPermission("islandium.teleport.nowarmup")) {
-                System.out.println("[ISLANDIUM-TP] Player " + player.getName() + " has nowarmup permission, instant teleport");
                 doTeleport(player, destination);
                 player.sendNotification(NotificationType.SUCCESS,
                         ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
                 if (onComplete != null) onComplete.run();
                 return;
             }
-            System.out.println("[ISLANDIUM-TP] hytalePlayer is null for " + player.getName() + ", proceeding with warmup");
         }
 
         // Bypass warmup dans le monde cellule
@@ -137,10 +134,10 @@ public class TeleportService {
                 ColorUtil.stripColors(plugin.getConfigManager().getMessages()
                         .getPrefixed("teleport.warmup", "seconds", String.valueOf(warmupSeconds))));
 
-        // Créer la tâche de téléportation
+        // Creer la tache de teleportation
         TeleportTask task = new TeleportTask(player, startLocation, destination, onComplete);
 
-        // Programmer la vérification du mouvement toutes les 500ms
+        // Programmer la verification du mouvement toutes les 500ms
         ScheduledFuture<?> checkTask = scheduler.scheduleAtFixedRate(() -> {
             if (!checkMovement(task)) {
                 cancelPendingTeleport(uuid);
@@ -149,7 +146,7 @@ public class TeleportService {
 
         task.setCheckTask(checkTask);
 
-        // Programmer la téléportation après le warmup
+        // Programmer la teleportation apres le warmup
         ScheduledFuture<?> teleportTask = scheduler.schedule(() -> {
             executeTeleport(task);
         }, warmupSeconds, TimeUnit.SECONDS);
@@ -160,18 +157,16 @@ public class TeleportService {
     }
 
     /**
-     * Téléporte un joueur instantanément (sans warmup).
+     * Teleporte un joueur instantanement (sans warmup).
      */
     public void teleportInstant(@NotNull IslandiumPlayer player, @NotNull ServerLocation destination) {
         UUID uuid = player.getUniqueId();
         cancelPendingTeleport(uuid);
-
-        // Exécuter la téléportation directement
         doTeleport(player, destination);
     }
 
     /**
-     * Vérifie si le joueur a bougé.
+     * Verifie si le joueur a bouge.
      */
     private boolean checkMovement(TeleportTask task) {
         IslandiumPlayer player = task.getPlayer();
@@ -195,13 +190,13 @@ public class TeleportService {
     }
 
     /**
-     * Exécute la téléportation.
+     * Execute la teleportation.
      */
     private void executeTeleport(TeleportTask task) {
         UUID uuid = task.getPlayer().getUniqueId();
         pendingTeleports.remove(uuid);
 
-        // Arrêter la vérification du mouvement
+        // Arreter la verification du mouvement
         if (task.getCheckTask() != null) {
             task.getCheckTask().cancel(false);
         }
@@ -213,10 +208,10 @@ public class TeleportService {
             return;
         }
 
-        // Faire la téléportation
+        // Faire la teleportation
         doTeleport(task.getPlayer(), task.getDestination());
 
-        // Message de succès
+        // Message de succes
         task.getPlayer().sendNotification(NotificationType.SUCCESS,
                 ColorUtil.stripColors(plugin.getConfigManager().getMessages().getPrefixed("teleport.success")));
 
@@ -226,11 +221,9 @@ public class TeleportService {
     }
 
     /**
-     * Effectue la téléportation réelle via l'API Hytale.
-     * Utilise le composant Teleport pour synchroniser correctement client/serveur.
-     * Sauvegarde automatiquement la position précédente pour /back.
-     * Gère le changement de monde si la destination est dans un monde différent.
-     * Exécute sur le thread du monde pour garantir la thread-safety.
+     * Effectue la teleportation reelle via l'API Hytale.
+     * Gere le changement de monde si la destination est dans un monde different.
+     * Execute sur le thread du monde pour garantir la thread-safety.
      */
     private void doTeleport(@NotNull IslandiumPlayer islandiumPlayer, @NotNull ServerLocation destination) {
         PlayerRef playerRef = getPlayerRef(islandiumPlayer);
@@ -251,89 +244,130 @@ public class TeleportService {
 
             Universe universe = Universe.get();
             if (universe == null) {
-                System.out.println("[ISLANDIUM-TP] Cannot teleport player " + islandiumPlayer.getName() + ": Universe is null");
+                System.out.println("[ISLANDIUM-TP] Cannot teleport " + islandiumPlayer.getName() + ": Universe is null");
                 return;
             }
 
-            // Résoudre le monde de DESTINATION par son nom
+            // Resoudre le monde de DESTINATION par son nom
             String destWorldName = destination.world();
             World destinationWorld = universe.getWorlds().get(destWorldName);
             if (destinationWorld == null) {
-                System.out.println("[ISLANDIUM-TP] Cannot teleport player " + islandiumPlayer.getName() + ": destination world '" + destWorldName + "' not found");
-                return;
+                // Fallback: chercher par UUID au cas ou destWorldName est un UUID
+                destinationWorld = findWorldByUuidString(universe, destWorldName);
+                if (destinationWorld == null) {
+                    System.out.println("[ISLANDIUM-TP] Cannot teleport " + islandiumPlayer.getName() + ": destination world '" + destWorldName + "' not found. Available worlds: " + universe.getWorlds().keySet());
+                    return;
+                }
+                System.out.println("[ISLANDIUM-TP] Resolved destination world by UUID fallback: " + destinationWorld.getName());
             }
 
-            // Résoudre le monde ACTUEL du joueur
-            UUID currentWorldUuid = playerRef.getWorldUuid();
-            World currentWorld = null;
-            if (currentWorldUuid != null) {
-                for (World w : universe.getWorlds().values()) {
-                    try {
-                        if (w.getWorldConfig().getUuid().equals(currentWorldUuid)) {
-                            currentWorld = w;
-                            break;
-                        }
-                    } catch (Exception ignored) {}
-                }
-            }
+            // Resoudre le monde ACTUEL du joueur
+            World currentWorld = resolveCurrentWorld(universe, playerRef);
 
             if (currentWorld == null) {
-                System.out.println("[ISLANDIUM-TP] Cannot teleport player " + islandiumPlayer.getName() + ": current world not found for UUID " + currentWorldUuid);
+                System.out.println("[ISLANDIUM-TP] Cannot teleport " + islandiumPlayer.getName() + ": current world not found for UUID " + playerRef.getWorldUuid() + ". Available worlds: " + universe.getWorlds().keySet());
                 return;
             }
 
-            // Vérifier si on doit changer de monde
+            // Verifier si on doit changer de monde
             boolean sameWorld = currentWorld == destinationWorld;
-            System.out.println("[ISLANDIUM-TP] Player " + islandiumPlayer.getName() + " current world: " + currentWorld.getName() + ", destination world: " + destinationWorld.getName() + ", sameWorld: " + sameWorld);
 
             if (sameWorld) {
-                // Même monde: téléportation simple aux coordonnées
+                // Meme monde: teleportation simple aux coordonnees
                 currentWorld.execute(() -> {
                     try {
                         applyTeleportPosition(playerRef, islandiumPlayer, destination);
                     } catch (Exception e) {
-                        System.out.println("[ISLANDIUM-TP] Failed to teleport in world thread: " + e.getMessage());
+                        System.out.println("[ISLANDIUM-TP] Failed same-world teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
                         e.printStackTrace();
                     }
                 });
             } else {
-                // Monde différent: retirer du monde actuel, ajouter au monde de destination, puis TP aux coordonnées
-                System.out.println("[ISLANDIUM-TP] Cross-world teleport: " + currentWorld.getName() + " -> " + destinationWorld.getName());
+                // Monde different: retirer du monde actuel, ajouter au monde de destination, puis TP
+                System.out.println("[ISLANDIUM-TP] Cross-world: " + currentWorld.getName() + " -> " + destinationWorld.getName() + " for " + islandiumPlayer.getName());
+                final World destWorld = destinationWorld;
                 currentWorld.execute(() -> {
                     try {
+                        // Verifier que le joueur est toujours valide avant de le retirer
+                        Ref<EntityStore> preRef = playerRef.getReference();
+                        if (preRef == null || !preRef.isValid()) {
+                            System.out.println("[ISLANDIUM-TP] Player ref invalid before removeFromStore for " + islandiumPlayer.getName());
+                            return;
+                        }
+
                         playerRef.removeFromStore();
-                        destinationWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
+                        destWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
                             .thenRun(() -> {
-                                // Après ajout au nouveau monde, appliquer la position exacte
-                                destinationWorld.execute(() -> {
-                                    try {
-                                        applyTeleportPosition(playerRef, islandiumPlayer, destination);
-                                    } catch (Exception e) {
-                                        System.out.println("[ISLANDIUM-TP] Failed to apply position after world change: " + e.getMessage());
-                                        e.printStackTrace();
-                                    }
-                                });
+                                // Verifier que le joueur est toujours en ligne
+                                if (!islandiumPlayer.isOnline()) {
+                                    System.out.println("[ISLANDIUM-TP] Player " + islandiumPlayer.getName() + " disconnected during cross-world teleport");
+                                    return;
+                                }
+                                // Appliquer la position avec retry
+                                applyPositionWithRetry(destWorld, playerRef, islandiumPlayer, destination, 0);
                             })
                             .exceptionally(ex -> {
-                                System.out.println("[ISLANDIUM-TP] Failed to add player to destination world: " + ex.getMessage());
+                                System.out.println("[ISLANDIUM-TP] Failed to add " + islandiumPlayer.getName() + " to " + destWorld.getName() + ": " + ex.getMessage());
                                 ex.printStackTrace();
                                 return null;
                             });
                     } catch (Exception e) {
-                        System.out.println("[ISLANDIUM-TP] Failed cross-world teleport: " + e.getMessage());
+                        System.out.println("[ISLANDIUM-TP] Failed cross-world teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
                         e.printStackTrace();
                     }
                 });
             }
         } catch (Exception e) {
-            System.out.println("[ISLANDIUM-TP] Failed to teleport player: " + e.getMessage());
+            System.out.println("[ISLANDIUM-TP] Failed to teleport " + islandiumPlayer.getName() + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     /**
-     * Applique la position de téléportation au joueur via le composant Teleport.
-     * Doit être appelé sur le thread du monde.
+     * Applique la position apres un cross-world teleport avec retry.
+     * Apres addPlayer(), le ref/transform peut ne pas etre immediatement pret.
+     * On retry jusqu'a MAX_POSITION_RETRIES fois avec un delai.
+     */
+    private void applyPositionWithRetry(World destWorld, PlayerRef playerRef, IslandiumPlayer islandiumPlayer, ServerLocation destination, int attempt) {
+        destWorld.execute(() -> {
+            try {
+                Ref<EntityStore> ref = playerRef.getReference();
+                if (ref != null && ref.isValid()) {
+                    Store<EntityStore> store = ref.getStore();
+                    TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
+                    if (transform != null) {
+                        Vector3d targetPos = new Vector3d(destination.x(), destination.y(), destination.z());
+                        Vector3f targetRotation = (destination.yaw() != 0f || destination.pitch() != 0f)
+                            ? new Vector3f(destination.pitch(), destination.yaw(), 0f)
+                            : transform.getRotation().clone();
+                        Teleport teleport = new Teleport(targetPos, targetRotation);
+                        store.addComponent(ref, Teleport.getComponentType(), teleport);
+                        System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destWorld.getName() + " " + destination.x() + "," + destination.y() + "," + destination.z() + (attempt > 0 ? " (retry " + attempt + ")" : ""));
+                        return;
+                    }
+                }
+
+                // Ref ou transform pas encore pret - retry si possible
+                if (attempt < MAX_POSITION_RETRIES) {
+                    System.out.println("[ISLANDIUM-TP] Ref/transform not ready for " + islandiumPlayer.getName() + " in " + destWorld.getName() + ", retry " + (attempt + 1) + "/" + MAX_POSITION_RETRIES);
+                    scheduler.schedule(() -> {
+                        if (islandiumPlayer.isOnline()) {
+                            applyPositionWithRetry(destWorld, playerRef, islandiumPlayer, destination, attempt + 1);
+                        }
+                    }, RETRY_DELAY_MS, TimeUnit.MILLISECONDS);
+                } else {
+                    System.out.println("[ISLANDIUM-TP] FAILED: Could not apply position for " + islandiumPlayer.getName() + " after " + MAX_POSITION_RETRIES + " retries (ref=" + (ref != null) + ", valid=" + (ref != null && ref.isValid()) + ")");
+                }
+            } catch (Exception e) {
+                System.out.println("[ISLANDIUM-TP] Error applying position for " + islandiumPlayer.getName() + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Applique la position de teleportation au joueur via le composant Teleport.
+     * Doit etre appele sur le thread du monde.
      */
     private void applyTeleportPosition(@NotNull PlayerRef playerRef, @NotNull IslandiumPlayer islandiumPlayer, @NotNull ServerLocation destination) {
         Ref<EntityStore> ref = playerRef.getReference();
@@ -347,15 +381,66 @@ public class TeleportService {
                     : transform.getRotation().clone();
                 Teleport teleport = new Teleport(targetPos, targetRotation);
                 store.addComponent(ref, Teleport.getComponentType(), teleport);
-                System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destination);
+                System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destination.x() + "," + destination.y() + "," + destination.z());
                 return;
             }
         }
-        System.out.println("[ISLANDIUM-TP] Cannot teleport player " + islandiumPlayer.getName() + ": invalid ref or transform");
+        System.out.println("[ISLANDIUM-TP] Cannot teleport " + islandiumPlayer.getName() + ": invalid ref (" + (ref != null) + ") or transform");
     }
 
     /**
-     * Obtient le PlayerRef à partir d'un IslandiumPlayer.
+     * Resout le monde actuel du joueur a partir de son PlayerRef.
+     * Cherche par UUID de WorldConfig, puis par nom dans la cle.
+     */
+    @Nullable
+    private World resolveCurrentWorld(@NotNull Universe universe, @NotNull PlayerRef playerRef) {
+        UUID currentWorldUuid = playerRef.getWorldUuid();
+        if (currentWorldUuid == null) return null;
+
+        // Methode 1: Comparer avec WorldConfig UUID
+        for (World w : universe.getWorlds().values()) {
+            try {
+                UUID wUuid = w.getWorldConfig().getUuid();
+                if (wUuid != null && wUuid.equals(currentWorldUuid)) {
+                    return w;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // Methode 2: Chercher l'UUID dans le nom du monde (ex: "instance-basic-UUID")
+        String uuidStr = currentWorldUuid.toString();
+        for (var entry : universe.getWorlds().entrySet()) {
+            if (entry.getKey().contains(uuidStr)) {
+                return entry.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Cherche un monde par un UUID sous forme de string (fallback si le nom du monde est un UUID).
+     */
+    @Nullable
+    private World findWorldByUuidString(@NotNull Universe universe, @NotNull String possibleUuid) {
+        try {
+            UUID uuid = UUID.fromString(possibleUuid);
+            for (World w : universe.getWorlds().values()) {
+                try {
+                    UUID wUuid = w.getWorldConfig().getUuid();
+                    if (wUuid != null && wUuid.equals(uuid)) {
+                        return w;
+                    }
+                } catch (Exception ignored) {}
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Ce n'est pas un UUID, c'est normal
+        }
+        return null;
+    }
+
+    /**
+     * Obtient le PlayerRef a partir d'un IslandiumPlayer.
      */
     @Nullable
     private PlayerRef getPlayerRef(@NotNull IslandiumPlayer player) {
@@ -364,19 +449,27 @@ public class TeleportService {
             if (raw instanceof PlayerRef ref) {
                 return ref;
             } else if (raw instanceof Player p) {
-                return p.getPlayerRef();
+                try {
+                    return p.getPlayerRef();
+                } catch (Exception e) {
+                    System.out.println("[ISLANDIUM-TP] Failed to get PlayerRef from Player for " + player.getName() + ": " + e.getMessage());
+                }
             }
         }
         // Fallback: essayer getHytalePlayer()
         Player hytalePlayer = player.getHytalePlayer();
         if (hytalePlayer != null) {
-            return hytalePlayer.getPlayerRef();
+            try {
+                return hytalePlayer.getPlayerRef();
+            } catch (Exception e) {
+                System.out.println("[ISLANDIUM-TP] Failed to get PlayerRef via fallback for " + player.getName() + ": " + e.getMessage());
+            }
         }
         return null;
     }
 
     /**
-     * Annule une téléportation en cours.
+     * Annule une teleportation en cours.
      */
     public void cancelPendingTeleport(@NotNull UUID uuid) {
         TeleportTask task = pendingTeleports.remove(uuid);
@@ -397,17 +490,17 @@ public class TeleportService {
     }
 
     /**
-     * Vérifie si un joueur a une téléportation en cours.
+     * Verifie si un joueur a une teleportation en cours.
      */
     public boolean hasPendingTeleport(@NotNull UUID uuid) {
         return pendingTeleports.containsKey(uuid);
     }
 
     /**
-     * Arrête le service.
+     * Arrete le service.
      */
     public void shutdown() {
-        // Annuler toutes les téléportations en cours
+        // Annuler toutes les teleportations en cours
         for (UUID uuid : pendingTeleports.keySet()) {
             cancelPendingTeleport(uuid);
         }
@@ -415,7 +508,7 @@ public class TeleportService {
     }
 
     /**
-     * Classe interne pour stocker les infos d'une téléportation en attente.
+     * Classe interne pour stocker les infos d'une teleportation en attente.
      */
     private static class TeleportTask {
         private final IslandiumPlayer player;

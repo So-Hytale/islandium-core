@@ -451,8 +451,9 @@ public class IslandiumPlayerImpl implements IslandiumPlayer {
     }
 
     /**
-     * Convertit un UUID de monde en nom de monde (clé dans Universe).
-     * Le problème: PlayerRef.getWorldUuid() retourne l'UUID, mais on veut la clé (ex: "prison").
+     * Convertit un UUID de monde en nom de monde (cle dans Universe).
+     * PlayerRef.getWorldUuid() retourne l'UUID, mais on veut la cle (ex: "prison").
+     * Priorite: WorldConfig UUID match > nom contenant UUID.
      */
     @NotNull
     private String getWorldNameFromUuid(@Nullable UUID worldUuid) {
@@ -461,26 +462,29 @@ public class IslandiumPlayerImpl implements IslandiumPlayer {
         Universe universe = Universe.get();
         if (universe == null) return worldUuid.toString();
 
-        // Chercher le monde par son UUID
+        String uuidStr = worldUuid.toString();
+
+        // Methode 1 (prioritaire): Comparer avec WorldConfig UUID
+        // C'est la methode la plus fiable car c'est l'UUID reel du monde
         for (var entry : universe.getWorlds().entrySet()) {
-            String key = entry.getKey();
-            World w = entry.getValue();
-
-            // Méthode 1: L'UUID est dans la clé (ex: "instance-basic-UUID")
-            if (key.contains(worldUuid.toString())) {
-                return key;
-            }
-
-            // Méthode 2: Comparer avec World.getUuid() si disponible
             try {
-                UUID wUuid = w.getWorldConfig().getUuid();
+                UUID wUuid = entry.getValue().getWorldConfig().getUuid();
                 if (wUuid != null && wUuid.equals(worldUuid)) {
-                    return key; // Retourner la clé (ex: "prison")
+                    return entry.getKey();
                 }
             } catch (Exception ignored) {}
         }
 
+        // Methode 2: L'UUID est dans la cle (ex: "instance-basic-UUID")
+        for (var entry : universe.getWorlds().entrySet()) {
+            if (entry.getKey().contains(uuidStr)) {
+                return entry.getKey();
+            }
+        }
+
         // Fallback: retourner l'UUID sous forme de string
-        return worldUuid.toString();
+        // Cela peut poser probleme si utilise comme nom de monde pour une TP
+        System.out.println("[ISLANDIUM] WARNING: Could not resolve world name for UUID " + uuidStr + ". Available worlds: " + universe.getWorlds().keySet());
+        return uuidStr;
     }
 }
