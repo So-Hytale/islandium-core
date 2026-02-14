@@ -1,0 +1,163 @@
+$C = "../../Common.ui";
+
+$C.@PageOverlay {
+    $C.@Container {
+        Anchor: (Width: 550, Height: 500);
+
+        #Title {
+            Group {
+                $C.@Title {
+                    @Text = "MESSAGES PRIVES";
+                }
+            }
+        }
+
+        #Content {
+            LayoutMode: Top;
+
+            // Header bar
+            Group #HeaderBar {
+                Anchor: (Height: 45);
+                Background: (Color: #16212f);
+                LayoutMode: Left;
+                Padding: (Horizontal: 10);
+
+                TextButton #BackButton {
+                    Anchor: (Width: 70, Height: 35);
+                    Text: "< Retour";
+                    Visible: false;
+                    Style: TextButtonStyle(
+                        Default: (
+                            LabelStyle: (FontSize: 13, TextColor: #93844c, RenderBold: true, VerticalAlignment: Center)
+                        ),
+                        Hovered: (
+                            Background: #1a2638,
+                            LabelStyle: (FontSize: 13, TextColor: #ffd700, RenderBold: true, VerticalAlignment: Center)
+                        ),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                }
+
+                Group { FlexWeight: 1; }
+
+                TextButton #CloseButton {
+                    Anchor: (Width: 35, Height: 35);
+                    Text: "X";
+                    Style: TextButtonStyle(
+                        Default: (
+                            LabelStyle: (FontSize: 16, TextColor: #ff4444, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                        ),
+                        Hovered: (
+                            Background: #2a1a1a,
+                            LabelStyle: (FontSize: 16, TextColor: #ff6666, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                        ),
+                        Sounds: $C.@ButtonSounds,
+                    );
+                }
+            }
+
+            // Panel liste des joueurs
+            Group #PlayerListPanel {
+                FlexWeight: 1;
+                LayoutMode: Top;
+                Padding: (Horizontal: 15, Top: 10);
+
+                Label #OnlineCount {
+                    Text: "0 joueurs en ligne";
+                    Anchor: (Height: 24);
+                    Style: (FontSize: 12, TextColor: #808080, HorizontalAlignment: Center);
+                }
+
+                Group #PlayerList {
+                    FlexWeight: 1;
+                    LayoutMode: TopScrolling;
+                    ScrollbarStyle: $C.@DefaultScrollbarStyle;
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 8);
+                }
+
+                Label {
+                    Text: "Cliquez sur un joueur pour lui envoyer un message";
+                    Anchor: (Height: 25, Top: 6);
+                    Style: (FontSize: 10, TextColor: #606060, HorizontalAlignment: Center);
+                }
+            }
+
+            // Panel conversation (cache par defaut)
+            Group #ConversationPanel {
+                FlexWeight: 1;
+                Visible: false;
+                LayoutMode: Top;
+                Padding: (Horizontal: 15, Top: 10);
+
+                // Destinataire
+                Group {
+                    Anchor: (Height: 50);
+                    Background: (Color: #0a0f17);
+                    Padding: (Full: 10);
+                    LayoutMode: Top;
+
+                    Label {
+                        Text: "Envoyer a :";
+                        Anchor: (Height: 18);
+                        Style: (FontSize: 11, TextColor: #808080, HorizontalAlignment: Center);
+                    }
+
+                    Label #TargetName {
+                        Text: "Joueur";
+                        Anchor: (Height: 26);
+                        Style: (FontSize: 16, TextColor: #ffd700, RenderBold: true, HorizontalAlignment: Center);
+                    }
+                }
+
+                $C.@ContentSeparator {
+                    Anchor: (Top: 8, Bottom: 8);
+                }
+
+                // Zone de saisie
+                Group {
+                    Anchor: (Height: 50);
+                    LayoutMode: Left;
+
+                    $C.@TextField #MessageField {
+                        FlexWeight: 1;
+                        Anchor: (Height: 42);
+                        PlaceholderText: "Tapez votre message...";
+                    }
+
+                    TextButton #SendButton {
+                        Anchor: (Width: 90, Left: 8, Height: 42);
+                        Text: "Envoyer";
+                        Style: TextButtonStyle(
+                            Default: (
+                                Background: #2d5a2d,
+                                LabelStyle: (FontSize: 14, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Hovered: (
+                                Background: #3d7a3d,
+                                LabelStyle: (FontSize: 14, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Pressed: (
+                                Background: #1d4a1d,
+                                LabelStyle: (FontSize: 14, TextColor: #ffffff, HorizontalAlignment: Center, VerticalAlignment: Center, RenderBold: true)
+                            ),
+                            Sounds: $C.@ButtonSounds,
+                        );
+                    }
+                }
+
+                // Statut
+                Label #StatusLabel {
+                    Text: "";
+                    Anchor: (Height: 24, Top: 8);
+                    Style: (FontSize: 12, TextColor: #4ade80, HorizontalAlignment: Center);
+                }
+
+                // Espace flexible en bas
+                Group {
+                    FlexWeight: 1;
+                }
+            }
+        }
+    }
+}
