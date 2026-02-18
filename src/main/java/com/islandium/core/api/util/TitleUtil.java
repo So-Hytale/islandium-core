@@ -52,7 +52,7 @@ public final class TitleUtil {
                 playerRef,
                 primaryMsg,
                 secondaryMsg,
-                false, // isMajor - false pour un petit titre
+                true, // isMajor - false pour un petit titre
                 null,  // icon
                 duration,
                 fadeIn,
