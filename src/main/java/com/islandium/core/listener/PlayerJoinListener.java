@@ -54,7 +54,7 @@ public class PlayerJoinListener extends IslandiumListener {
     }
 
     private void loadPlayerData(java.util.UUID uuid, String name, com.hypixel.hytale.server.core.universe.PlayerRef playerRef, @Nullable Player hytalePlayer) {
-        plugin.getPlayerManager().handlePlayerJoin(uuid, name, playerRef)
+        plugin.getPlayerManager().handlePlayerJoin(uuid, name, hytalePlayer != null ? hytalePlayer : playerRef)
             .thenCompose(essentialsPlayer -> {
                 // Synchroniser les permissions avec le système natif Hytale
                 return plugin.getServiceManager().getPermissionServiceImpl()
