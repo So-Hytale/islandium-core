@@ -2,6 +2,7 @@ package com.islandium.core;
 
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.islandium.core.api.IslandiumAPI;
+import com.islandium.core.api.event.IslandiumEventBus;
 import com.islandium.core.command.CommandManager;
 import com.islandium.core.config.ConfigManager;
 import com.islandium.core.database.DatabaseManager;
@@ -53,6 +54,10 @@ public class IslandiumPlugin extends JavaPlugin {
         instance = this;
         log(Level.INFO, "Initializing Essentials...");
         try {
+            // 0. Event Bus (Hyxin)
+            log(Level.INFO, "Initializing Event Bus...");
+            IslandiumEventBus.init();
+
             // 1. Configuration
             log(Level.INFO, "Loading configuration...");
             this.configManager = new ConfigManager(this);
@@ -114,6 +119,9 @@ public class IslandiumPlugin extends JavaPlugin {
         log(Level.INFO, "Shutting down Essentials...");
 
         try {
+            // Shutdown Event Bus
+            IslandiumEventBus.shutdown();
+
             // Shutdown API
             IslandiumAPI.shutdown();
 

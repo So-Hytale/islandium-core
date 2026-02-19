@@ -1,6 +1,7 @@
 package com.islandium.core.api;
 
 import com.islandium.core.api.economy.EconomyService;
+import com.islandium.core.api.event.IslandiumEventBus;
 import com.islandium.core.api.messaging.CrossServerMessenger;
 import com.islandium.core.api.moderation.ModerationService;
 import com.islandium.core.api.player.PlayerProvider;
@@ -88,6 +89,11 @@ public final class IslandiumAPI {
     @NotNull
     public CrossServerMessenger getMessenger() {
         return messenger;
+    }
+
+    @NotNull
+    public IslandiumEventBus getEventBus() {
+        return IslandiumEventBus.get();
     }
 
     // === Builder ===
