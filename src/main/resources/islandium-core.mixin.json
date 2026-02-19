@@ -15,6 +15,7 @@
     "SpawningPluginMixin",
     "HytaleServerMixin",
     "PacketHandlerWriteMixin",
-    "PlayerGiveItemMixin"
+    "PlayerGiveItemMixin",
+    "BlockHarvestMixin"
   ]
 }
