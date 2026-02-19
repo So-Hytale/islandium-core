@@ -7,8 +7,7 @@
   "Website": "",
   "ServerVersion": "*",
   "Dependencies": {
-    "Hytale:EntityModule": "*",
-    "Build-9:Hyxin": "*"
+    "Hytale:EntityModule": "*"
   },
   "IncludesAssetPack": true,
   "Hyxin": {
