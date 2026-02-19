@@ -1,19 +1,9 @@
 package com.islandium.core.hook;
 
 import com.islandium.core.api.event.IslandiumEventBus;
-import com.islandium.core.api.event.command.CommandPreProcessEvent;
-import com.islandium.core.api.event.inventory.HammerCycleEvent;
-import com.islandium.core.api.event.inventory.HotbarSwitchEvent;
-import com.islandium.core.api.event.network.PacketReceiveEvent;
-import com.islandium.core.api.event.network.PacketSendEvent;
 import com.islandium.core.api.event.server.ServerBootEvent;
 import com.islandium.mixins.HookRegistry;
 import com.islandium.mixins.hooks.*;
-
-import com.hypixel.hytale.protocol.ToClientPacket;
-import com.hypixel.hytale.protocol.ToServerPacket;
-import com.hypixel.hytale.protocol.packets.inventory.SetActiveSlot;
-import com.hypixel.hytale.protocol.packets.inventory.SwitchHotbarBlockSet;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,46 +46,7 @@ public final class HookRegistrar {
             return event.isCancelled();
         });
 
-        // 4. Command hook
-        HookRegistry.register(HookRegistry.COMMAND_HOOK, (CommandHook) (sender, commandLine) -> {
-            if (!IslandiumEventBus.isAvailable()) return false;
-            CommandPreProcessEvent event = new CommandPreProcessEvent(sender, commandLine);
-            IslandiumEventBus.get().fire(event);
-            return event.isCancelled();
-        });
-
-        // 5. Packet receive hook
-        HookRegistry.register(HookRegistry.PACKET_RECEIVE_HOOK, (PacketReceiveHook) (packet, packetId) -> {
-            if (!IslandiumEventBus.isAvailable()) return false;
-            PacketReceiveEvent event = new PacketReceiveEvent((ToServerPacket) packet, packetId);
-            IslandiumEventBus.get().fire(event);
-            return event.isCancelled();
-        });
-
-        // 6. Packet send hook
-        HookRegistry.register(HookRegistry.PACKET_SEND_HOOK, (PacketSendHook) (packet, packetId) -> {
-            if (!IslandiumEventBus.isAvailable()) return false;
-            PacketSendEvent event = new PacketSendEvent((ToClientPacket) packet, packetId);
-            IslandiumEventBus.get().fire(event);
-            return event.isCancelled();
-        });
-
-        // 7. Inventory hook
-        HookRegistry.register(HookRegistry.INVENTORY_HOOK, (InventoryHook) (actionType, packet) -> {
-            if (!IslandiumEventBus.isAvailable()) return false;
-            if ("HOTBAR_SWITCH".equals(actionType) && packet instanceof SetActiveSlot setSlot) {
-                HotbarSwitchEvent event = new HotbarSwitchEvent(setSlot.inventorySectionId, setSlot.activeSlot);
-                IslandiumEventBus.get().fire(event);
-                return event.isCancelled();
-            } else if ("HAMMER_CYCLE".equals(actionType) && packet instanceof SwitchHotbarBlockSet switchSet) {
-                HammerCycleEvent event = new HammerCycleEvent(switchSet.itemId);
-                IslandiumEventBus.get().fire(event);
-                return event.isCancelled();
-            }
-            return false;
-        });
-
-        // 8. Server boot hook
+        // 4. Server boot hook
         HookRegistry.register(HookRegistry.SERVER_BOOT_HOOK, (ServerBootHook) () -> {
             if (!IslandiumEventBus.isAvailable()) return;
             IslandiumEventBus.get().fire(new ServerBootEvent());
@@ -108,10 +59,6 @@ public final class HookRegistrar {
         HookRegistry.unregister(HookRegistry.HARVEST_HOOK);
         HookRegistry.unregister(HookRegistry.ITEM_PICKUP_HOOK);
         HookRegistry.unregister(HookRegistry.DAMAGE_HOOK);
-        HookRegistry.unregister(HookRegistry.COMMAND_HOOK);
-        HookRegistry.unregister(HookRegistry.PACKET_RECEIVE_HOOK);
-        HookRegistry.unregister(HookRegistry.PACKET_SEND_HOOK);
-        HookRegistry.unregister(HookRegistry.INVENTORY_HOOK);
         HookRegistry.unregister(HookRegistry.SERVER_BOOT_HOOK);
         LOGGER.log(Level.INFO, "[Essentials] All mixin hooks unregistered.");
     }
