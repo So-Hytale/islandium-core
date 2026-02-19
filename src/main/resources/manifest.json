@@ -9,8 +9,5 @@
   "Dependencies": {
     "Hytale:EntityModule": "*"
   },
-  "IncludesAssetPack": true,
-  "Hyxin": {
-    "Configs": ["islandium-core.mixin.json"]
-  }
+  "IncludesAssetPack": true
 }

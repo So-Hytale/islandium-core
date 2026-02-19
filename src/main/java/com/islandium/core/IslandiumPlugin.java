@@ -4,6 +4,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.islandium.core.api.IslandiumAPI;
 import com.islandium.core.api.event.IslandiumEventBus;
 import com.islandium.core.command.CommandManager;
+import com.islandium.core.hook.HookRegistrar;
 import com.islandium.core.config.ConfigManager;
 import com.islandium.core.database.DatabaseManager;
 import com.islandium.core.listener.ListenerManager;
@@ -54,9 +55,13 @@ public class IslandiumPlugin extends JavaPlugin {
         instance = this;
         log(Level.INFO, "Initializing Essentials...");
         try {
-            // 0. Event Bus (Hyxin)
+            // 0. Event Bus
             log(Level.INFO, "Initializing Event Bus...");
             IslandiumEventBus.init();
+
+            // 0.1 Register mixin hooks (bridge earlyplugins/ <-> mods/)
+            log(Level.INFO, "Registering mixin hooks...");
+            HookRegistrar.registerAll();
 
             // 1. Configuration
             log(Level.INFO, "Loading configuration...");
@@ -119,6 +124,9 @@ public class IslandiumPlugin extends JavaPlugin {
         log(Level.INFO, "Shutting down Essentials...");
 
         try {
+            // Unregister mixin hooks
+            HookRegistrar.unregisterAll();
+
             // Shutdown Event Bus
             IslandiumEventBus.shutdown();
 
