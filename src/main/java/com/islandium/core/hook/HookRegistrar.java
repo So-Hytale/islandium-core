@@ -1,6 +1,7 @@
 package com.islandium.core.hook;
 
 import com.islandium.core.api.event.IslandiumEventBus;
+import com.islandium.core.api.event.entity.EntitySpawnEvent;
 import com.islandium.mixins.HookRegistry;
 import com.islandium.mixins.hooks.*;
 
@@ -35,10 +36,21 @@ public final class HookRegistrar {
         });
 
         LOGGER.log(Level.INFO, "[Essentials] Harvest hook registered successfully!");
+
+        // 2. Entity spawn hook — utilise @Redirect sur NPCPlugin.spawnEntity
+        HookRegistry.register(HookRegistry.ENTITY_SPAWN_HOOK, (EntitySpawnHook) (npcTypeId, x, y, z) -> {
+            if (!IslandiumEventBus.isAvailable()) return false;
+            EntitySpawnEvent event = new EntitySpawnEvent(npcTypeId, x, y, z, -1);
+            IslandiumEventBus.get().fire(event);
+            return event.isCancelled();
+        });
+
+        LOGGER.log(Level.INFO, "[Essentials] Entity spawn hook registered successfully!");
     }
 
     public static void unregisterAll() {
         HookRegistry.unregister(HookRegistry.HARVEST_HOOK);
+        HookRegistry.unregister(HookRegistry.ENTITY_SPAWN_HOOK);
         LOGGER.log(Level.INFO, "[Essentials] All mixin hooks unregistered.");
     }
 }

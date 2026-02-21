@@ -26,6 +26,7 @@ public final class HookRegistry {
     public static final String PACKET_SEND_HOOK = "islandium.packet.send.hook";
     public static final String INVENTORY_HOOK = "islandium.inventory.hook";
     public static final String SERVER_BOOT_HOOK = "islandium.server.boot.hook";
+    public static final String ENTITY_SPAWN_HOOK = "islandium.entity.spawn.hook";
 
     // Status keys
     public static final String MIXINS_LOADED = "islandium.mixins.loaded";
