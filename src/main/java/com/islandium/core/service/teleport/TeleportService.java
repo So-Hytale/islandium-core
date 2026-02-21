@@ -272,51 +272,42 @@ public class TeleportService {
             // Verifier si on doit changer de monde
             boolean sameWorld = currentWorld == destinationWorld;
 
-            if (sameWorld) {
-                // Meme monde: teleportation simple aux coordonnees
-                currentWorld.execute(() -> {
-                    try {
-                        applyTeleportPosition(playerRef, islandiumPlayer, destination);
-                    } catch (Exception e) {
-                        System.out.println("[ISLANDIUM-TP] Failed same-world teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                });
-            } else {
-                // Monde different: retirer du monde actuel, ajouter au monde de destination, puis TP
+            // Toujours utiliser removeFromStore + addPlayer pour garantir le chargement des chunks
+            // (meme en same-world, le Teleport component seul cause "Incorrect teleportId" si les chunks destination ne sont pas charges)
+            if (!sameWorld) {
                 System.out.println("[ISLANDIUM-TP] Cross-world: " + currentWorld.getName() + " -> " + destinationWorld.getName() + " for " + islandiumPlayer.getName());
-                final World destWorld = destinationWorld;
-                currentWorld.execute(() -> {
-                    try {
-                        // Verifier que le joueur est toujours valide avant de le retirer
-                        Ref<EntityStore> preRef = playerRef.getReference();
-                        if (preRef == null || !preRef.isValid()) {
-                            System.out.println("[ISLANDIUM-TP] Player ref invalid before removeFromStore for " + islandiumPlayer.getName());
-                            return;
-                        }
-
-                        playerRef.removeFromStore();
-                        destWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
-                            .thenRun(() -> {
-                                // Verifier que le joueur est toujours en ligne
-                                if (!islandiumPlayer.isOnline()) {
-                                    System.out.println("[ISLANDIUM-TP] Player " + islandiumPlayer.getName() + " disconnected during cross-world teleport");
-                                    return;
-                                }
-                                // Appliquer la position avec retry
-                                applyPositionWithRetry(destWorld, playerRef, islandiumPlayer, destination, 0);
-                            })
-                            .exceptionally(ex -> {
-                                System.out.println("[ISLANDIUM-TP] Failed to add " + islandiumPlayer.getName() + " to " + destWorld.getName() + ": " + ex.getMessage());
-                                ex.printStackTrace();
-                                return null;
-                            });
-                    } catch (Exception e) {
-                        System.out.println("[ISLANDIUM-TP] Failed cross-world teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                });
             }
+            final World destWorld = destinationWorld;
+            currentWorld.execute(() -> {
+                try {
+                    // Verifier que le joueur est toujours valide avant de le retirer
+                    Ref<EntityStore> preRef = playerRef.getReference();
+                    if (preRef == null || !preRef.isValid()) {
+                        System.out.println("[ISLANDIUM-TP] Player ref invalid before removeFromStore for " + islandiumPlayer.getName());
+                        return;
+                    }
+
+                    playerRef.removeFromStore();
+                    destWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
+                        .thenRun(() -> {
+                            // Verifier que le joueur est toujours en ligne
+                            if (!islandiumPlayer.isOnline()) {
+                                System.out.println("[ISLANDIUM-TP] Player " + islandiumPlayer.getName() + " disconnected during teleport");
+                                return;
+                            }
+                            // Appliquer la position avec retry
+                            applyPositionWithRetry(destWorld, playerRef, islandiumPlayer, destination, 0);
+                        })
+                        .exceptionally(ex -> {
+                            System.out.println("[ISLANDIUM-TP] Failed to add " + islandiumPlayer.getName() + " to " + destWorld.getName() + ": " + ex.getMessage());
+                            ex.printStackTrace();
+                            return null;
+                        });
+                } catch (Exception e) {
+                    System.out.println("[ISLANDIUM-TP] Failed teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
         } catch (Exception e) {
             System.out.println("[ISLANDIUM-TP] Failed to teleport " + islandiumPlayer.getName() + ": " + e.getMessage());
             e.printStackTrace();
