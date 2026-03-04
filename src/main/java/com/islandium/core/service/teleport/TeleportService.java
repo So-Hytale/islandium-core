@@ -273,42 +273,45 @@ public class TeleportService {
             // Verifier si on doit changer de monde
             boolean sameWorld = currentWorld == destinationWorld;
 
-            // Toujours utiliser removeFromStore + addPlayer pour garantir le chargement des chunks
-            // (meme en same-world, le Teleport component seul cause "Incorrect teleportId" si les chunks destination ne sont pas charges)
-            if (!sameWorld) {
+            if (sameWorld) {
+                // Same-world: utiliser directement le Teleport component (pas de removeFromStore+addPlayer
+                // qui cause un PendingTeleport coince bloquant tous les mouvements)
+                System.out.println("[ISLANDIUM-TP] Same-world teleport for " + islandiumPlayer.getName() + " in " + currentWorld.getName());
+                currentWorld.execute(() -> {
+                    applyTeleportPosition(playerRef, islandiumPlayer, destination);
+                });
+            } else {
+                // Cross-world: removeFromStore + addPlayer pour charger les chunks du nouveau monde
                 System.out.println("[ISLANDIUM-TP] Cross-world: " + currentWorld.getName() + " -> " + destinationWorld.getName() + " for " + islandiumPlayer.getName());
-            }
-            final World destWorld = destinationWorld;
-            currentWorld.execute(() -> {
-                try {
-                    // Verifier que le joueur est toujours valide avant de le retirer
-                    Ref<EntityStore> preRef = playerRef.getReference();
-                    if (preRef == null || !preRef.isValid()) {
-                        System.out.println("[ISLANDIUM-TP] Player ref invalid before removeFromStore for " + islandiumPlayer.getName());
-                        return;
-                    }
+                final World destWorld = destinationWorld;
+                currentWorld.execute(() -> {
+                    try {
+                        Ref<EntityStore> preRef = playerRef.getReference();
+                        if (preRef == null || !preRef.isValid()) {
+                            System.out.println("[ISLANDIUM-TP] Player ref invalid before removeFromStore for " + islandiumPlayer.getName());
+                            return;
+                        }
 
-                    playerRef.removeFromStore();
-                    destWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
-                        .thenRun(() -> {
-                            // Verifier que le joueur est toujours en ligne
-                            if (!islandiumPlayer.isOnline()) {
-                                System.out.println("[ISLANDIUM-TP] Player " + islandiumPlayer.getName() + " disconnected during teleport");
-                                return;
-                            }
-                            // Appliquer la position avec retry
-                            applyPositionWithRetry(destWorld, playerRef, islandiumPlayer, destination, 0);
-                        })
-                        .exceptionally(ex -> {
-                            System.out.println("[ISLANDIUM-TP] Failed to add " + islandiumPlayer.getName() + " to " + destWorld.getName() + ": " + ex.getMessage());
-                            ex.printStackTrace();
-                            return null;
-                        });
-                } catch (Exception e) {
-                    System.out.println("[ISLANDIUM-TP] Failed teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
-                    e.printStackTrace();
-                }
-            });
+                        playerRef.removeFromStore();
+                        destWorld.addPlayer(playerRef, null, Boolean.TRUE, Boolean.FALSE)
+                            .thenRun(() -> {
+                                if (!islandiumPlayer.isOnline()) {
+                                    System.out.println("[ISLANDIUM-TP] Player " + islandiumPlayer.getName() + " disconnected during teleport");
+                                    return;
+                                }
+                                applyPositionWithRetry(destWorld, playerRef, islandiumPlayer, destination, 0);
+                            })
+                            .exceptionally(ex -> {
+                                System.out.println("[ISLANDIUM-TP] Failed to add " + islandiumPlayer.getName() + " to " + destWorld.getName() + ": " + ex.getMessage());
+                                ex.printStackTrace();
+                                return null;
+                            });
+                    } catch (Exception e) {
+                        System.out.println("[ISLANDIUM-TP] Failed teleport for " + islandiumPlayer.getName() + ": " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                });
+            }
         } catch (Exception e) {
             System.out.println("[ISLANDIUM-TP] Failed to teleport " + islandiumPlayer.getName() + ": " + e.getMessage());
             e.printStackTrace();
@@ -332,8 +335,6 @@ public class TeleportService {
                         Vector3f targetRotation = (destination.yaw() != 0f || destination.pitch() != 0f)
                             ? new Vector3f(destination.pitch(), destination.yaw(), 0f)
                             : transform.getRotation().clone();
-                        // Nettoyer tout PendingTeleport coince (peut rester apres addPlayer/removeFromStore)
-                        store.tryRemoveComponent(ref, PendingTeleport.getComponentType());
                         Teleport teleport = new Teleport(targetPos, targetRotation);
                         store.addComponent(ref, Teleport.getComponentType(), teleport);
                         System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destWorld.getName() + " " + destination.x() + "," + destination.y() + "," + destination.z() + (attempt > 0 ? " (retry " + attempt + ")" : ""));
@@ -373,8 +374,6 @@ public class TeleportService {
                 Vector3f targetRotation = (destination.yaw() != 0f || destination.pitch() != 0f)
                     ? new Vector3f(destination.pitch(), destination.yaw(), 0f)
                     : transform.getRotation().clone();
-                // Nettoyer tout PendingTeleport coince (peut rester apres addPlayer/removeFromStore)
-                store.tryRemoveComponent(ref, PendingTeleport.getComponentType());
                 Teleport teleport = new Teleport(targetPos, targetRotation);
                 store.addComponent(ref, Teleport.getComponentType(), teleport);
                 System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destination.x() + "," + destination.y() + "," + destination.z());
