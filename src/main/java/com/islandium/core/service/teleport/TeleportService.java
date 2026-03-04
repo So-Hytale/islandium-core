@@ -274,11 +274,31 @@ public class TeleportService {
             boolean sameWorld = currentWorld == destinationWorld;
 
             if (sameWorld) {
-                // Same-world: utiliser directement le Teleport component (pas de removeFromStore+addPlayer
-                // qui cause un PendingTeleport coince bloquant tous les mouvements)
+                // Same-world: setter directement la position sur le TransformComponent
+                // (le Teleport component cree un PendingTeleport qui bloque les mouvements au join)
                 System.out.println("[ISLANDIUM-TP] Same-world teleport for " + islandiumPlayer.getName() + " in " + currentWorld.getName());
                 currentWorld.execute(() -> {
-                    applyTeleportPosition(playerRef, islandiumPlayer, destination);
+                    try {
+                        Ref<EntityStore> ref = playerRef.getReference();
+                        if (ref != null && ref.isValid()) {
+                            Store<EntityStore> store = ref.getStore();
+                            TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
+                            if (transform != null) {
+                                Vector3d targetPos = new Vector3d(destination.x(), destination.y(), destination.z());
+                                transform.setPosition(targetPos);
+                                if (destination.yaw() != 0f || destination.pitch() != 0f) {
+                                    transform.setRotation(new Vector3f(destination.pitch(), destination.yaw(), 0f));
+                                }
+                                System.out.println("[ISLANDIUM-TP] SUCCESS (direct): " + islandiumPlayer.getName() + " to " + destination.x() + "," + destination.y() + "," + destination.z());
+                                return;
+                            }
+                        }
+                        // Fallback: utiliser Teleport component si ref pas pret
+                        applyTeleportPosition(playerRef, islandiumPlayer, destination);
+                    } catch (Exception e) {
+                        System.out.println("[ISLANDIUM-TP] Same-world direct failed: " + e.getMessage() + ", fallback to Teleport component");
+                        applyTeleportPosition(playerRef, islandiumPlayer, destination);
+                    }
                 });
             } else {
                 // Cross-world: removeFromStore + addPlayer pour charger les chunks du nouveau monde
