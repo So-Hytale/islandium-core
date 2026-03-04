@@ -4,6 +4,7 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.modules.entity.teleport.PendingTeleport;
 import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -331,6 +332,8 @@ public class TeleportService {
                         Vector3f targetRotation = (destination.yaw() != 0f || destination.pitch() != 0f)
                             ? new Vector3f(destination.pitch(), destination.yaw(), 0f)
                             : transform.getRotation().clone();
+                        // Nettoyer tout PendingTeleport coince (peut rester apres addPlayer/removeFromStore)
+                        store.tryRemoveComponent(ref, PendingTeleport.getComponentType());
                         Teleport teleport = new Teleport(targetPos, targetRotation);
                         store.addComponent(ref, Teleport.getComponentType(), teleport);
                         System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destWorld.getName() + " " + destination.x() + "," + destination.y() + "," + destination.z() + (attempt > 0 ? " (retry " + attempt + ")" : ""));
@@ -370,6 +373,8 @@ public class TeleportService {
                 Vector3f targetRotation = (destination.yaw() != 0f || destination.pitch() != 0f)
                     ? new Vector3f(destination.pitch(), destination.yaw(), 0f)
                     : transform.getRotation().clone();
+                // Nettoyer tout PendingTeleport coince (peut rester apres addPlayer/removeFromStore)
+                store.tryRemoveComponent(ref, PendingTeleport.getComponentType());
                 Teleport teleport = new Teleport(targetPos, targetRotation);
                 store.addComponent(ref, Teleport.getComponentType(), teleport);
                 System.out.println("[ISLANDIUM-TP] SUCCESS: Teleported " + islandiumPlayer.getName() + " to " + destination.x() + "," + destination.y() + "," + destination.z());
