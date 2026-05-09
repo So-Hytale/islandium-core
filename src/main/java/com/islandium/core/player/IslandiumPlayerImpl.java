@@ -395,8 +395,7 @@ public class IslandiumPlayerImpl implements IslandiumPlayer {
         if (hytalePlayer instanceof Player player) {
             var playerRef = player.getPlayerRef();
             if (playerRef != null) {
-                // Note: disconnect prend un String, on utilise stripColors pour le kick
-                playerRef.getPacketHandler().disconnect(ColorUtil.stripColors(reason));
+                playerRef.getPacketHandler().disconnect(Message.raw(ColorUtil.stripColors(reason)));
             }
         }
     }

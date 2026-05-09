@@ -8,6 +8,7 @@ import com.islandium.core.api.util.ColorUtil;
 import com.islandium.core.api.util.NotificationType;
 import com.islandium.core.listener.base.IslandiumListener;
 import com.hypixel.hytale.event.EventRegistry;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,8 +44,7 @@ public class PlayerJoinListener extends IslandiumListener {
                     String message = punishment.expiresAt() != null
                         ? "Vous êtes banni jusqu'au " + punishment.expiresAt() + ": " + reason
                         : "Vous êtes banni définitivement: " + reason;
-                    // Disconnect via packet handler
-                    playerRef.getPacketHandler().disconnect(message);
+                    playerRef.getPacketHandler().disconnect(Message.raw(message));
                     return;
                 }
 
